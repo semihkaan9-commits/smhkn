@@ -1,0 +1,139 @@
+import React, { useState, useMemo } from 'react';
+import { Villager } from '../types';
+import { Search, Phone, MapPin, BadgeCheck, Navigation, Star } from 'lucide-react';
+
+interface WorkerSearchProps {
+  villagers: Villager[];
+  onRateVillager: (id: string, newRating: number) => void;
+  topAd?: string | null;
+}
+
+export const WorkerSearch: React.FC<WorkerSearchProps> = ({ villagers, onRateVillager, topAd }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredVillagers = useMemo(() => {
+    let result = villagers;
+    if (searchTerm) {
+      const lowerTerm = searchTerm.toLocaleLowerCase('tr-TR');
+      result = villagers.filter(v => 
+        v.profession.toLocaleLowerCase('tr-TR').includes(lowerTerm) ||
+        v.name.toLocaleLowerCase('tr-TR').includes(lowerTerm) ||
+        v.surname.toLocaleLowerCase('tr-TR').includes(lowerTerm)
+      );
+    }
+    return result.sort((a, b) => b.rating - a.rating);
+  }, [searchTerm, villagers]);
+
+  return (
+    <section id="workers" className="py-16 px-4 max-w-7xl mx-auto">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl font-bold text-green-900 mb-4">Köy Rehberi & İş İlanları</h2>
+        <p className="text-stone-600 max-w-xl mx-auto">
+          Köyümüzde yapılacak bir işiniz mi var? Aradığınız ustayı veya yardımcıyı buradan kolayca bulabilirsiniz.
+          <br/>
+          <span className="text-xs text-green-600 font-medium">Not: En yüksek puanlı üyeler en üstte listelenir.</span>
+        </p>
+      </div>
+
+      <div className="max-w-2xl mx-auto mb-12">
+        <div className="relative group">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <Search className="text-gray-400 group-focus-within:text-green-600 transition-colors" />
+          </div>
+          <input
+            type="text"
+            className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-100 bg-white shadow-sm focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all outline-none text-lg text-black"
+            placeholder="Ne aramıştınız? (Örn: Tesisatçı, Elektrikçi...)"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
+      {searchTerm && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
+          {filteredVillagers.length > 0 ? (
+            filteredVillagers.map((person) => (
+              <div key={person.id} className="bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-shadow border-t-4 border-green-500 flex flex-col h-full">
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">{person.name} {person.surname}</h3>
+                    {person.nickname && <p className="text-sm text-gray-500 italic">"{person.nickname}"</p>}
+                  </div>
+                  <BadgeCheck className="text-green-500" />
+                </div>
+
+                <div className="flex items-center mb-4">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      onClick={() => onRateVillager(person.id, star)}
+                      className="focus:outline-none transition-transform hover:scale-110"
+                    >
+                      <Star 
+                        size={18} 
+                        className={`${star <= person.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
+                      />
+                    </button>
+                  ))}
+                  <span className="ml-2 text-xs text-gray-500">({person.rating}/5)</span>
+                </div>
+                
+                <div className="space-y-4 mt-auto">
+                  <div className="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+                    {person.profession}
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <MapPin size={20} className="shrink-0 text-green-600 mt-1" />
+                    <div className="flex-grow">
+                      <span className="text-gray-600 text-sm block mb-2">{person.address}</span>
+                      <a 
+                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(person.address + ' Yeşilvadi Köyü')}`} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100 transition-colors"
+                      >
+                        <Navigation size={12} /> Yol Tarifi
+                      </a>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between gap-3 pt-2 border-t border-gray-100">
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Phone size={18} className="text-green-600" />
+                      <span className="font-mono text-sm">{person.contact}</span>
+                    </div>
+                    <a 
+                      href={`tel:${person.contact}`}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                    >
+                      <Phone size={14} /> Ara
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-10 text-gray-500">
+              <p>Aradığınız kriterlere uygun köy sakini bulunamadı.</p>
+            </div>
+          )}
+        </div>
+      )}
+      
+      {!searchTerm && (
+        <div className="w-full h-80 bg-stone-200 rounded-2xl border-4 border-dashed border-stone-300 flex items-center justify-center animate-fade-in-up overflow-hidden group">
+           {topAd ? (
+             <img src={topAd} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Üst Reklam" />
+           ) : (
+             <div className="text-center">
+               <h3 className="text-3xl font-extrabold text-stone-400 mb-2 tracking-widest uppercase">REKLAM ALANI 1</h3>
+               <p className="text-stone-500 font-medium italic">Köyümüzün en değerli alanında yerinizi alın.</p>
+             </div>
+           )}
+        </div>
+      )}
+    </section>
+  );
+};

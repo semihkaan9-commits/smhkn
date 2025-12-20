@@ -1,0 +1,56 @@
+import React from 'react';
+import { Map, Info, User } from 'lucide-react';
+
+export const AboutSection: React.FC = () => {
+  return (
+    <section id="about" className="py-16 px-4 bg-white">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="order-2 md:order-1">
+            <h2 className="text-3xl font-bold text-green-900 mb-6 flex items-center gap-2">
+              <Info className="text-green-600" />
+              Köyümüz Hakkında
+            </h2>
+            <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
+              <p>
+                Yeşilvadi, doğanın tüm renklerini barındıran, tarihi dokusu ve misafirperver halkıyla bölgenin incisi konumundadır. 
+                Tarım ve hayvancılığın modern yöntemlerle yapıldığı köyümüzde, geleneksel yaşam kültürü de yaşatılmaya devam etmektedir.
+              </p>
+              
+              <div className="bg-green-50 p-6 rounded-xl border border-green-100">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="bg-white p-2 rounded-full shadow-sm text-green-700">
+                    <User size={24} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900">Köy Muhtarı</h4>
+                    <p className="text-gray-600">Ahmet Yılmaz</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-4">
+                  <div className="bg-white p-2 rounded-full shadow-sm text-green-700">
+                    <Map size={24} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900">Konum</h4>
+                    <p className="text-gray-600">Yeşilvadi Köyü, Merkez İlçe / Anadolu</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Sabit Görsel Alanı - Kafa Karıştırmasın Diye Reklamdan Arındırıldı */}
+          <div className="order-1 md:order-2 h-80 md:h-full min-h-[400px] rounded-2xl overflow-hidden shadow-2xl">
+             <img 
+               src="https://picsum.photos/id/10/1200/800" 
+               className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" 
+               alt="Yeşilvadi Köyü" 
+             />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
