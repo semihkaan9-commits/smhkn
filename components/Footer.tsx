@@ -8,9 +8,9 @@ export const Footer: React.FC = () => {
         <div className="mb-6 md:mb-0">
             <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
                 <TreePine size={24} />
-                <span className="text-xl font-bold">Yeşilvadi Köyü</span>
+                <span className="text-xl font-bold">Balcılar Köyü</span>
             </div>
-          <p className="text-green-200 text-sm">© 2024 Tüm Hakları Saklıdır.</p>
+          <p className="text-green-200 text-sm">© 2026 Tüm Hakları Saklıdır.</p>
         </div>
         <div className="text-sm text-green-200">
           <p>Acil Durumlar İçin: 112</p>

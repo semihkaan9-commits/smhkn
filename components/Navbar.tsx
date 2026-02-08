@@ -26,7 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser, onLogout, onOpenAut
             <div className="bg-white p-1.5 rounded-full text-green-700 group-hover:scale-110 transition-transform">
               <TreePine size={24} />
             </div>
-            <span className="font-bold text-xl tracking-tight">Yeşilvadi Köyü</span>
+            <span className="font-bold text-xl tracking-tight">Balcılar Köyü</span>
           </div>
           
           {/* Desktop/Tablet Navigation - Centered */}

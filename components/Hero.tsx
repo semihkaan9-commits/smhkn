@@ -17,7 +17,7 @@ export const Hero: React.FC = () => {
       
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto -mt-10">
         <h1 className="text-5xl md:text-7xl font-bold mb-6 drop-shadow-2xl animate-fade-in-up text-white">
-          Yeşilvadi'ye Hoşgeldiniz
+          Balcılar'a Hoşgeldiniz
         </h1>
         <p className="text-xl md:text-2xl font-light mb-8 max-w-2xl mx-auto drop-shadow-lg text-green-50 animate-fade-in-up animate-delay-100">
           Doğanın kalbinde, huzurun adresinde buluşuyoruz. Köyümüzün dijital meydanına adım atın.

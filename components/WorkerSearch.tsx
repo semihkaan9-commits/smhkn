@@ -89,7 +89,7 @@ export const WorkerSearch: React.FC<WorkerSearchProps> = ({ villagers, onRateVil
                     <div className="flex-grow">
                       <span className="text-gray-600 text-sm block mb-2">{person.address}</span>
                       <a 
-                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(person.address + ' Yeşilvadi Köyü')}`} 
+                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(person.address + ' Balcılar Köyü')}`} 
                         target="_blank" 
                         rel="noreferrer"
                         className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100 transition-colors"

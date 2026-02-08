@@ -8,12 +8,14 @@ export const AboutSection: React.FC = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="order-2 md:order-1">
             <h2 className="text-3xl font-bold text-green-900 mb-6 flex items-center gap-2">
-              <Info className="text-green-600" />
+              <span className="text-green-600">
+                <Info />
+              </span>
               Köyümüz Hakkında
             </h2>
             <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
               <p>
-                Yeşilvadi, doğanın tüm renklerini barındıran, tarihi dokusu ve misafirperver halkıyla bölgenin incisi konumundadır. 
+                Balcılar, doğanın tüm renklerini barındıran, tarihi dokusu ve misafirperver halkıyla bölgenin incisi konumundadır. 
                 Tarım ve hayvancılığın modern yöntemlerle yapıldığı köyümüzde, geleneksel yaşam kültürü de yaşatılmaya devam etmektedir.
               </p>
               
@@ -34,19 +36,19 @@ export const AboutSection: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-900">Konum</h4>
-                    <p className="text-gray-600">Yeşilvadi Köyü, Merkez İlçe / Anadolu</p>
+                    <p className="text-gray-600">Balcılar Köyü, Merkez İlçe / Anadolu</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Sabit Görsel Alanı - Kafa Karıştırmasın Diye Reklamdan Arındırıldı */}
+          {/* Sabit Görsel Alanı */}
           <div className="order-1 md:order-2 h-80 md:h-full min-h-[400px] rounded-2xl overflow-hidden shadow-2xl">
              <img 
                src="https://picsum.photos/id/10/1200/800" 
                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" 
-               alt="Yeşilvadi Köyü" 
+               alt="Balcılar Köyü" 
              />
           </div>
         </div>
