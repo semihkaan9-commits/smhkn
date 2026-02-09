@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { WorkerSearch } from './components/WorkerSearch';
@@ -10,7 +10,7 @@ import { Footer } from './components/Footer';
 import { AuthModal } from './components/AuthModal';
 import { AdManager } from './components/AdManager';
 import { AnyUser, NewsItem, UserRole, Villager, GalleryItem, Donation } from './types';
-import { INITIAL_NEWS, INITIAL_VILLAGERS, INITIAL_GALLERY, INITIAL_DONATIONS } from './constants';
+import { supabase } from './lib/supabase';
 
 import { Toaster, toast } from 'react-hot-toast';
 
@@ -18,36 +18,99 @@ const App: React.FC = () => {
   // State
   const [currentUser, setCurrentUser] = useState<AnyUser | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [villagers, setVillagers] = useState<Villager[]>(INITIAL_VILLAGERS);
-  const [guests, setGuests] = useState<AnyUser[]>([]);
-  const [news, setNews] = useState<NewsItem[]>(INITIAL_NEWS);
-  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(INITIAL_GALLERY);
-  const [donations, setDonations] = useState<Donation[]>(INITIAL_DONATIONS);
+  const [villagers, setVillagers] = useState<Villager[]>([]);
+  const [guests, setGuests] = useState<AnyUser[]>([]); // Not really used for Guests list but keeping for type compatibility if needed
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [donations, setDonations] = useState<Donation[]>([]);
 
   // Reklam Durumları - 3 Bağımsız Alan
   const [area1Ad, setArea1Ad] = useState<string | null>(null); // Üst Alan
   const [area2AAd, setArea2AAd] = useState<string | null>(null); // Alt Alan A
   const [area2BAd, setArea2BAd] = useState<string | null>(null); // Alt Alan B
 
-  // Handlers
-  const handleLogin = (user: AnyUser) => {
-    setCurrentUser(user);
-    toast.success(`Hoşgeldin ${user.name}!`);
-  };
+  // Helper to fetch user profile
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+      if (error) throw error;
 
-  const handleRegister = (user: AnyUser) => {
-    setCurrentUser(user);
-    if (user.role === UserRole.VILLAGER) {
-      setVillagers(prev => [...prev, user as Villager]);
-      toast.success("Kayıt başarılı! Köy rehberine eklendiniz.");
-    } else {
-      setGuests(prev => [...prev, user]);
-      toast.success("Misafir kaydı başarılı! Hoşgeldiniz.");
+      let userData: AnyUser = {
+        id: profile.id,
+        name: profile.full_name?.split(' ')[0] || '',
+        surname: profile.full_name?.split(' ').slice(1).join(' ') || '',
+        role: profile.role as UserRole,
+        email: undefined // Supabase user object has email, profile doesn't usually store it redundant
+      };
+
+      if (profile.role === UserRole.VILLAGER) {
+        const { data: villagerData } = await supabase.from('villagers').select('*').eq('user_id', userId).single();
+        if (villagerData) {
+          userData = { ...userData, ...villagerData, id: userId, role: UserRole.VILLAGER };
+        }
+      }
+
+      // Admin override check if needed, but role from profile is source of truth
+      setCurrentUser(userData);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
     }
   };
 
-  const handleLogout = () => {
-    setCurrentUser(null);
+  // Auth Subscription
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) fetchUserProfile(session.user.id);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        fetchUserProfile(session.user.id);
+      } else {
+        setCurrentUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Data Fetching
+  const refreshData = async () => {
+    const { data: v } = await supabase.from('villagers').select('*');
+    if (v) setVillagers(v as Villager[]);
+
+    const { data: n } = await supabase.from('news').select('*').order('date', { ascending: false });
+    if (n) setNews(n as NewsItem[]);
+
+    const { data: g } = await supabase.from('gallery').select('*').order('date', { ascending: false });
+    if (g) setGalleryItems(g as unknown as GalleryItem[]);
+
+    const { data: d } = await supabase.from('donations').select('*').order('date', { ascending: false });
+    if (d) setDonations(d as Donation[]);
+  }
+
+  useEffect(() => {
+    refreshData();
+  }, []);
+
+
+  // Handlers
+  const handleLogin = (user: AnyUser) => {
+    // This is now purely for UI feedback if needed, but AuthModal handles the actual login
+    // and onAuthStateChange handles the state update.
+    // We can keep it to show the toast or let AuthModal do it.
+    // AuthModal already shows toast.
+  };
+
+  const handleRegister = (user: AnyUser) => {
+    // Handled by AuthModal and Supabase Auth
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Çıkış yapıldı.");
   };
 
   const handleUpdateAd = (area: 'top' | 'bottomA' | 'bottomB', url: string | null) => {
@@ -60,78 +123,85 @@ const App: React.FC = () => {
     }
   };
 
-  const handleAddNews = (title: string, content: string, imageUrl?: string) => {
-    const dateStr = new Date().toLocaleDateString('tr-TR');
-    const newsId = Date.now().toString(); // Consistent ID
-    const newNewsItem: NewsItem = {
-      id: newsId,
+  const handleAddNews = async (title: string, content: string, imageUrl?: string) => {
+    const { error } = await supabase.from('news').insert({
       title,
       content,
-      date: dateStr,
-      author: currentUser?.name || 'Yönetici',
-      imageUrl
-    };
-    setNews(prev => [newNewsItem, ...prev]);
+      image_url: imageUrl,
+      author_id: currentUser?.id
+    });
 
-    if (imageUrl) {
-      const newGalleryItem: GalleryItem = {
-        id: `news-${newsId}`, // Deterministic ID linked to news
-        type: 'image',
-        url: imageUrl,
-        caption: title,
-        date: dateStr
-      };
-      setGalleryItems(prev => [newGalleryItem, ...prev]);
+    if (error) {
+      toast.error('Haber eklenirken hata oluştu.');
+      console.error(error);
+    } else {
+      toast.success('Haber eklendi.');
+      refreshData();
     }
   };
 
-  const handleDeleteNews = (id: string) => {
-    setNews(prev => prev.filter(item => item.id !== id));
-    // Also delete from gallery if it exists (using the deterministic ID)
-    setGalleryItems(prev => prev.filter(item => item.id !== `news-${id}`));
+  const handleDeleteNews = async (id: string) => {
+    const { error } = await supabase.from('news').delete().eq('id', id);
+    if (error) {
+      toast.error('Haber silinirken hata oluştu.');
+    } else {
+      toast.success('Haber silindi.');
+      refreshData();
+    }
   };
 
-  const handleAddGalleryItem = (type: 'image' | 'video', url: string, caption: string) => {
-    const newItem: GalleryItem = {
-      id: Date.now().toString(),
+  const handleAddGalleryItem = async (type: 'image' | 'video', url: string, caption: string) => {
+    const { error } = await supabase.from('gallery').insert({
       type,
       url,
-      caption,
-      date: new Date().toLocaleDateString('tr-TR')
-    };
-    setGalleryItems(prev => [newItem, ...prev]);
+      caption
+    });
+    if (error) {
+      toast.error('Galeri öğesi eklenirken hata oluştu.');
+    } else {
+      toast.success('Galeri öğesi eklendi.');
+      refreshData();
+    }
   };
 
-  const handleDeleteGalleryItem = (id: string) => {
-    setGalleryItems(prev => prev.filter(item => item.id !== id));
+  const handleDeleteGalleryItem = async (id: string) => {
+    const { error } = await supabase.from('gallery').delete().eq('id', id);
+    if (error) {
+      toast.error('Silinirken hata oluştu.');
+    } else {
+      refreshData();
+    }
   };
 
-  const handleRateVillager = (id: string, newRating: number) => {
-    setVillagers(prev => prev.map(v => {
-      if (v.id === id) {
-        return { ...v, rating: newRating };
-      }
-      return v;
-    }));
+  const handleRateVillager = async (id: string, newRating: number) => {
+    const { error } = await supabase.from('villagers').update({ rating: newRating }).eq('id', id);
+    if (!error) refreshData();
   };
 
-  const handleAddDonation = (donorName: string, amount: number) => {
-    const newDonation: Donation = {
-      id: Date.now().toString(),
-      donorName,
-      amount,
-      date: new Date().toLocaleDateString('tr-TR')
-    };
-    setDonations(prev => [newDonation, ...prev]);
+  const handleAddDonation = async (donorName: string, amount: number) => {
+    const { error } = await supabase.from('donations').insert({
+      donor_name: donorName,
+      amount
+    });
+    if (error) toast.error('Bağış eklenirken hata oluştu.');
+    else {
+      toast.success('Bağış eklendi!');
+      refreshData();
+    }
   };
 
-  const handleDeleteDonation = (id: string) => {
-    setDonations(prev => prev.filter(item => item.id !== id));
+  const handleDeleteDonation = async (id: string) => {
+    const { error } = await supabase.from('donations').delete().eq('id', id);
+    if (!error) refreshData();
   };
 
-  const handleDeleteVillager = (id: string) => {
-    setVillagers(prev => prev.filter(v => v.id !== id));
-    toast.success("Köy sakini başarıyla silindi.");
+  const handleDeleteVillager = async (id: string) => {
+    const { error } = await supabase.from('villagers').delete().eq('id', id);
+    if (error) toast.error('Silinirken hata oluştu.');
+    else {
+      toast.success('Köy sakini silindi.');
+      refreshData();
+    }
   };
 
   const scrollToSection = (id: string) => {

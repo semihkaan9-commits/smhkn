@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { UserRole, AnyUser, Villager } from '../types';
 import { X } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -15,12 +16,11 @@ interface AuthModalProps {
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, onRegister, villagers, guests }) => {
   const [mode, setMode] = useState<'LOGIN' | 'REGISTER'>('LOGIN');
   const [registerType, setRegisterType] = useState<UserRole.GUEST | UserRole.VILLAGER>(UserRole.GUEST);
-  const [loginType, setLoginType] = useState<UserRole.VILLAGER | UserRole.GUEST | UserRole.ADMIN>(UserRole.VILLAGER);
 
   // Form States
-  const [username, setUsername] = useState(''); // For Admin
-  const [password, setPassword] = useState(''); // For Admin
+  // const [username, setUsername] = useState(''); // Removed separate username state
   const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
   const [surname, setSurname] = useState('');
   const [email, setEmail] = useState('');
 
@@ -33,85 +33,55 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
   if (!isOpen) return null;
 
   const resetForm = () => {
-    setUsername(''); setPassword(''); setName(''); setSurname('');
+    // setUsername(''); 
+    setPassword(''); setName(''); setSurname('');
     setEmail(''); setNickname(''); setProfession(''); setAddress(''); setContact('');
   };
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Admin Check
-    if (username === 'admin') {
-      if (password === '123') {
-        onLogin({ id: 'admin', name: 'Sistem', surname: 'Yöneticisi', role: UserRole.ADMIN });
-        resetForm();
-        onClose();
-        return;
-      } else {
-        toast.error("Yönetici şifresi yanlış!");
-        return;
-      }
-    }
-
-    // Regular Login Validation
-    if (!name.trim() || !surname.trim()) {
-      toast.error("Giriş yapmak için İsim ve Soyisim alanlarını doldurmalısınız.");
+    // Admin Check (Legacy/Backdoor) - mapped to email field for convenience if user types 'admin'
+    if (email === 'admin' && password === '123') {
+      onLogin({ id: 'admin', name: 'Sistem', surname: 'Yöneticisi', role: UserRole.ADMIN });
+      resetForm();
+      onClose();
       return;
     }
 
-
-
-    // Determine Role based on Radio Selection
-    const role = loginType === UserRole.ADMIN ? UserRole.ADMIN : (loginType === UserRole.VILLAGER ? UserRole.VILLAGER : UserRole.GUEST);
-
-    if (role === UserRole.VILLAGER) {
-      // Normalize input for case-insensitive comparison
-      const inputName = name.trim().toLocaleLowerCase('tr-TR');
-      const inputSurname = surname.trim().toLocaleLowerCase('tr-TR');
-
-      // Find villager
-      const foundVillager = villagers.find(v =>
-        v.name.toLocaleLowerCase('tr-TR') === inputName &&
-        v.surname.toLocaleLowerCase('tr-TR') === inputSurname
-      );
-
-      if (foundVillager) {
-        onLogin(foundVillager);
-      } else {
-        toast.error("Böyle bir köy sakini bulunamadı. Lütfen isminizi ve soyisminizi doğru girdiğinizden emin olun veya yeni kayıt oluşturun.", {
-          duration: 5000,
-        });
-        return;
-      }
-    } else {
-      // Guest Login Validation
-      const inputName = name.trim().toLocaleLowerCase('tr-TR');
-      const inputSurname = surname.trim().toLocaleLowerCase('tr-TR');
-
-      const foundGuest = guests.find(g =>
-        g.name.toLocaleLowerCase('tr-TR') === inputName &&
-        g.surname.toLocaleLowerCase('tr-TR') === inputSurname
-      );
-
-      if (foundGuest) {
-        onLogin(foundGuest);
-      } else {
-        toast.error("Misafir kaydınız bulunamadı. Lütfen önce kayıt olun.", {
-          duration: 5000,
-        });
-        return;
-      }
+    if (!email.trim()) {
+      toast.error("Lütfen e-posta adresinizi giriniz.");
+      return;
     }
-    resetForm();
-    onClose();
+    if (!password) {
+      toast.error("Lütfen şifrenizi giriniz.");
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: password.trim(),
+      });
+
+      if (error) throw error;
+
+      // Login successful, App.tsx will handle the session change via onAuthStateChange
+      toast.success("Giriş başarılı!");
+      resetForm();
+      onClose();
+
+    } catch (error: any) {
+      toast.error(`Giriş başarısız: ${error.message}. Lütfen bilgilerinizi kontrol edin.`);
+    }
   };
 
-  const handleRegisterSubmit = (e: React.FormEvent) => {
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Basic Validation
-    if (!name.trim() || !surname.trim() || !email.trim()) {
-      toast.error("Lütfen isim, soyisim ve e-posta alanlarını doldurunuz.");
+    if (!name.trim() || !surname.trim() || !email.trim() || !password.trim()) {
+      toast.error("Lütfen isim, soyisim, e-posta ve şifre alanlarını doldurunuz.");
       return;
     }
 
@@ -123,29 +93,52 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
       }
     }
 
-    const baseUser = {
-      id: Date.now().toString(),
-      name,
-      surname,
-      email
-    };
+    try {
+      // 1. Sign Up in Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password: password.trim(),
+        options: {
+          data: {
+            full_name: `${name} ${surname}`,
+            role: registerType
+          }
+        }
+      });
 
-    if (registerType === UserRole.GUEST) {
-      onRegister({ ...baseUser, role: UserRole.GUEST });
-    } else {
-      const newVillager: Villager = {
-        ...baseUser,
-        role: UserRole.VILLAGER,
-        nickname,
-        profession,
-        address,
-        contact,
-        rating: 0 // Initialize rating
-      };
-      onRegister(newVillager);
+      if (authError) throw authError;
+
+      if (authData.user) {
+        // 2. If Villager, insert into villagers table
+        if (registerType === UserRole.VILLAGER) {
+          const { error: villagerError } = await supabase.from('villagers').insert({
+            user_id: authData.user.id,
+            name,
+            surname,
+            nickname,
+            profession,
+            address,
+            contact,
+            email,
+            rating: 0
+          });
+
+          if (villagerError) {
+            console.error('Error creating villager profile:', villagerError);
+            toast.error('Kullanıcı oluşturuldu fakat profil detayları kaydedilemedi.');
+            // Optional: Delete user to maintain consistency?
+          }
+        }
+
+        toast.success("Kayıt başarılı! Giriş yapabilirsiniz.");
+        resetForm();
+        onClose();
+      }
+
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      toast.error(`Kayıt başarısız: ${error.message}`);
     }
-    resetForm();
-    onClose();
   };
 
   return (
@@ -176,88 +169,26 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
           {mode === 'LOGIN' ? (
             <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Giriş Türü</label>
-                  <div className="flex gap-4 mt-1">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="loginType"
-                        checked={loginType === UserRole.VILLAGER}
-                        onChange={() => {
-                          setLoginType(UserRole.VILLAGER);
-                          if (username === 'admin') {
-                            setUsername('');
-                            setName('');
-                          }
-                          setPassword('');
-                          setSurname('');
-                        }}
-                        className="text-green-600 focus:ring-green-500"
-                      />
-                      <span>Köylü</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="loginType"
-                        checked={loginType === UserRole.GUEST}
-                        onChange={() => {
-                          setLoginType(UserRole.GUEST);
-                          if (username === 'admin') {
-                            setUsername('');
-                            setName('');
-                          }
-                          setPassword('');
-                          setSurname('');
-                        }}
-                        className="text-green-600 focus:ring-green-500"
-                      />
-                      <span>Misafir</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="loginType"
-                        checked={loginType === UserRole.ADMIN}
-                        onChange={() => {
-                          setLoginType(UserRole.ADMIN);
-                          setUsername('admin');
-                          setPassword(''); // Optional: clear password when switching TO admin too
-                          setSurname('');
-                        }}
-                        className="text-green-600 focus:ring-green-500"
-                      />
-                      <span>Yönetici</span>
-                    </label>
-                  </div>
-                </div>
 
-                {/* Standard Fields */}
-                <div className="grid grid-cols-2 gap-4">
+                {/* Simplified Login Fields */}
+                <div className="grid grid-cols-1 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Kullanıcı Adı</label>
+                    <label className="block text-sm font-medium text-gray-700">E-Posta</label>
                     <input
-                      type="text"
-                      value={username || name}
-                      onChange={e => {
-                        const val = e.target.value;
-                        if (loginType !== UserRole.ADMIN && val.toLowerCase() === 'admin') {
-                          toast.error("Kullanıcı adı olarak 'admin' kullanılamaz!");
-                          return;
-                        }
-                        setName(val);
-                        setUsername(val);
-                      }}
+                      type="email" // Explicitly valid HTML5 email input
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      placeholder="ad@ornek.com"
                       className="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-green-500 focus:ring-green-500 bg-white text-black"
                     />
                   </div>
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Şifre</label>
                     <input
-                      type={username === 'admin' ? 'password' : 'text'}
-                      value={password || surname}
-                      onChange={e => { setSurname(e.target.value); setPassword(e.target.value); }}
+                      type="password"
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
                       className="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-green-500 focus:ring-green-500 bg-white text-black"
                     />
                   </div>
@@ -304,6 +235,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase">E-Posta</label>
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full border-b-2 border-gray-200 focus:border-green-500 outline-none py-2 bg-transparent text-black transition-colors" />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase">Şifre</label>
+                <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full border-b-2 border-gray-200 focus:border-green-500 outline-none py-2 bg-transparent text-black transition-colors" />
               </div>
 
               {registerType === UserRole.VILLAGER && (
