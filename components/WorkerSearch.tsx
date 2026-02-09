@@ -1,21 +1,32 @@
 import React, { useState, useMemo } from 'react';
-import { Villager } from '../types';
-import { Search, Phone, MapPin, BadgeCheck, Navigation, Star } from 'lucide-react';
+import { Villager, UserRole, AnyUser } from '../types';
+import { Search, Phone, MapPin, BadgeCheck, Navigation, Star, Trash2 } from 'lucide-react';
+import { DeleteModal } from './DeleteModal';
 
 interface WorkerSearchProps {
   villagers: Villager[];
   onRateVillager: (id: string, newRating: number) => void;
   topAd?: string | null;
+  currentUser: AnyUser | null;
+  onDeleteVillager: (id: string) => void;
 }
 
-export const WorkerSearch: React.FC<WorkerSearchProps> = ({ villagers, onRateVillager, topAd }) => {
+export const WorkerSearch: React.FC<WorkerSearchProps> = ({
+  villagers,
+  onRateVillager,
+  topAd,
+  currentUser,
+  onDeleteVillager
+}) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [villagerToDelete, setVillagerToDelete] = useState<string | null>(null);
 
   const filteredVillagers = useMemo(() => {
     let result = villagers;
     if (searchTerm) {
       const lowerTerm = searchTerm.toLocaleLowerCase('tr-TR');
-      result = villagers.filter(v => 
+      result = villagers.filter(v =>
         v.profession.toLocaleLowerCase('tr-TR').includes(lowerTerm) ||
         v.name.toLocaleLowerCase('tr-TR').includes(lowerTerm) ||
         v.surname.toLocaleLowerCase('tr-TR').includes(lowerTerm)
@@ -24,13 +35,25 @@ export const WorkerSearch: React.FC<WorkerSearchProps> = ({ villagers, onRateVil
     return result.sort((a, b) => b.rating - a.rating);
   }, [searchTerm, villagers]);
 
+  const handleDeleteClick = (id: string) => {
+    setVillagerToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (villagerToDelete) {
+      onDeleteVillager(villagerToDelete);
+      setVillagerToDelete(null);
+    }
+  };
+
   return (
     <section id="workers" className="py-16 px-4 max-w-7xl mx-auto">
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-green-900 mb-4">Köy Rehberi & İş İlanları</h2>
         <p className="text-stone-600 max-w-xl mx-auto">
           Köyümüzde yapılacak bir işiniz mi var? Aradığınız ustayı veya yardımcıyı buradan kolayca bulabilirsiniz.
-          <br/>
+          <br />
           <span className="text-xs text-green-600 font-medium">Not: En yüksek puanlı üyeler en üstte listelenir.</span>
         </p>
       </div>
@@ -54,7 +77,19 @@ export const WorkerSearch: React.FC<WorkerSearchProps> = ({ villagers, onRateVil
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
           {filteredVillagers.length > 0 ? (
             filteredVillagers.map((person) => (
-              <div key={person.id} className="bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-shadow border-t-4 border-green-500 flex flex-col h-full">
+              <div key={person.id} className="relative bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-shadow border-t-4 border-green-500 flex flex-col h-full group">
+
+                {/* Admin Delete Button */}
+                {currentUser?.role === UserRole.ADMIN && (
+                  <button
+                    onClick={() => handleDeleteClick(person.id)}
+                    className="absolute top-4 right-4 z-[5] bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-lg border-2 border-white transition-transform hover:scale-110 cursor-pointer pointer-events-auto"
+                    title="Kişiyi Sil"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                )}
+
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <h3 className="text-xl font-bold text-gray-900">{person.name} {person.surname}</h3>
@@ -70,27 +105,27 @@ export const WorkerSearch: React.FC<WorkerSearchProps> = ({ villagers, onRateVil
                       onClick={() => onRateVillager(person.id, star)}
                       className="focus:outline-none transition-transform hover:scale-110"
                     >
-                      <Star 
-                        size={18} 
-                        className={`${star <= person.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
+                      <Star
+                        size={18}
+                        className={`${star <= person.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
                       />
                     </button>
                   ))}
                   <span className="ml-2 text-xs text-gray-500">({person.rating}/5)</span>
                 </div>
-                
+
                 <div className="space-y-4 mt-auto">
                   <div className="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
                     {person.profession}
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <MapPin size={20} className="shrink-0 text-green-600 mt-1" />
                     <div className="flex-grow">
                       <span className="text-gray-600 text-sm block mb-2">{person.address}</span>
-                      <a 
-                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(person.address + ' Balcılar Köyü')}`} 
-                        target="_blank" 
+                      <a
+                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(person.address + ' Balcılar Köyü')}`}
+                        target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100 transition-colors"
                       >
@@ -98,13 +133,13 @@ export const WorkerSearch: React.FC<WorkerSearchProps> = ({ villagers, onRateVil
                       </a>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center justify-between gap-3 pt-2 border-t border-gray-100">
                     <div className="flex items-center gap-2 text-gray-600">
                       <Phone size={18} className="text-green-600" />
                       <span className="font-mono text-sm">{person.contact}</span>
                     </div>
-                    <a 
+                    <a
                       href={`tel:${person.contact}`}
                       className="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
                     >
@@ -121,19 +156,27 @@ export const WorkerSearch: React.FC<WorkerSearchProps> = ({ villagers, onRateVil
           )}
         </div>
       )}
-      
+
       {!searchTerm && (
         <div className="w-full h-80 bg-stone-200 rounded-2xl border-4 border-dashed border-stone-300 flex items-center justify-center animate-fade-in-up overflow-hidden group">
-           {topAd ? (
-             <img src={topAd} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Üst Reklam" />
-           ) : (
-             <div className="text-center">
-               <h3 className="text-3xl font-extrabold text-stone-400 mb-2 tracking-widest uppercase">REKLAM ALANI 1</h3>
-               <p className="text-stone-500 font-medium italic">Köyümüzün en değerli alanında yerinizi alın.</p>
-             </div>
-           )}
+          {topAd ? (
+            <img src={topAd} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Üst Reklam" />
+          ) : (
+            <div className="text-center">
+              <h3 className="text-3xl font-extrabold text-stone-400 mb-2 tracking-widest uppercase">REKLAM ALANI 1</h3>
+              <p className="text-stone-500 font-medium italic">Köyümüzün en değerli alanında yerinizi alın.</p>
+            </div>
+          )}
         </div>
       )}
+
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="Köy Sakinini Sil"
+        description="Bu kişiyi köy rehberinden silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
+      />
     </section>
   );
 };

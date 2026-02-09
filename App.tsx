@@ -129,6 +129,11 @@ const App: React.FC = () => {
     setDonations(prev => prev.filter(item => item.id !== id));
   };
 
+  const handleDeleteVillager = (id: string) => {
+    setVillagers(prev => prev.filter(v => v.id !== id));
+    toast.success("Köy sakini başarıyla silindi.");
+  };
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -164,6 +169,8 @@ const App: React.FC = () => {
           villagers={villagers}
           onRateVillager={handleRateVillager}
           topAd={area1Ad}
+          currentUser={currentUser}
+          onDeleteVillager={handleDeleteVillager}
         />
 
         <NewsSection
