@@ -36,7 +36,7 @@ export const AboutSection: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-900">Konum</h4>
-                    <p className="text-gray-600">Köyceğiz/Konya</p>
+                    <p className="text-gray-600">Taşkent/Konya</p>
                   </div>
                 </div>
               </div>
