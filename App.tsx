@@ -82,13 +82,24 @@ const App: React.FC = () => {
     if (v) setVillagers(v as Villager[]);
 
     const { data: n } = await supabase.from('news').select('*').order('date', { ascending: false });
-    if (n) setNews(n as NewsItem[]);
+    if (n) {
+      setNews(n.map((item: any) => ({
+        ...item,
+        imageUrl: item.image_url, // Map snake_case to camelCase
+        author: item.author_id ? 'Admin' : 'Anonim' // Temporary fix until we join profiles
+      })) as NewsItem[]);
+    }
 
     const { data: g } = await supabase.from('gallery').select('*').order('date', { ascending: false });
     if (g) setGalleryItems(g as unknown as GalleryItem[]);
 
     const { data: d } = await supabase.from('donations').select('*').order('date', { ascending: false });
-    if (d) setDonations(d as Donation[]);
+    if (d) {
+      setDonations(d.map((item: any) => ({
+        ...item,
+        donorName: item.donor_name || 'Anonim' // Map snake_case to camelCase and handle defaults
+      })) as Donation[]);
+    }
   }
 
   useEffect(() => {
@@ -135,6 +146,20 @@ const App: React.FC = () => {
       toast.error('Haber eklenirken hata oluştu.');
       console.error(error);
     } else {
+      // If there is an image, add it to the gallery as well
+      if (imageUrl) {
+        const { error: galleryError } = await supabase.from('gallery').insert({
+          type: 'image',
+          url: imageUrl,
+          caption: title // Use news title as caption
+        });
+
+        if (galleryError) {
+          console.error('Error adding news image to gallery:', galleryError);
+          // Optional: toast warning that gallery sync failed, but news succeeded
+        }
+      }
+
       toast.success('Haber eklendi.');
       refreshData();
     }
