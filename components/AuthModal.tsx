@@ -42,8 +42,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
     e.preventDefault();
 
     // Admin Check (Legacy/Backdoor) - mapped to email field for convenience if user types 'admin'
-    if (email === 'admin' && password === '123') {
-      onLogin({ id: 'admin', name: 'Sistem', surname: 'Yöneticisi', role: UserRole.ADMIN });
+    if (email.trim() === 'mbalci@ktun.edu.tr' && password.trim() === '109109109') {
+      onLogin({ id: 'admin', name: 'Melih', surname: 'Balcı', role: UserRole.ADMIN });
       resetForm();
       onClose();
       return;

@@ -27,7 +27,22 @@ export interface NewsItem {
   content: string;
   date: string;
   author: string;
-  imageUrl?: string;
+  author_id?: string;
+  image_url?: string;
+  imageUrl?: string; // Kept for frontend compatibility, mapped from image_url
+}
+
+export interface EventItem {
+  id: string;
+  title: string;
+  content: string;
+  date: string;
+  startDate?: string;
+  endDate?: string;
+  author: string;
+  author_id?: string;
+  image_url?: string;
+  imageUrl?: string; // Kept for frontend compatibility
 }
 
 export interface GalleryItem {

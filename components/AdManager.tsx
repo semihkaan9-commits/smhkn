@@ -2,21 +2,35 @@ import React, { useState } from 'react';
 import { Layout, Image as ImageIcon, Upload, Link as LinkIcon, Trash2, CheckCircle2 } from 'lucide-react';
 
 interface AdManagerProps {
-  onUpdateAd: (area: 'top' | 'bottomA' | 'bottomB', url: string | null) => void;
+  onUpdateAd: (area: 'top' | 'bottomA' | 'hero', url: string | null, link: string | null) => void;
   currentTopAd: string | null;
+  currentTopAdLink: string | null;
   currentBottomAAd: string | null;
-  currentBottomBAd: string | null;
+  currentBottomAAdLink: string | null;
+  currentHeroAd: string | null;
+  currentHeroAdLink: string | null;
 }
 
-export const AdManager: React.FC<AdManagerProps> = ({ 
-  onUpdateAd, 
-  currentTopAd, 
+export const AdManager: React.FC<AdManagerProps> = ({
+  onUpdateAd,
+  currentTopAd,
+  currentTopAdLink,
   currentBottomAAd,
-  currentBottomBAd 
+  currentBottomAAdLink,
+  currentHeroAd,
+  currentHeroAdLink
 }) => {
-  const [selectedArea, setSelectedArea] = useState<'top' | 'bottomA' | 'bottomB'>('top');
+  const [selectedArea, setSelectedArea] = useState<'top' | 'bottomA' | 'hero'>('hero');
   const [uploadMode, setUploadMode] = useState<'URL' | 'FILE'>('URL');
   const [url, setUrl] = useState('');
+  const [linkInput, setLinkInput] = useState('');
+
+  // Update link input when area changes
+  React.useEffect(() => {
+    if (selectedArea === 'hero') setLinkInput(currentHeroAdLink || '');
+    else if (selectedArea === 'top') setLinkInput(currentTopAdLink || '');
+    else if (selectedArea === 'bottomA') setLinkInput(currentBottomAAdLink || '');
+  }, [selectedArea, currentHeroAdLink, currentTopAdLink, currentBottomAAdLink]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -24,7 +38,7 @@ export const AdManager: React.FC<AdManagerProps> = ({
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
-        onUpdateAd(selectedArea, result);
+        onUpdateAd(selectedArea, result, linkInput.trim() || null);
         e.target.value = ""; // Reset input
       };
       reader.readAsDataURL(file);
@@ -34,21 +48,21 @@ export const AdManager: React.FC<AdManagerProps> = ({
   const handleUrlSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (url.trim()) {
-      onUpdateAd(selectedArea, url.trim());
+      onUpdateAd(selectedArea, url.trim(), linkInput.trim() || null);
       setUrl('');
     }
   };
 
   const getCurrentPreviewAd = () => {
+    if (selectedArea === 'hero') return currentHeroAd;
     if (selectedArea === 'top') return currentTopAd;
-    if (selectedArea === 'bottomA') return currentBottomAAd;
-    return currentBottomBAd;
+    return currentBottomAAd;
   };
 
   const getAreaLabel = () => {
+    if (selectedArea === 'hero') return 'GİRİŞ ALANI (HERO)';
     if (selectedArea === 'top') return '1. ALAN (ÜST)';
-    if (selectedArea === 'bottomA') return '2. ALAN (A)';
-    return '2. ALAN (B)';
+    return '2. ALAN (A)';
   };
 
   return (
@@ -74,6 +88,19 @@ export const AdManager: React.FC<AdManagerProps> = ({
           <div className="space-y-4">
             <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">1. ALAN SEÇİMİ</h3>
             <div className="flex flex-col gap-3">
+
+              <button
+                type="button"
+                onClick={() => setSelectedArea('hero')}
+                className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all duration-300 ${selectedArea === 'hero' ? 'border-orange-500 bg-orange-50 ring-4 ring-orange-100 scale-[1.02]' : 'border-gray-100 bg-white hover:border-gray-300 shadow-sm'}`}
+              >
+                <div className="text-left">
+                  <span className={`block font-black text-lg ${selectedArea === 'hero' ? 'text-orange-700' : 'text-gray-700'}`}>GİRİŞ ALANI</span>
+                  <span className="text-xs text-gray-500 font-medium">Hero / Karşılama</span>
+                </div>
+                {selectedArea === 'hero' ? <CheckCircle2 className="text-orange-600" size={24} /> : <div className="w-6 h-6 rounded-full border-2 border-gray-200"></div>}
+              </button>
+
               <button
                 type="button"
                 onClick={() => setSelectedArea('top')}
@@ -86,29 +113,17 @@ export const AdManager: React.FC<AdManagerProps> = ({
                 {selectedArea === 'top' ? <CheckCircle2 className="text-orange-600" size={24} /> : <div className="w-6 h-6 rounded-full border-2 border-gray-200"></div>}
               </button>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3">
                 <button
                   type="button"
                   onClick={() => setSelectedArea('bottomA')}
                   className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all duration-300 ${selectedArea === 'bottomA' ? 'border-orange-500 bg-orange-50 ring-4 ring-orange-100 scale-[1.02]' : 'border-gray-100 bg-white hover:border-gray-300 shadow-sm'}`}
                 >
                   <div className="text-left">
-                    <span className={`block font-black text-sm ${selectedArea === 'bottomA' ? 'text-orange-700' : 'text-gray-700'}`}>2. ALAN (A)</span>
-                    <span className="text-[10px] text-gray-500 font-medium">Alt Sol</span>
+                    <span className={`block font-black text-sm ${selectedArea === 'bottomA' ? 'text-orange-700' : 'text-gray-700'}`}>BAĞIŞ / ALT SOL</span>
+                    <span className="text-[10px] text-gray-500 font-medium">Bağış Bölümü</span>
                   </div>
                   {selectedArea === 'bottomA' && <CheckCircle2 className="text-orange-600" size={16} />}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setSelectedArea('bottomB')}
-                  className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all duration-300 ${selectedArea === 'bottomB' ? 'border-orange-500 bg-orange-50 ring-4 ring-orange-100 scale-[1.02]' : 'border-gray-100 bg-white hover:border-gray-300 shadow-sm'}`}
-                >
-                  <div className="text-left">
-                    <span className={`block font-black text-sm ${selectedArea === 'bottomB' ? 'text-orange-700' : 'text-gray-700'}`}>2. ALAN (B)</span>
-                    <span className="text-[10px] text-gray-500 font-medium">Alt Sağ</span>
-                  </div>
-                  {selectedArea === 'bottomB' && <CheckCircle2 className="text-orange-600" size={16} />}
                 </button>
               </div>
             </div>
@@ -116,8 +131,24 @@ export const AdManager: React.FC<AdManagerProps> = ({
 
           {/* Yükleme Formu */}
           <div className="space-y-4">
-            <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">2. FOTOĞRAF YÜKLE</h3>
+            <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">2. FOTOĞRAF VE LİNK</h3>
             <div className="bg-gray-50 p-6 rounded-3xl border border-gray-200 space-y-4 h-full shadow-inner">
+
+              {/* Link Input */}
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase">HEDEF URL (OPSİYONEL)</label>
+                <div className="flex items-center bg-white border-2 border-gray-200 rounded-xl px-3 focus-within:border-orange-400 transition-colors">
+                  <LinkIcon size={14} className="text-gray-400 shrink-0" />
+                  <input
+                    type="text"
+                    value={linkInput}
+                    onChange={(e) => setLinkInput(e.target.value)}
+                    placeholder="https://örnek.com"
+                    className="w-full p-2.5 text-sm outline-none font-medium bg-transparent"
+                  />
+                </div>
+              </div>
+
               <div className="flex gap-2 p-1 bg-gray-200 rounded-xl">
                 <button
                   onClick={() => setUploadMode('URL')}
@@ -163,7 +194,7 @@ export const AdManager: React.FC<AdManagerProps> = ({
               )}
 
               <button
-                onClick={() => onUpdateAd(selectedArea, null)}
+                onClick={() => onUpdateAd(selectedArea, null, null)}
                 className="w-full flex items-center justify-center gap-2 py-3 text-xs font-black text-red-600 hover:bg-red-50 rounded-xl transition-all border border-transparent hover:border-red-200"
               >
                 <Trash2 size={16} /> REKLAMI TAMAMEN KALDIR
@@ -180,7 +211,7 @@ export const AdManager: React.FC<AdManagerProps> = ({
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center bg-gray-800 text-gray-500">
                   <ImageIcon size={48} className="mb-2 opacity-20" />
-                  <span className="font-black italic text-sm uppercase">{selectedArea} ALANI BOŞ</span>
+                  <span className="font-black italic text-sm uppercase">{selectedArea === 'hero' ? 'Giriş Alanı' : selectedArea + ' Alanı'} Boş</span>
                 </div>
               )}
               <div className="absolute bottom-4 left-4 right-4 bg-orange-600 text-white text-[10px] px-3 py-1.5 rounded-lg font-black uppercase text-center shadow-lg">
