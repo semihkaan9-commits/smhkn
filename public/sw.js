@@ -1,4 +1,4 @@
-const CACHE_NAME = 'balcilar-koyu-v2';
+const CACHE_NAME = 'balcilar-koyu-v4';
 const urlsToCache = [
     './',
     './index.html',
