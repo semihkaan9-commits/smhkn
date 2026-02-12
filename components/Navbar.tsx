@@ -27,8 +27,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser, onLogout, onOpenAut
             if (onLogoClick) onLogoClick();
             scrollToSection('hero');
           }}>
-            <div className="bg-white p-1.5 rounded-full text-green-700 group-hover:scale-110 transition-transform">
-              <TreePine size={24} />
+            <div className="bg-white p-1 rounded-full group-hover:scale-110 transition-transform shadow-sm">
+              <img src="/logo.png" alt="Balcılar Köyü" className="w-10 h-10 object-contain" />
             </div>
             <span className="font-bold text-xl tracking-tight">Balcılar Köyü</span>
           </div>

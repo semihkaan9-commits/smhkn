@@ -36,7 +36,14 @@ export const AboutSection: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-900">Konum</h4>
-                    <p className="text-gray-600">Taşkent/Konya</p>
+                    <a
+                      href="https://www.google.com/maps/search/?api=1&query=Balcılar+Köyü+Taşkent+Konya"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-600 hover:text-green-700 hover:underline transition-colors block"
+                    >
+                      Taşkent/Konya
+                    </a>
                   </div>
                 </div>
               </div>
