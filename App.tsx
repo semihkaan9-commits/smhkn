@@ -276,11 +276,16 @@ const App: React.FC = () => {
       const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
       if (error) throw error;
 
+      let role: UserRole = UserRole.GUEST;
+      const dbRole = profile.role?.toUpperCase();
+      if (dbRole === 'ADMIN') role = UserRole.ADMIN;
+      else if (dbRole === 'VILLAGER') role = UserRole.VILLAGER;
+
       let userData: AnyUser = {
         id: profile.id,
         name: profile.full_name?.split(' ')[0] || '',
         surname: profile.full_name?.split(' ').slice(1).join(' ') || '',
-        role: profile.role as UserRole,
+        role: role,
         email: undefined
       };
 
@@ -379,7 +384,14 @@ const App: React.FC = () => {
   const handleLogin = async (user: AnyUser) => {
     setCurrentUser(user);
     setIsAuthOpen(false);
-    toast.success(`Hoş geldin, ${user.name}!`);
+
+    // Check both enum and string "admin" for robustness
+    if (user.role === UserRole.ADMIN || (user.role as string) === 'admin') {
+      toast.success('Hoşgeldin Yönetici');
+    } else {
+      toast.success(`Hoş geldin, ${user.name}!`);
+    }
+
     await refreshData();
   };
 
@@ -391,10 +403,14 @@ const App: React.FC = () => {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setCurrentUser(null);
-    toast.success('Başarıyla çıkış yapıldı.');
-    setCurrentView('home');
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Force reload to clear all state and ensure clean logout
+      window.location.reload();
+    }
   };
 
   const handleUpdateAd = (area: 'top' | 'bottomA' | 'hero', url: string | null, link: string | null) => {

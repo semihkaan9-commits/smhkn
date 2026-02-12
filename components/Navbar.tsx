@@ -50,10 +50,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser, onLogout, onOpenAut
             {currentUser ? (
               <div className="flex items-center gap-4">
                 <div className="text-right">
-                  <p className="text-sm font-semibold">{currentUser.name} {currentUser.surname}</p>
+                  <p className="text-sm font-semibold">
+                    {(currentUser.role === UserRole.ADMIN || currentUser.role === 'admin') ? 'Hoşgeldin Yönetici' : `${currentUser.name} ${currentUser.surname}`}
+                  </p>
                   <p className="text-xs text-green-200">
-                    {currentUser.role === UserRole.ADMIN ? 'Yönetici' :
-                      currentUser.role === UserRole.VILLAGER ? 'Köy Sakini' : 'Misafir'}
+                    {(currentUser.role === UserRole.ADMIN || currentUser.role === 'admin') ? 'Yönetici' :
+                      (currentUser.role === UserRole.VILLAGER || currentUser.role === 'villager') ? 'Köy Sakini' : 'Misafir'}
                   </p>
                 </div>
                 <button
@@ -102,10 +104,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser, onLogout, onOpenAut
               {currentUser ? (
                 <div className="flex items-center justify-between px-3 py-2">
                   <div>
-                    <p className="text-sm font-semibold">{currentUser.name} {currentUser.surname}</p>
+                    <p className="text-sm font-semibold">
+                      {(currentUser.role === UserRole.ADMIN || currentUser.role === 'admin') ? 'Hoşgeldin Yönetici' : `${currentUser.name} ${currentUser.surname}`}
+                    </p>
                     <p className="text-xs text-green-300">
-                      {currentUser.role === UserRole.ADMIN ? 'Yönetici' :
-                        currentUser.role === UserRole.VILLAGER ? 'Köy Sakini' : 'Misafir'}
+                      {(currentUser.role === UserRole.ADMIN || currentUser.role === 'admin') ? 'Yönetici' :
+                        (currentUser.role === UserRole.VILLAGER || currentUser.role === 'villager') ? 'Köy Sakini' : 'Misafir'}
                     </p>
                   </div>
                   <button
