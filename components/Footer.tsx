@@ -8,7 +8,7 @@ export const Footer: React.FC = () => {
         <div className="mb-6 md:mb-0">
           <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
             <div className="bg-white/10 p-1.5 rounded-full">
-              <img src="/logo.png" alt="Balcılar Köyü" className="w-8 h-8 object-contain" />
+              <img src="/logo.png" alt="Balcılar Köyü" className="w-8 h-8 object-cover rounded-full" />
             </div>
             <span className="text-xl font-bold">Balcılar Köyü</span>
           </div>

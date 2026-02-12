@@ -28,7 +28,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser, onLogout, onOpenAut
             scrollToSection('hero');
           }}>
             <div className="bg-white p-1 rounded-full group-hover:scale-110 transition-transform shadow-sm">
-              <img src="/logo.png" alt="Balcılar Köyü" className="w-10 h-10 object-contain" />
+              <img src="/logo.png" alt="Balcılar Köyü" className="w-10 h-10 object-cover rounded-full" />
             </div>
             <span className="font-bold text-xl tracking-tight">Balcılar Köyü</span>
           </div>
