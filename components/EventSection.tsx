@@ -9,7 +9,7 @@ interface EventSectionProps {
     events: EventItem[];
     currentUser: AnyUser | null;
     onAddEvent: (title: string, content: string, imageUrl?: string, startDate?: string, endDate?: string) => void;
-    onDeleteEvent: (id: string) => void;
+    onDeleteEvent: (id: string, title?: string) => void;
     onUpdateEvent: (id: string, title: string, content: string, startDate?: string, endDate?: string) => void;
     limit?: number;
     onShowAll?: () => void;
@@ -25,6 +25,16 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
 
     // Modal State
     const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+    const [deleteTargetTitle, setDeleteTargetTitle] = useState<string | null>(null);
+
+    // ... (existing code)
+
+    const openDeleteModal = (e: React.MouseEvent, id: string, title: string) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setDeleteTargetId(id);
+        setDeleteTargetTitle(title);
+    };
 
     // Edit State
     const [editTarget, setEditTarget] = useState<EventItem | null>(null);
@@ -95,11 +105,7 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
         return `${s.toLocaleDateString('tr-TR', options)} - ${e.toLocaleDateString('tr-TR', options)}`;
     };
 
-    const openDeleteModal = (e: React.MouseEvent, id: string) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setDeleteTargetId(id);
-    };
+
 
     const openEditModal = (e: React.MouseEvent, item: EventItem) => {
         e.preventDefault();
@@ -291,7 +297,7 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={(e) => openDeleteModal(e, item.id)}
+                                            onClick={(e) => openDeleteModal(e, item.id, item.title)}
                                             className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-lg border-2 border-white transition-transform hover:scale-110 cursor-pointer pointer-events-auto"
                                             title="Etkinliği Sil"
                                         >
@@ -338,9 +344,12 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
             {/* Delete Confirmation Modal */}
             <DeleteModal
                 isOpen={deleteTargetId !== null}
-                onClose={() => setDeleteTargetId(null)}
+                onClose={() => {
+                    setDeleteTargetId(null);
+                    setDeleteTargetTitle(null);
+                }}
                 onConfirm={() => {
-                    if (deleteTargetId) onDeleteEvent(deleteTargetId);
+                    if (deleteTargetId) onDeleteEvent(deleteTargetId, deleteTargetTitle || undefined);
                 }}
                 title="Etkinlik silinsin mi?"
                 description="Bu etkinliği sildiğinizde bu işlem geri alınamaz ve listeden kaldırılır."

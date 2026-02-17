@@ -498,15 +498,25 @@ const App: React.FC = () => {
     }
   };
 
-  const handleDeleteEvent = async (id: string) => {
+  const handleDeleteEvent = async (id: string, title?: string) => {
     try {
+      // 1. Delete the Event
       const { error } = await supabase.from('events').delete().eq('id', id);
       if (error) throw error;
-      toast.success('Etkinlik silindi.');
+
+      // 2. Best-effort: Delete associated Gallery item (if it exists)
+      // Since we don't have a direct foreign key, we search by title/category convention used in creation
+      if (title) {
+        const galleryTitle = `Etkinlik: ${title}`;
+        await supabase.from('gallery').delete().eq('title', galleryTitle).eq('category', 'Etkinlik');
+      }
+
+      toast.success('Etkinlik ve ilişkili dosyalar silindi.');
       await refreshData();
     } catch (error: any) {
       console.error('Error deleting event:', error);
-      toast.error(`Etkinlik silinemedi: ${error.message || 'Bilinmeyen hata'}`);
+      // Show simpler error to user, but log full details
+      toast.error(`Silme başarısız: ${error.message || 'Yetki sorunu veya bağlantı hatası'}`);
     }
   };
 
