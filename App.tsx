@@ -216,8 +216,10 @@ const App: React.FC = () => {
 
   const handleDeleteNews = async (id: string) => {
     try {
-      const { error } = await supabase.from('news').delete().eq('id', id);
+      const { data, error } = await supabase.from('news').delete().eq('id', id).select();
       if (error) throw error;
+      if (!data || data.length === 0) throw new Error('Silinemedi (Yetki Yok)');
+
       toast.success('Haber silindi.');
       setNews(prev => prev.filter(item => item.id !== id));
     } catch (error: any) {
@@ -263,9 +265,10 @@ const App: React.FC = () => {
 
   const handleDeleteEvent = async (id: string, title?: string) => {
     try {
-      // 1. Delete the Event from database
-      const { error } = await supabase.from('events').delete().eq('id', id);
+      // 1. Delete the Event from database and verify
+      const { data, error } = await supabase.from('events').delete().eq('id', id).select();
       if (error) throw error;
+      if (!data || data.length === 0) throw new Error('Silinemedi (Yetki Yok)');
 
       // 2. Best-effort: Delete associated Gallery item
       if (title) {
@@ -303,8 +306,10 @@ const App: React.FC = () => {
 
   const handleDeleteGalleryItem = async (id: string) => {
     try {
-      const { error } = await supabase.from('gallery').delete().eq('id', id);
+      const { data, error } = await supabase.from('gallery').delete().eq('id', id).select();
       if (error) throw error;
+      if (!data || data.length === 0) throw new Error('Silinemedi (Yetki Yok)');
+
       toast.success('Fotoğraf silindi.');
       setGalleryItems(prev => prev.filter(item => item.id !== id));
     } catch (error: any) {
@@ -319,8 +324,10 @@ const App: React.FC = () => {
 
   const handleDeleteVillager = async (id: string) => {
     try {
-      const { error } = await supabase.from('villagers').delete().eq('id', id);
+      const { data, error } = await supabase.from('villagers').delete().eq('id', id).select();
       if (error) throw error;
+      if (!data || data.length === 0) throw new Error('Silinemedi (Yetki Yok)');
+
       toast.success('Kişi listeden silindi.');
       setVillagers(prev => prev.filter(v => v.id !== id));
     } catch (error: any) {
