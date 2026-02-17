@@ -12,7 +12,7 @@ export const Footer: React.FC = () => {
             </div>
             <span className="text-xl font-bold">Balcılar Köyü</span>
           </div>
-          <p className="text-green-200 text-sm">© 2026 Tüm Hakları Saklıdır.</p>
+          <p>&copy; {new Date().getFullYear()} Balcılar Köyü. Tüm hakları saklıdır. v2.0 (Fix Applied)</p>
         </div>
         <div className="text-sm text-green-200">
           <p>Acil Durumlar İçin: 112</p>
