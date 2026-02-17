@@ -453,6 +453,13 @@ const App: React.FC = () => {
 
   const handleDeleteNews = async (id: string) => {
     try {
+      // Check for mock data
+      if (id.startsWith('mock-') || id.length < 20) {
+        setNews(prev => prev.filter(item => item.id !== id));
+        toast.success('Haber silindi (Demo).');
+        return;
+      }
+
       const { error } = await supabase.from('news').delete().eq('id', id);
       if (error) throw error;
       toast.success('Haber silindi.');
@@ -500,12 +507,24 @@ const App: React.FC = () => {
 
   const handleDeleteEvent = async (id: string, title?: string) => {
     try {
+      // Check for mock events
+      if (id.startsWith('mock-') || id.length < 20) {
+        setEvents(prev => prev.filter(item => item.id !== id));
+
+        // Also remove associated gallery mock items if possible (best effort local)
+        if (title) {
+          setGalleryItems(prev => prev.filter(g => !g.caption.includes(title)));
+        }
+
+        toast.success('Etkinlik silindi (Demo).');
+        return;
+      }
+
       // 1. Delete the Event
       const { error } = await supabase.from('events').delete().eq('id', id);
       if (error) throw error;
 
       // 2. Best-effort: Delete associated Gallery item (if it exists)
-      // Since we don't have a direct foreign key, we search by title/category convention used in creation
       if (title) {
         const galleryTitle = `Etkinlik: ${title}`;
         await supabase.from('gallery').delete().eq('title', galleryTitle).eq('category', 'Etkinlik');
@@ -515,7 +534,6 @@ const App: React.FC = () => {
       await refreshData();
     } catch (error: any) {
       console.error('Error deleting event:', error);
-      // Show simpler error to user, but log full details
       toast.error(`Silme başarısız: ${error.message || 'Yetki sorunu veya bağlantı hatası'}`);
     }
   };
@@ -540,6 +558,12 @@ const App: React.FC = () => {
 
   const handleDeleteGalleryItem = async (id: string) => {
     try {
+      if (id.startsWith('gal-') || id.startsWith('mock-') || id.length < 20) {
+        setGalleryItems(prev => prev.filter(item => item.id !== id));
+        toast.success('Fotoğraf silindi (Demo).');
+        return;
+      }
+
       const { error } = await supabase.from('gallery').delete().eq('id', id);
       if (error) throw error;
       toast.success('Fotoğraf silindi.');
@@ -556,6 +580,12 @@ const App: React.FC = () => {
 
   const handleDeleteVillager = async (id: string) => {
     try {
+      if (id.startsWith('vil-') || id.length < 20) {
+        setVillagers(prev => prev.filter(v => v.id !== id));
+        toast.success('Kişi silindi (Demo).');
+        return;
+      }
+
       const { error } = await supabase.from('villagers').delete().eq('id', id);
       if (error) throw error;
       toast.success('Kişi listeden silindi.');
