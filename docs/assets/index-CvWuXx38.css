@@ -1,0 +1,1 @@
+@import"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap";body{font-family:Inter,sans-serif}@keyframes fade-in-up{0%{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.animate-fade-in-up{animation:fade-in-up .6s ease-out forwards}.animate-delay-100{animation-delay:.1s}.animate-delay-200{animation-delay:.2s}

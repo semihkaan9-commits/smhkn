@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Balcılar Köyü</title>
+  <link rel="icon" type="image/png" href="/smhkn/logo.png?v=4" />
+  <link rel="apple-touch-icon" href="/smhkn/logo.png?v=4" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+
+  <link rel="manifest" href="/smhkn/manifest.json">
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.561.0"
+  }
+}
+</script>
+  <script type="module" crossorigin src="/smhkn/assets/index-Dn4uDEyt.js"></script>
+  <link rel="stylesheet" crossorigin href="/smhkn/assets/index-CvWuXx38.css">
+</head>
+
+<body class="bg-stone-50 text-stone-800 antialiased">
+  <div id="root"></div>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log('SW registered: ', registration);
+          })
+          .catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+  </script>
+</body>
+
+</html>
