@@ -362,18 +362,20 @@ const App: React.FC = () => {
     try {
       setNews(prev => prev.map(n => n.id === id ? { ...n, title, content, date } : n));
 
-      const { error } = await supabase.from('news').update({
+      const { data, error } = await supabase.from('news').update({
         title,
         content,
         date
-      }).eq('id', id);
+      }).eq('id', id).select();
 
       if (error) throw error;
+      if (!data || data.length === 0) throw new Error('Güncellenemedi (Yetki Yok)');
+
       toast.success('Haber başarıyla güncellendi.');
       await refreshData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating news:', error);
-      toast.error('Haber güncellenemedi.');
+      toast.error(`Haber güncellenemedi: ${error.message || 'Yetki Yok'}`);
       await refreshData();
     }
   };
@@ -382,19 +384,21 @@ const App: React.FC = () => {
     try {
       setEvents(prev => prev.map(e => e.id === id ? { ...e, title, content, startDate, endDate } : e));
 
-      const { error } = await supabase.from('events').update({
+      const { data, error } = await supabase.from('events').update({
         title,
         content,
         start_date: startDate,
         end_date: endDate
-      }).eq('id', id);
+      }).eq('id', id).select();
 
       if (error) throw error;
+      if (!data || data.length === 0) throw new Error('Güncellenemedi (Yetki Yok)');
+
       toast.success('Etkinlik başarıyla güncellendi.');
       await refreshData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating event:', error);
-      toast.error('Etkinlik güncellenemedi.');
+      toast.error(`Etkinlik güncellenemedi: ${error.message || 'Yetki Yok'}`);
       await refreshData();
     }
   };
@@ -403,23 +407,24 @@ const App: React.FC = () => {
     try {
       setVillagers(prev => prev.map(v => v.id === updatedVillager.id ? updatedVillager : v));
 
-      const { error } = await supabase.from('villagers').update({
+      const { data, error } = await supabase.from('villagers').update({
         name: updatedVillager.name,
         surname: updatedVillager.surname,
         nickname: updatedVillager.nickname,
         profession: updatedVillager.profession,
         address: updatedVillager.address,
         contact: updatedVillager.contact
-      }).eq('id', updatedVillager.id);
+      }).eq('id', updatedVillager.id).select();
 
       if (error) throw error;
+      if (!data || data.length === 0) throw new Error('Güncellenemedi (Yetki Yok)');
 
       toast.success('Kişi başarıyla güncellendi.');
       await refreshData();
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating villager:', error);
-      toast.error('Güncelleme sırasında hata oluştu.');
+      toast.error(`Güncelleme başarısız: ${error.message || 'Yetki Yok'}`);
       await refreshData();
     }
   };
