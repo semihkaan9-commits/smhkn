@@ -12,7 +12,7 @@ export const Footer: React.FC = () => {
             </div>
             <span className="text-xl font-bold">Balcılar Köyü</span>
           </div>
-          <p>&copy; {new Date().getFullYear()} Balcılar Köyü. Tüm hakları saklıdır. v2.1 (RLS Check)</p>
+          <p>&copy; {new Date().getFullYear()} Balcılar Köyü. Tüm hakları saklıdır.</p>
         </div>
         <div className="text-sm text-green-200">
           <p>Acil Durumlar İçin: 112</p>
