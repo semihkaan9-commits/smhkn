@@ -193,7 +193,10 @@ const App: React.FC = () => {
 
   const handleAddNews = async (title: string, content: string, imageUrl?: string) => {
     try {
-      if (!currentUser) return;
+      if (!currentUser) {
+        toast.error('Haber eklemek için giriş yapmalısınız.');
+        return;
+      }
 
       const newNews = {
         title,
@@ -230,7 +233,10 @@ const App: React.FC = () => {
 
   const handleAddEvent = async (title: string, content: string, imageUrl?: string, startDate?: string, endDate?: string) => {
     try {
-      if (!currentUser) return;
+      if (!currentUser) {
+        toast.error('Etkinlik eklemek için giriş yapmalısınız.');
+        return;
+      }
 
       const newEvent = {
         title,
