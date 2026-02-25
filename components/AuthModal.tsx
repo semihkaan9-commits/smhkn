@@ -56,35 +56,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
         password: password.trim(),
       });
 
-      console.log('Supabase Auth Response:', { user: data.user?.id, error });
+      console.log('Login Response:', { data, error });
 
       if (error) throw error;
 
       if (data.user) {
-        // Use metadata for instant response instead of slow DB query
-        const metadata = data.user.user_metadata;
-        const dbRole = (metadata?.role || 'guest').toUpperCase();
-        let role = UserRole.GUEST;
-        if (dbRole === 'ADMIN') role = UserRole.ADMIN;
-        else if (dbRole === 'VILLAGER') role = UserRole.VILLAGER;
-
-        onLogin({
-          id: data.user.id,
-          name: metadata?.full_name?.split(' ')[0] || 'Kullanıcı',
-          surname: metadata?.full_name?.split(' ').slice(1).join(' ') || '',
-          role: role
-        });
+        toast.success("Giriş başarılı!");
+        // We don't call onClose() or onLogin() here manually
+        // because App.tsx onAuthStateChange will handle it faster
+        resetForm();
       }
-
-      toast.success("Giriş başarılı!");
-      resetForm();
-      onClose();
 
     } catch (error: any) {
       console.error('Login Error:', error);
       toast.error(`Giriş başarısız: ${error.message}`);
-    } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Only stop loading if error, otherwise App.tsx unmounts us
     }
   };
 

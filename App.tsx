@@ -136,8 +136,10 @@ const App: React.FC = () => {
     };
     init();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth State Change:', event, session?.user?.id);
       if (session?.user) {
+        setIsAuthOpen(false); // Close modal ASAP
         await fetchUserProfile(session.user.id);
       } else {
         setCurrentUser(null);
