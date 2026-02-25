@@ -136,10 +136,8 @@ const App: React.FC = () => {
     };
     init();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth State Change:', event, session?.user?.id);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
-        setIsAuthOpen(false); // Close modal ASAP
         await fetchUserProfile(session.user.id);
       } else {
         setCurrentUser(null);
@@ -160,7 +158,7 @@ const App: React.FC = () => {
       toast.success(`Hoş geldin, ${user.name}!`);
     }
 
-    refreshData();
+    await refreshData();
   };
 
   const handleRegister = async (user: AnyUser) => {
