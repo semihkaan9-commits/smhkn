@@ -560,7 +560,7 @@ const App: React.FC = () => {
 
       </main>
 
-      <Footer />
+      <Footer currentUser={currentUser} />
 
       <AuthModal
         isOpen={isAuthOpen}
