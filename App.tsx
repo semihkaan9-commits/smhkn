@@ -158,7 +158,7 @@ const App: React.FC = () => {
       toast.success(`Hoş geldin, ${user.name}!`);
     }
 
-    await refreshData();
+    refreshData();
   };
 
   const handleRegister = async (user: AnyUser) => {

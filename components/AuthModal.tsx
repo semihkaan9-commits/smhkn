@@ -61,23 +61,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
       if (error) throw error;
 
       if (data.user) {
-        // Fetch profile to pass to onLogin
-        const { data: profile } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
-        console.log('Profile Fetch Result:', profile);
+        // Use metadata for instant response instead of slow DB query
+        const metadata = data.user.user_metadata;
+        const dbRole = (metadata?.role || 'guest').toUpperCase();
+        let role = UserRole.GUEST;
+        if (dbRole === 'ADMIN') role = UserRole.ADMIN;
+        else if (dbRole === 'VILLAGER') role = UserRole.VILLAGER;
 
-        if (profile) {
-          const dbRole = profile.role?.toUpperCase();
-          let role = UserRole.GUEST;
-          if (dbRole === 'ADMIN') role = UserRole.ADMIN;
-          else if (dbRole === 'VILLAGER') role = UserRole.VILLAGER;
-
-          onLogin({
-            id: profile.id,
-            name: profile.full_name?.split(' ')[0] || '',
-            surname: profile.full_name?.split(' ').slice(1).join(' ') || '',
-            role: role
-          });
-        }
+        onLogin({
+          id: data.user.id,
+          name: metadata?.full_name?.split(' ')[0] || 'Kullanıcı',
+          surname: metadata?.full_name?.split(' ').slice(1).join(' ') || '',
+          role: role
+        });
       }
 
       toast.success("Giriş başarılı!");
