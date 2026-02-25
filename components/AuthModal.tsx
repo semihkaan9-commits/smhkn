@@ -16,6 +16,7 @@ interface AuthModalProps {
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, onRegister, villagers, guests }) => {
   const [mode, setMode] = useState<'LOGIN' | 'REGISTER'>('LOGIN');
   const [registerType, setRegisterType] = useState<UserRole.GUEST | UserRole.VILLAGER>(UserRole.GUEST);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Form States
   // const [username, setUsername] = useState(''); // Removed separate username state
@@ -41,16 +42,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-
-
-    if (!email.trim()) {
-      toast.error("Lütfen e-posta adresinizi giriniz.");
+    if (!email.trim() || !password) {
+      toast.error("Lütfen e-posta ve şifrenizi giriniz.");
       return;
     }
-    if (!password) {
-      toast.error("Lütfen şifrenizi giriniz.");
-      return;
-    }
+
+    setIsLoading(true);
+    console.log('Login attempt for:', email.trim());
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -58,15 +56,39 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
         password: password.trim(),
       });
 
+      console.log('Supabase Auth Response:', { user: data.user?.id, error });
+
       if (error) throw error;
 
-      // Login successful, App.tsx will handle the session change via onAuthStateChange
+      if (data.user) {
+        // Fetch profile to pass to onLogin
+        const { data: profile } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
+        console.log('Profile Fetch Result:', profile);
+
+        if (profile) {
+          const dbRole = profile.role?.toUpperCase();
+          let role = UserRole.GUEST;
+          if (dbRole === 'ADMIN') role = UserRole.ADMIN;
+          else if (dbRole === 'VILLAGER') role = UserRole.VILLAGER;
+
+          onLogin({
+            id: profile.id,
+            name: profile.full_name?.split(' ')[0] || '',
+            surname: profile.full_name?.split(' ').slice(1).join(' ') || '',
+            role: role
+          });
+        }
+      }
+
       toast.success("Giriş başarılı!");
       resetForm();
       onClose();
 
     } catch (error: any) {
-      toast.error(`Giriş başarısız: ${error.message}. Lütfen bilgilerinizi kontrol edin.`);
+      console.error('Login Error:', error);
+      toast.error(`Giriş başarısız: ${error.message}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -189,8 +211,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
                 </div>
               </div>
 
-              <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition-colors shadow-md mt-6">
-                Giriş Yap
+              <button
+                type="submit"
+                disabled={isLoading}
+                className={`w-full ${isLoading ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700'} text-white font-bold py-3 rounded-lg transition-colors shadow-md mt-6 flex justify-center items-center gap-2`}
+              >
+                {isLoading ? (
+                  <>
+                    <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Giriş Yapılıyor...
+                  </>
+                ) : 'Giriş Yap'}
               </button>
             </form>
           ) : (
