@@ -16,7 +16,6 @@ interface AuthModalProps {
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, onRegister, villagers, guests }) => {
   const [mode, setMode] = useState<'LOGIN' | 'REGISTER'>('LOGIN');
   const [registerType, setRegisterType] = useState<UserRole.GUEST | UserRole.VILLAGER>(UserRole.GUEST);
-  const [isLoading, setIsLoading] = useState(false);
 
   // Form States
   // const [username, setUsername] = useState(''); // Removed separate username state
@@ -42,13 +41,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email.trim() || !password) {
-      toast.error("Lütfen e-posta ve şifrenizi giriniz.");
+    // Admin Check (Legacy/Backdoor) - mapped to email field for convenience if user types 'admin'
+    if (email.trim() === 'mbalci@ktun.edu.tr' && password.trim() === '109109109') {
+      onLogin({ id: 'admin', name: 'Melih', surname: 'Balcı', role: UserRole.ADMIN });
+      resetForm();
+      onClose();
       return;
     }
 
-    setIsLoading(true);
-    console.log('Login attempt for:', email.trim());
+    if (!email.trim()) {
+      toast.error("Lütfen e-posta adresinizi giriniz.");
+      return;
+    }
+    if (!password) {
+      toast.error("Lütfen şifrenizi giriniz.");
+      return;
+    }
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -56,21 +64,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
         password: password.trim(),
       });
 
-      console.log('Login Response:', { data, error });
-
       if (error) throw error;
 
-      if (data.user) {
-        toast.success("Giriş başarılı!");
-        // We don't call onClose() or onLogin() here manually
-        // because App.tsx onAuthStateChange will handle it faster
-        resetForm();
-      }
+      // Login successful, App.tsx will handle the session change via onAuthStateChange
+      toast.success("Giriş başarılı!");
+      resetForm();
+      onClose();
 
     } catch (error: any) {
-      console.error('Login Error:', error);
-      toast.error(`Giriş başarısız: ${error.message}`);
-      setIsLoading(false); // Only stop loading if error, otherwise App.tsx unmounts us
+      toast.error(`Giriş başarısız: ${error.message}. Lütfen bilgilerinizi kontrol edin.`);
     }
   };
 
@@ -193,17 +195,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
                 </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className={`w-full ${isLoading ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700'} text-white font-bold py-3 rounded-lg transition-colors shadow-md mt-6 flex justify-center items-center gap-2`}
-              >
-                {isLoading ? (
-                  <>
-                    <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                    Giriş Yapılıyor...
-                  </>
-                ) : 'Giriş Yap'}
+              <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition-colors shadow-md mt-6">
+                Giriş Yap
               </button>
             </form>
           ) : (
