@@ -93,7 +93,7 @@ const App: React.FC = () => {
       const { data: profiles } = await supabase.from('profiles').select('id, full_name');
       const profileMap = new Map(profiles?.map(p => [p.id, p.full_name]) || []);
 
-      const { data: newsData } = await supabase.from('news').select('*').order('date', { ascending: false });
+      const { data: newsData } = await supabase.from('news').select('*').order('created_at', { ascending: false });
       if (newsData) {
         const mappedNews = newsData.map((item: any) => ({
           ...item,
@@ -103,10 +103,10 @@ const App: React.FC = () => {
         setNews(mappedNews);
       }
 
-      const { data: galleryData } = await supabase.from('gallery').select('*').order('date', { ascending: false });
+      const { data: galleryData } = await supabase.from('gallery').select('*').order('created_at', { ascending: false });
       if (galleryData) setGalleryItems(galleryData);
 
-      const { data: eventsData } = await supabase.from('events').select('*').order('date', { ascending: true });
+      const { data: eventsData } = await supabase.from('events').select('*').order('created_at', { ascending: false }); // Show newest added first, or we can sort by start_date/date
       if (eventsData) {
         const mappedEvents = eventsData.map((item: any) => ({
           ...item,
@@ -118,7 +118,7 @@ const App: React.FC = () => {
         setEvents(mappedEvents);
       }
 
-      const { data: donationsData } = await supabase.from('donations').select('*').order('date', { ascending: false });
+      const { data: donationsData } = await supabase.from('donations').select('*').order('created_at', { ascending: false });
       if (donationsData) setDonations(donationsData);
 
     } catch (error) {
@@ -193,24 +193,38 @@ const App: React.FC = () => {
 
   const handleAddNews = async (title: string, content: string, imageUrl?: string) => {
     try {
-      if (!currentUser) return;
+      if (!currentUser) {
+        toast.error('Lütfen önce giriş yapın.');
+        return;
+      }
 
       const newNews = {
         title,
         content,
-        image_url: imageUrl,
-        date: new Date().toLocaleDateString('tr-TR'),
+        image_url: imageUrl || '',
+        date: new Date().toISOString().split('T')[0],
         author_id: currentUser.id,
       };
 
-      const { error } = await supabase.from('news').insert([newNews]);
+      const { data, error } = await supabase.from('news').insert([newNews]).select();
       if (error) throw error;
+
+      // Fotoğrafı galeriye de ekle
+      if (imageUrl) {
+        const galleryItem = {
+          type: 'image',
+          url: imageUrl,
+          caption: `Haber: ${title}`,
+          date: new Date().toISOString().split('T')[0]
+        };
+        await supabase.from('gallery').insert([galleryItem]);
+      }
 
       toast.success('Haber başarıyla eklendi!');
       await refreshData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding news:', error);
-      toast.error('Haber eklenirken bir hata oluştu.');
+      toast.error(`Haber eklenirken hata: ${error?.message || 'Bilinmeyen hata'}`);
     }
   };
 
@@ -236,7 +250,7 @@ const App: React.FC = () => {
         title,
         content,
         image_url: imageUrl,
-        date: new Date().toLocaleDateString('tr-TR'),
+        date: new Date().toISOString().split('T')[0],
         start_date: startDate,
         end_date: endDate,
         author_id: currentUser.id
@@ -247,10 +261,10 @@ const App: React.FC = () => {
 
       if (imageUrl) {
         const galleryItem = {
-          title: `Etkinlik: ${title}`,
-          imageUrl,
-          date: new Date().toLocaleDateString('tr-TR'),
-          category: 'Etkinlik'
+          type: 'image',
+          url: imageUrl,
+          caption: `Etkinlik: ${title}`,
+          date: new Date().toISOString().split('T')[0]
         };
         await supabase.from('gallery').insert([galleryItem]);
       }
@@ -286,17 +300,17 @@ const App: React.FC = () => {
     }
   };
 
-  const handleAddGalleryItem = async (title: string, imageUrl: string, category: string) => {
+  const handleAddGalleryItem = async (type: 'image' | 'video', url: string, caption: string) => {
     try {
       const newItem = {
-        title,
-        imageUrl,
-        category,
-        date: new Date().toLocaleDateString('tr-TR')
+        type,
+        url,
+        caption,
+        date: new Date().toISOString().split('T')[0]
       };
       const { error } = await supabase.from('gallery').insert([newItem]);
       if (error) throw error;
-      toast.success('Fotoğraf galeriye eklendi.');
+      toast.success('Medya galeriye eklendi.');
       await refreshData();
     } catch (error) {
       console.error('Error adding gallery item:', error);
