@@ -207,7 +207,15 @@ const App: React.FC = () => {
       };
 
       const { data, error } = await supabase.from('news').insert([newNews]).select();
-      if (error) throw error;
+      if (error) {
+        if (error.code === '42501') {
+          await supabase.auth.signOut();
+          setCurrentUser(null);
+          toast.error('Oturum süreniz dolmuş veya geçersiz. Lütfen tekrar giriş yapın.');
+          return;
+        }
+        throw error;
+      }
 
       // Fotoğrafı galeriye de ekle
       if (imageUrl) {
@@ -231,7 +239,15 @@ const App: React.FC = () => {
   const handleDeleteNews = async (id: string) => {
     try {
       const { data, error } = await supabase.from('news').delete().eq('id', id).select();
-      if (error) throw error;
+      if (error) {
+        if (error.code === '42501') {
+          await supabase.auth.signOut();
+          setCurrentUser(null);
+          toast.error('Oturum süreniz dolmuş veya geçersiz. Lütfen tekrar giriş yapın.');
+          return;
+        }
+        throw error;
+      }
       if (!data || data.length === 0) throw new Error('Silinemedi (Yetki Yok)');
 
       toast.success('Haber silindi.');
@@ -257,7 +273,15 @@ const App: React.FC = () => {
       };
 
       const { error } = await supabase.from('events').insert([newEvent]);
-      if (error) throw error;
+      if (error) {
+        if (error.code === '42501') {
+          await supabase.auth.signOut();
+          setCurrentUser(null);
+          toast.error('Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.');
+          return;
+        }
+        throw error;
+      }
 
       if (imageUrl) {
         const galleryItem = {
