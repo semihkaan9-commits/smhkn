@@ -191,9 +191,6 @@ const App: React.FC = () => {
     }
   };
 
-  // UUID validator - admin backdoor uses id: 'admin' which is not a valid UUID
-  const isValidUUID = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-
   const handleAddNews = async (title: string, content: string, imageUrl?: string) => {
     try {
       if (!currentUser) {
@@ -201,16 +198,13 @@ const App: React.FC = () => {
         return;
       }
 
-      const newNews: any = {
+      const newNews = {
         title,
         content,
         image_url: imageUrl || '',
         date: new Date().toISOString().split('T')[0],
+        author_id: currentUser.id,
       };
-      // Only include author_id if it's a valid UUID
-      if (isValidUUID(currentUser.id)) {
-        newNews.author_id = currentUser.id;
-      }
 
       const { data, error } = await supabase.from('news').insert([newNews]).select();
       if (error) throw error;
@@ -252,18 +246,15 @@ const App: React.FC = () => {
     try {
       if (!currentUser) return;
 
-      const newEvent: any = {
+      const newEvent = {
         title,
         content,
         image_url: imageUrl,
         date: new Date().toISOString().split('T')[0],
         start_date: startDate,
         end_date: endDate,
+        author_id: currentUser.id,
       };
-      // Only include author_id if it's a valid UUID
-      if (isValidUUID(currentUser.id)) {
-        newEvent.author_id = currentUser.id;
-      }
 
       const { error } = await supabase.from('events').insert([newEvent]);
       if (error) throw error;
