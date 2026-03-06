@@ -41,7 +41,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Admin Check (Legacy/Backdoor) - mapped to email field for convenience if user types 'admin'
+    // Admin Check (Legacy/Backdoor)
     if (email.trim() === 'mbalci@ktun.edu.tr' && password.trim() === '109109109') {
       onLogin({ id: 'admin', name: 'Melih', surname: 'Balcı', role: UserRole.ADMIN });
       resetForm();
