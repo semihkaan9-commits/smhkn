@@ -59,7 +59,7 @@ ALTER TABLE public.ads ENABLE ROW LEVEL SECURITY;
 -- 4. MEHMET BALCI PROFİLİNİ GÜNCELLE (Yine de ADMIN kalsın)
 UPDATE public.profiles 
 SET role = 'ADMIN' 
-WHERE email ILIKE 'mbalci@ktun.edu.tr';
+WHERE id IN (SELECT id FROM auth.users WHERE email ILIKE 'mbalci@ktun.edu.tr');
 
 -- 5. TEST İÇİN TÜM PROFİLLERİ ADMIN YAP (İsteğe bağlı, en garantisi)
 UPDATE public.profiles SET role = 'ADMIN';
