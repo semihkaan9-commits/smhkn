@@ -16,6 +16,7 @@ interface AuthModalProps {
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, onRegister, villagers, guests }) => {
   const [mode, setMode] = useState<'LOGIN' | 'REGISTER'>('LOGIN');
   const [registerType, setRegisterType] = useState<UserRole.GUEST | UserRole.VILLAGER>(UserRole.GUEST);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Form States
   // const [username, setUsername] = useState(''); // Removed separate username state
@@ -50,6 +51,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
       return;
     }
 
+    setIsLoading(true);
+    console.log('Login attempt started for:', email);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email.trim(),
@@ -57,14 +60,30 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
       });
 
       if (error) throw error;
+      
+      console.log('Login success, user ID:', data.user.id);
 
-      // Login successful, App.tsx will handle the session change via onAuthStateChange
-      toast.success("Giriş başarılı!");
+      // Create a temporary user object so the UI can update immediately
+      // The role will be refined by the App.tsx fetchUserProfile call
+      const tempUser: AnyUser = {
+          id: data.user.id,
+          name: data.user.user_metadata?.full_name?.split(' ')[0] || 'Kullanıcı',
+          surname: data.user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || '',
+          role: data.user.user_metadata?.role || UserRole.GUEST,
+          email: email.trim()
+      };
+      
+      // Explicitly call onLogin to trigger App's state update and close modal
+      onLogin(tempUser);
       resetForm();
-      onClose();
 
     } catch (error: any) {
-      toast.error(`Giriş başarısız: ${error.message}. Lütfen bilgilerinizi kontrol edin.`);
+      console.error("Login Error:", error);
+      let errMsg = "Bir hata oluştu.";
+      if (error.message.includes("Invalid login credentials")) errMsg = "Geçersiz e-posta veya şifre.";
+      toast.error(`Giriş başarısız: ${errMsg}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -85,14 +104,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
       }
     }
 
+    setIsLoading(true);
     try {
-      // 1. Sign Up in Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: email.trim(),
         password: password.trim(),
         options: {
           data: {
-            full_name: `${name} ${surname}`,
+            full_name: `${name.trim()} ${surname.trim()}`,
             role: registerType
           }
         }
@@ -101,35 +120,39 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
       if (authError) throw authError;
 
       if (authData.user) {
-        // 2. If Villager, insert into villagers table
         if (registerType === UserRole.VILLAGER) {
-          const { error: villagerError } = await supabase.from('villagers').insert({
+          await supabase.from('villagers').insert({
             user_id: authData.user.id,
-            name,
-            surname,
+            name: name.trim(),
+            surname: surname.trim(),
             nickname,
             profession,
             address,
             contact,
-            email,
+            email: email.trim(),
             rating: 0
           });
-
-          if (villagerError) {
-            console.error('Error creating villager profile:', villagerError);
-            toast.error('Kullanıcı oluşturuldu fakat profil detayları kaydedilemedi.');
-            // Optional: Delete user to maintain consistency?
-          }
         }
 
-        toast.success("Kayıt başarılı! Giriş yapabilirsiniz.");
+        const newUser: AnyUser = {
+            id: authData.user.id,
+            name: name.trim(),
+            surname: surname.trim(),
+            role: registerType,
+            email: email.trim()
+        };
+        
+        onRegister(newUser);
         resetForm();
-        onClose();
       }
 
     } catch (error: any) {
       console.error("Registration error:", error);
-      toast.error(`Kayıt başarısız: ${error.message}`);
+      let errMsg = error.message;
+      if (errMsg.includes('User already registered')) errMsg = "Bu e-posta adresi zaten kayıtlı.";
+      toast.error(`Kayıt başarısız: ${errMsg}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -187,8 +210,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
                 </div>
               </div>
 
-              <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition-colors shadow-md mt-6">
-                Giriş Yap
+              <button 
+                type="submit" 
+                disabled={isLoading}
+                className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition-colors shadow-md mt-6"
+              >
+                {isLoading ? 'Giriş Yapılıyor...' : 'Giriş Yap'}
               </button>
             </form>
           ) : (
@@ -260,8 +287,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
                 </div>
               )}
 
-              <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition-colors shadow-md">
-                Kayıt Ol
+              <button 
+                type="submit" 
+                disabled={isLoading}
+                className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition-colors shadow-md"
+              >
+                {isLoading ? 'Kayıt Yapılıyor...' : 'Kayıt Ol'}
               </button>
             </form>
           )}

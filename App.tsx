@@ -42,87 +42,110 @@ const App: React.FC = () => {
   const fetchUserProfile = async (userId: string) => {
     try {
       const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
-      if (error) throw error;
-
+      
       let role: UserRole = UserRole.GUEST;
-      const dbRole = profile.role?.toUpperCase();
-      if (dbRole === 'ADMIN') role = UserRole.ADMIN;
-      else if (dbRole === 'VILLAGER') role = UserRole.VILLAGER;
-
       let userData: AnyUser = {
-        id: profile.id,
-        name: profile.full_name?.split(' ')[0] || '',
-        surname: profile.full_name?.split(' ').slice(1).join(' ') || '',
+        id: userId,
+        name: 'Kullanıcı',
+        surname: '',
         role: role,
         email: undefined
       };
 
-      if (profile.role === UserRole.VILLAGER) {
-        const { data: villagerData } = await supabase.from('villagers').select('*').eq('user_id', userId).single();
-        if (villagerData) {
-          userData = { ...userData, ...villagerData, id: userId, role: UserRole.VILLAGER };
+      if (!error && profile) {
+        const dbRole = profile.role?.toUpperCase();
+        if (dbRole === 'ADMIN') role = UserRole.ADMIN;
+        else if (dbRole === 'VILLAGER') role = UserRole.VILLAGER;
+
+        userData.name = profile.full_name?.split(' ')[0] || 'Kullanıcı';
+        userData.surname = profile.full_name?.split(' ').slice(1).join(' ') || '';
+        userData.role = role;
+
+        if (profile.role === UserRole.VILLAGER) {
+          const { data: villagerData } = await supabase.from('villagers').select('*').eq('user_id', userId).single();
+          if (villagerData) {
+            userData = { ...userData, ...villagerData, id: userId, role: UserRole.VILLAGER };
+          }
         }
+      } else if (error && error.code !== 'PGRST116') {
+         console.error('Error fetching profile but setting default:', error);
       }
 
       setCurrentUser(userData);
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('General error fetching profile:', error);
+      // Ensure user is still logged in as guest if everything fails
+      setCurrentUser({
+        id: userId,
+        name: 'Kullanıcı',
+        surname: '',
+        role: UserRole.GUEST,
+        email: undefined
+      });
     }
   };
 
   const refreshData = async () => {
     try {
-      const { data: villagersData } = await supabase.from('villagers').select('*').order('name');
-      if (villagersData) {
-        setVillagers(villagersData);
-      }
+      // Individual try-catches for each table to prevent one failure from blocking everything
+      try {
+        const { data: villagersData } = await supabase.from('villagers').select('*').order('name');
+        if (villagersData) setVillagers(villagersData);
+      } catch (e) { console.error('Error fetching villagers:', e); }
 
-      const { data: guestsData } = await supabase.from('profiles').select('*').eq('role', 'guest');
-      if (guestsData) {
-        const mappedGuests: AnyUser[] = guestsData.map((g: any) => ({
-          id: g.id,
-          name: g.full_name?.split(' ')[0] || '',
-          surname: g.full_name?.split(' ').slice(1).join(' ') || '',
-          role: UserRole.GUEST,
-          email: undefined
-        }));
-        setGuests(mappedGuests);
-      }
+      try {
+        const { data: guestsData } = await supabase.from('profiles').select('*').eq('role', 'guest');
+        if (guestsData) {
+          const mappedGuests: AnyUser[] = guestsData.map((g: any) => ({
+            id: g.id,
+            name: g.full_name?.split(' ')[0] || '',
+            surname: g.full_name?.split(' ').slice(1).join(' ') || '',
+            role: UserRole.GUEST,
+            email: undefined
+          }));
+          setGuests(mappedGuests);
+        }
+      } catch (e) { console.error('Error fetching guests:', e); }
 
-      // Fetch profiles for mapping
-      const { data: profiles } = await supabase.from('profiles').select('id, full_name');
-      const profileMap = new Map(profiles?.map(p => [p.id, p.full_name]) || []);
+      try {
+        const { data: profiles } = await supabase.from('profiles').select('id, full_name');
+        const profileMap = new Map(profiles?.map(p => [p.id, p.full_name]) || []);
 
-      const { data: newsData } = await supabase.from('news').select('*').order('created_at', { ascending: false });
-      if (newsData) {
-        const mappedNews = newsData.map((item: any) => ({
-          ...item,
-          imageUrl: item.image_url || item.imageUrl,
-          author: profileMap.get(item.author_id) || item.author || 'Bilinmiyor'
-        }));
-        setNews(mappedNews);
-      }
+        const { data: newsData } = await supabase.from('news').select('*').order('created_at', { ascending: false });
+        if (newsData) {
+          const mappedNews = newsData.map((item: any) => ({
+            ...item,
+            imageUrl: item.image_url || item.imageUrl,
+            author: profileMap.get(item.author_id) || item.author || 'Bilinmiyor'
+          }));
+          setNews(mappedNews);
+        }
 
-      const { data: galleryData } = await supabase.from('gallery').select('*').order('created_at', { ascending: false });
-      if (galleryData) setGalleryItems(galleryData);
+        const { data: eventsData } = await supabase.from('events').select('*').order('created_at', { ascending: false });
+        if (eventsData) {
+          const mappedEvents = eventsData.map((item: any) => ({
+            ...item,
+            imageUrl: item.image_url || item.imageUrl,
+            startDate: item.start_date || item.startDate,
+            endDate: item.end_date || item.endDate,
+            author: profileMap.get(item.author_id) || item.author || 'Bilinmiyor'
+          }));
+          setEvents(mappedEvents);
+        }
+      } catch (e) { console.error('Error fetching CMS data:', e); }
 
-      const { data: eventsData } = await supabase.from('events').select('*').order('created_at', { ascending: false }); // Show newest added first, or we can sort by start_date/date
-      if (eventsData) {
-        const mappedEvents = eventsData.map((item: any) => ({
-          ...item,
-          imageUrl: item.image_url || item.imageUrl,
-          startDate: item.start_date || item.startDate,
-          endDate: item.end_date || item.endDate,
-          author: profileMap.get(item.author_id) || item.author || 'Bilinmiyor'
-        }));
-        setEvents(mappedEvents);
-      }
+      try {
+        const { data: galleryData } = await supabase.from('gallery').select('*').order('created_at', { ascending: false });
+        if (galleryData) setGalleryItems(galleryData);
+      } catch (e) { console.error('Error fetching gallery:', e); }
 
-      const { data: donationsData } = await supabase.from('donations').select('*').order('created_at', { ascending: false });
-      if (donationsData) setDonations(donationsData);
+      try {
+        const { data: donationsData } = await supabase.from('donations').select('*').order('created_at', { ascending: false });
+        if (donationsData) setDonations(donationsData);
+      } catch (e) { console.error('Error fetching donations:', e); }
 
     } catch (error) {
-      console.error('Error refreshing data:', error);
+      console.error('Critical internal error in refreshData:', error);
     }
   };
 
@@ -136,9 +159,9 @@ const App: React.FC = () => {
     };
     init();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        await fetchUserProfile(session.user.id);
+        fetchUserProfile(session.user.id);
       } else {
         setCurrentUser(null);
       }
@@ -147,25 +170,37 @@ const App: React.FC = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Auto-close modal when user is logged in
+  useEffect(() => {
+    if (currentUser) {
+      setIsAuthOpen(false);
+    }
+  }, [currentUser]);
+
   // Handlers
-  const handleLogin = async (user: AnyUser) => {
+  const handleLogin = (user: AnyUser) => {
+    console.log('handleLogin called with:', user.role);
     setCurrentUser(user);
     setIsAuthOpen(false);
 
-    if (user.role === UserRole.ADMIN || (user.role as string) === 'admin') {
+    if (user.role === UserRole.ADMIN || (user.role as string).toUpperCase() === 'ADMIN') {
       toast.success('Hoşgeldin Yönetici');
     } else {
       toast.success(`Hoş geldin, ${user.name}!`);
     }
 
-    await refreshData();
+    // Refresh data in background without awaiting to keep UI responsive
+    refreshData();
+    
+    // Also trigger profile fetch to ensure role is correct from DB
+    fetchUserProfile(user.id);
   };
 
-  const handleRegister = async (user: AnyUser) => {
+  const handleRegister = (user: AnyUser) => {
     setCurrentUser(user);
     setIsAuthOpen(false);
     toast.success('Kayıt başarılı! Hoş geldiniz.');
-    await refreshData();
+    refreshData();
   };
 
   const handleLogout = async () => {
