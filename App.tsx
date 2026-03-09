@@ -144,6 +144,24 @@ const App: React.FC = () => {
         if (donationsData) setDonations(donationsData);
       } catch (e) { console.error('Error fetching donations:', e); }
 
+      try {
+        const { data: adsData } = await supabase.from('ads').select('*');
+        if (adsData) {
+          adsData.forEach((ad: any) => {
+            if (ad.area === 'top') {
+              setArea1Ad(ad.url);
+              setArea1AdLink(ad.link);
+            } else if (ad.area === 'bottomA') {
+              setArea2AAd(ad.url);
+              setArea2AAdLink(ad.link);
+            } else if (ad.area === 'hero') {
+              setHeroAd(ad.url);
+              setHeroAdLink(ad.link);
+            }
+          });
+        }
+      } catch (e) { console.error('Error fetching ads:', e); }
+
     } catch (error) {
       console.error('Critical internal error in refreshData:', error);
     }
@@ -213,16 +231,31 @@ const App: React.FC = () => {
     }
   };
 
-  const handleUpdateAd = (area: 'top' | 'bottomA' | 'hero', url: string | null, link: string | null) => {
-    if (area === 'top') {
-      setArea1Ad(url);
-      setArea1AdLink(link);
-    } else if (area === 'bottomA') {
-      setArea2AAd(url);
-      setArea2AAdLink(link);
-    } else if (area === 'hero') {
-      setHeroAd(url);
-      setHeroAdLink(link);
+  const handleUpdateAd = async (area: 'top' | 'bottomA' | 'hero', url: string | null, link: string | null) => {
+    try {
+      if (area === 'top') {
+        setArea1Ad(url);
+        setArea1AdLink(link);
+      } else if (area === 'bottomA') {
+        setArea2AAd(url);
+        setArea2AAdLink(link);
+      } else if (area === 'hero') {
+        setHeroAd(url);
+        setHeroAdLink(link);
+      }
+
+      const { error } = await supabase.from('ads').upsert({
+        area,
+        url,
+        link,
+        updated_at: new Date().toISOString()
+      });
+
+      if (error) throw error;
+      toast.success('Reklam alanı güncellendi ve kaydedildi.');
+    } catch (error) {
+      console.error('Error saving ad:', error);
+      toast.error('Reklam güncellendi ama kaydedilemedi (Yetki Yok).');
     }
   };
 
