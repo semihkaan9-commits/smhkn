@@ -12,12 +12,12 @@ export const Hero: React.FC<HeroProps> = ({ heroAd, heroAdLink }) => {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://picsum.photos/1920/1080?grayscale"
+          src="/img_8255.jpg"
           alt="Background"
-          className="w-full h-full object-cover opacity-20"
+          className="w-full h-full object-cover opacity-80"
         />
-        {/* Gradient Overlay: Dark green top to Transparent/White bottom */}
-        <div className="absolute inset-0 bg-gradient-to-b from-green-900/90 via-green-700/80 to-stone-50"></div>
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-green-900/60 via-green-800/40 to-stone-50/20"></div>
       </div>
 
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto -mt-4">
@@ -29,16 +29,15 @@ export const Hero: React.FC<HeroProps> = ({ heroAd, heroAdLink }) => {
         </p>
 
         {/* Hero Ad Area */}
-        {/* Placeholder or Ad */}
-        <div className="mt-4 animate-fade-in-up animate-delay-200 px-4">
+        <div className="mt-4 animate-fade-in-up animate-delay-200 px-4 flex justify-center">
           {heroAd ? (
-            <div className="bg-white/10 backdrop-blur-sm p-2 rounded-xl inline-block border border-white/20 shadow-xl max-w-full">
+            <div className="bg-white/10 backdrop-blur-sm p-2 rounded-xl border border-white/20 shadow-xl w-full max-w-2xl overflow-hidden">
               {heroAdLink ? (
-                <a href={heroAdLink} target="_blank" rel="noopener noreferrer" className="block cursor-pointer">
-                  <img src={heroAd} alt="Giriş Reklamı" className="max-h-[120px] md:max-h-[160px] rounded-lg object-contain" />
+                <a href={heroAdLink} target="_blank" rel="noopener noreferrer" className="block cursor-pointer w-full">
+                  <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto max-h-[250px] rounded-lg object-contain" />
                 </a>
               ) : (
-                <img src={heroAd} alt="Giriş Reklamı" className="max-h-[120px] md:max-h-[160px] rounded-lg object-contain" />
+                <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto max-h-[250px] rounded-lg object-contain" />
               )}
               <span className="block text-[10px] text-white/60 mt-1 uppercase tracking-widest">Sponsorlu Bağlantı</span>
             </div>
