@@ -20,10 +20,7 @@ export const Footer: React.FC<FooterProps> = ({ currentUser }) => {
         </div>
       </div>
       <div className="mt-8 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
-        <p>&copy; {new Date().getFullYear()} Balcılar Köyü. Tüm hakları saklıdır.</p>
         <div className="flex items-center gap-4">
-          <a href="#" className="hover:text-blue-600 transition-colors">KVKK</a>
-          <a href="#" className="hover:text-blue-600 transition-colors">İletişim</a>
         </div>
       </div>
     </footer>
