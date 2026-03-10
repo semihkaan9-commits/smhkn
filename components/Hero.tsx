@@ -7,39 +7,39 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ heroAd, heroAdLink }) => {
   return (
-    <div id="hero" className="relative h-[50vh] flex items-center justify-center text-white overflow-hidden bg-green-800">
+    <div id="hero" className="relative min-h-[65vh] flex flex-col items-center justify-center text-white overflow-hidden bg-black">
 
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0 bg-black">
         <img
           src="/img_8255.jpg"
           alt="Background"
-          className="w-full h-full object-cover opacity-20"
+          className="w-full h-full object-cover opacity-10"
         />
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-green-950/95 via-green-950/90 to-black/80"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-green-950/95 via-green-950/90 to-black/90"></div>
       </div>
 
-      <div className="relative z-10 text-center px-4 max-w-4xl mx-auto -mt-4">
+      <div className="relative z-10 text-center px-4 max-w-4xl mx-auto flex-1 flex flex-col items-center justify-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-4 drop-shadow-2xl animate-fade-in-up text-white">
           Balcılar'a Hoşgeldiniz
         </h1>
-        <p className="text-lg md:text-xl font-light mb-6 max-w-2xl mx-auto drop-shadow-lg text-green-50 animate-fade-in-up animate-delay-100">
+        <p className="text-lg md:text-xl font-light mb-8 max-w-2xl mx-auto drop-shadow-lg text-green-50 animate-fade-in-up animate-delay-100">
           Doğanın kalbinde, huzurun adresinde buluşuyoruz. Köyümüzün dijital meydanına adım atın.
         </p>
 
-        {/* Hero Ad Area */}
-        <div className="mt-4 animate-fade-in-up animate-delay-200 px-4 flex justify-center">
+        {/* Hero Ad Area - Positioned with high z-index and smaller size */}
+        <div className="relative z-50 animate-fade-in-up animate-delay-200 px-4 flex justify-center w-full">
           {heroAd ? (
-            <div className="bg-white/10 backdrop-blur-sm p-2 rounded-xl border border-white/20 shadow-xl w-full max-w-md overflow-hidden">
+            <div className="bg-white/10 backdrop-blur-sm p-1.5 rounded-lg border border-white/20 shadow-xl w-full max-w-[240px] overflow-hidden">
               {heroAdLink ? (
                 <a href={heroAdLink} target="_blank" rel="noopener noreferrer" className="block cursor-pointer w-full">
-                  <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto max-h-[250px] rounded-lg object-contain" />
+                  <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto max-h-[180px] rounded-md object-contain" />
                 </a>
               ) : (
-                <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto max-h-[250px] rounded-lg object-contain" />
+                <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto max-h-[180px] rounded-md object-contain" />
               )}
-              <span className="block text-[10px] text-white/60 mt-1 uppercase tracking-widest">Sponsorlu Bağlantı</span>
+              <span className="block text-[8px] text-white/60 mt-0.5 uppercase tracking-widest text-center">Sponsorlu Bağlantı</span>
             </div>
           ) : null}
         </div>
