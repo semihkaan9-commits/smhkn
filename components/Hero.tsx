@@ -17,10 +17,10 @@ export const Hero: React.FC<HeroProps> = ({ heroAd, heroAdLink }) => {
           className="w-full h-full object-cover opacity-10"
         />
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-green-950/98 via-green-950/95 to-black"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-green-950/95 via-green-950/90 to-black/90"></div>
       </div>
 
-      <div className="relative z-10 text-center px-4 max-w-4xl mx-auto flex-1 flex flex-col items-center justify-center mt-12">
+      <div className="relative z-10 text-center px-4 max-w-4xl mx-auto flex-1 flex flex-col items-center justify-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-4 drop-shadow-2xl animate-fade-in-up text-white">
           Balcılar'a Hoşgeldiniz
         </h1>
@@ -28,20 +28,18 @@ export const Hero: React.FC<HeroProps> = ({ heroAd, heroAdLink }) => {
           Doğanın kalbinde, huzurun adresinde buluşuyoruz. Köyümüzün dijital meydanına adım atın.
         </p>
 
-        {/* Hero Ad Area - Minimized and stable */}
-        <div className="relative z-50 animate-fade-in-up animate-delay-200 px-4 flex justify-center w-full mt-4">
+        {/* Hero Ad Area - Responsive sizing: wider on mobile, small on desktop */}
+        <div className="relative z-50 animate-fade-in-up animate-delay-200 px-4 flex justify-center w-full">
           {heroAd ? (
-            <div className="bg-white/10 backdrop-blur-sm p-1 rounded-lg border border-white/20 shadow-xl w-full max-w-[150px] overflow-hidden">
+            <div className="bg-white/10 backdrop-blur-sm p-1.5 rounded-lg border border-white/20 shadow-xl w-full max-w-[90%] sm:max-w-[240px] overflow-hidden">
               {heroAdLink ? (
                 <a href={heroAdLink} target="_blank" rel="noopener noreferrer" className="block cursor-pointer w-full">
-                  <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto rounded-md" />
+                  <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto max-h-[160px] sm:max-h-[180px] rounded-md object-contain" />
                 </a>
               ) : (
-                <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto rounded-md" />
+                <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto max-h-[160px] sm:max-h-[180px] rounded-md object-contain" />
               )}
-              <div className="text-center">
-                <span className="block text-[7px] text-white/50 uppercase tracking-widest mt-0.5">Sponsor</span>
-              </div>
+              <span className="block text-[8px] text-white/60 mt-0.5 uppercase tracking-widest text-center">Sponsorlu Bağlantı</span>
             </div>
           ) : null}
         </div>
