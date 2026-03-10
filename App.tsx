@@ -490,6 +490,7 @@ const App: React.FC = () => {
     try {
       const oldNews = news.find(n => n.id === id);
       const oldTitle = oldNews?.title;
+      console.log('--- Sync Debug (News) ---', { id, title, oldTitle, imageUrl: oldNews?.image_url });
 
       setNews(prev => prev.map(n => n.id === id ? { ...n, title, content, date } : n));
 
@@ -506,22 +507,27 @@ const App: React.FC = () => {
       if (oldTitle && oldTitle !== title) {
         const imageUrl = oldNews?.image_url;
         if (imageUrl) {
-          await supabase.from('gallery')
+          console.log('Attempting sync by URL:', imageUrl);
+          const { data: syncData, error: syncError } = await supabase.from('gallery')
             .update({ 
               title: title, 
               caption: `Haber: ${title}` 
             })
             .eq('url', imageUrl)
-            .eq('category', 'Haber');
+            .eq('category', 'Haber')
+            .select();
+          console.log('Sync by URL result:', { syncData, syncError });
         } else {
-          // Fallback if no URL (e.g. news without image but gallery somehow exists)
-          await supabase.from('gallery')
+          console.log('Attempting sync by Title fallback:', oldTitle);
+          const { data: syncData, error: syncError } = await supabase.from('gallery')
             .update({ 
               title: title, 
               caption: `Haber: ${title}` 
             })
             .eq('title', oldTitle)
-            .eq('category', 'Haber');
+            .eq('category', 'Haber')
+            .select();
+          console.log('Sync by Title fallback result:', { syncData, syncError });
         }
       }
 
@@ -538,6 +544,7 @@ const App: React.FC = () => {
     try {
       const oldEvent = events.find(e => e.id === id);
       const oldTitle = oldEvent?.title;
+      console.log('--- Sync Debug (Event) ---', { id, title, oldTitle, imageUrl: oldEvent?.image_url });
 
       setEvents(prev => prev.map(e => e.id === id ? { ...e, title, content, startDate, endDate } : e));
 
@@ -555,22 +562,27 @@ const App: React.FC = () => {
       if (oldTitle && oldTitle !== title) {
         const imageUrl = oldEvent?.image_url;
         if (imageUrl) {
-          await supabase.from('gallery')
+          console.log('Attempting sync by URL:', imageUrl);
+          const { data: syncData, error: syncError } = await supabase.from('gallery')
             .update({ 
               title: title, 
               caption: `Etkinlik: ${title}` 
             })
             .eq('url', imageUrl)
-            .eq('category', 'Etkinlik');
+            .eq('category', 'Etkinlik')
+            .select();
+          console.log('Sync by URL result:', { syncData, syncError });
         } else {
-          // Fallback
-          await supabase.from('gallery')
+          console.log('Attempting sync by Title fallback:', oldTitle);
+          const { data: syncData, error: syncError } = await supabase.from('gallery')
             .update({ 
               title: title, 
               caption: `Etkinlik: ${title}` 
             })
             .eq('title', oldTitle)
-            .eq('category', 'Etkinlik');
+            .eq('category', 'Etkinlik')
+            .select();
+          console.log('Sync by Title fallback result:', { syncData, syncError });
         }
       }
 
