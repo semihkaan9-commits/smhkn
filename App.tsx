@@ -291,7 +291,8 @@ const App: React.FC = () => {
           type: 'image',
           url: imageUrl,
           caption: `Haber: ${title}`,
-          date: new Date().toISOString().split('T')[0]
+          date: new Date().toISOString().split('T')[0],
+          category: 'Haber'
         };
         await supabase.from('gallery').insert([galleryItem]);
       }
@@ -356,7 +357,8 @@ const App: React.FC = () => {
           type: 'image',
           url: imageUrl,
           caption: `Etkinlik: ${title}`,
-          date: new Date().toISOString().split('T')[0]
+          date: new Date().toISOString().split('T')[0],
+          category: 'Etkinlik'
         };
         await supabase.from('gallery').insert([galleryItem]);
       }
@@ -398,7 +400,8 @@ const App: React.FC = () => {
         type,
         url,
         caption,
-        date: new Date().toISOString().split('T')[0]
+        date: new Date().toISOString().split('T')[0],
+        category: 'Genel'
       };
       const { error } = await supabase.from('gallery').insert([newItem]).select();
       if (error) throw error;
