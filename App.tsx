@@ -16,6 +16,12 @@ import { supabase } from './lib/supabase';
 
 import { Toaster, toast } from 'react-hot-toast';
 
+// Helper to check if a string is a valid UUID
+const isValidUUID = (id: string) => {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(id);
+};
+
 const App: React.FC = () => {
   // State - initialized empty, filled from Supabase via refreshData()
   const [currentUser, setCurrentUser] = useState<AnyUser | null>(null);
@@ -40,6 +46,7 @@ const App: React.FC = () => {
 
   // Helper to fetch user profile
   const fetchUserProfile = async (userId: string) => {
+    console.log('Fetching profile for userId:', userId);
     try {
       const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
       
@@ -71,6 +78,7 @@ const App: React.FC = () => {
          console.error('Error fetching profile but setting default:', error);
       }
 
+      console.log('Setting currentUser to:', userData);
       setCurrentUser(userData);
     } catch (error) {
       console.error('General error fetching profile:', error);
@@ -197,7 +205,7 @@ const App: React.FC = () => {
 
   // Handlers
   const handleLogin = (user: AnyUser) => {
-    console.log('handleLogin called with:', user.role);
+    console.log('handleLogin success, user state:', user);
     setCurrentUser(user);
     setIsAuthOpen(false);
 
@@ -266,13 +274,17 @@ const App: React.FC = () => {
         return;
       }
 
-      const newNews = {
+      const newNews: any = {
         title,
         content,
         image_url: imageUrl || '',
         date: new Date().toISOString().split('T')[0],
-        author_id: currentUser.id,
       };
+
+      // Only add author_id if it's a valid UUID to prevent database errors
+      if (currentUser && currentUser.id && isValidUUID(currentUser.id)) {
+        newNews.author_id = currentUser.id;
+      }
 
       const { data, error } = await supabase.from('news').insert([newNews]).select();
       if (error) {
@@ -331,15 +343,19 @@ const App: React.FC = () => {
     try {
       if (!currentUser) return;
 
-      const newEvent = {
+      const newEvent: any = {
         title,
         content,
         image_url: imageUrl,
         date: new Date().toISOString().split('T')[0],
         start_date: startDate,
         end_date: endDate,
-        author_id: currentUser.id,
       };
+
+      // Only add author_id if it's a valid UUID
+      if (currentUser && currentUser.id && isValidUUID(currentUser.id)) {
+        newEvent.author_id = currentUser.id;
+      }
 
       const { error } = await supabase.from('events').insert([newEvent]).select();
       if (error) {
