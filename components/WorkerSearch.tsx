@@ -145,7 +145,7 @@ export const WorkerSearch: React.FC<WorkerSearchProps> = ({
                     <div className="flex-grow">
                       <span className="text-gray-600 text-sm block mb-2">{person.address}</span>
                       <a
-                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(person.address + ' Balcılar Köyü Konya')}`}
+                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(person.address + (person.address.toLowerCase().includes('konya') ? '' : ' Balcılar Köyü Konya'))}`}
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100 transition-colors"
@@ -164,7 +164,7 @@ export const WorkerSearch: React.FC<WorkerSearchProps> = ({
                       scrolling="no"
                       marginHeight={0}
                       marginWidth={0}
-                      src={`https://maps.google.com/maps?q=${encodeURIComponent(person.address + ' Balcılar Köyü Konya')}&t=h&z=17&ie=UTF8&iwloc=&output=embed&hl=tr`}
+                      src={`https://maps.google.com/maps?q=${encodeURIComponent(person.address + (person.address.toLowerCase().includes('konya') ? '' : ' Balcılar Köyü Konya'))}&t=m&z=15&ie=UTF8&iwloc=A&output=embed&hl=tr`}
                       title={`Harita: ${person.name}`}
                     ></iframe>
                   </div>
