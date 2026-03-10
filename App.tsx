@@ -177,6 +177,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const init = async () => {
+      console.log('--- APP INITIALIZED (Version v1.1) ---');
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         await fetchUserProfile(session.user.id);
@@ -210,9 +211,9 @@ const App: React.FC = () => {
     setIsAuthOpen(false);
 
     if (user.role === UserRole.ADMIN || (user.role as string).toUpperCase() === 'ADMIN') {
-      toast.success('Hoşgeldin Yönetici');
+      toast.success('Hoşgeldin Yönetici (v1.1)');
     } else {
-      toast.success(`Hoş geldin, ${user.name}!`);
+      toast.success(`Hoş geldin, ${user.name}! (v1.1)`);
     }
 
     // Refresh data in background without awaiting to keep UI responsive
@@ -309,7 +310,7 @@ const App: React.FC = () => {
         await supabase.from('gallery').insert([galleryItem]);
       }
 
-      toast.success('Haber başarıyla eklendi!');
+      toast.success('Haber başarıyla eklendi! (v1.1)');
       await refreshData();
     } catch (error: any) {
       console.error('Error adding news:', error);
