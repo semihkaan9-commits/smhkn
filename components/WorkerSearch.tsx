@@ -156,7 +156,7 @@ export const WorkerSearch: React.FC<WorkerSearchProps> = ({
                   </div>
 
                   {/* Google Maps Preview */}
-                  <div className="w-full h-32 rounded-lg overflow-hidden border border-gray-200 mt-2 shadow-inner">
+                  <div className="w-full h-40 rounded-lg overflow-hidden border border-gray-200 mt-2 shadow-inner">
                     <iframe
                       width="100%"
                       height="100%"
@@ -164,7 +164,7 @@ export const WorkerSearch: React.FC<WorkerSearchProps> = ({
                       scrolling="no"
                       marginHeight={0}
                       marginWidth={0}
-                      src={`https://maps.google.com/maps?q=${encodeURIComponent(person.address + ' Balcılar Köyü Konya')}&t=&z=14&ie=UTF8&iwloc=&output=embed`}
+                      src={`https://maps.google.com/maps?q=${encodeURIComponent(person.name + ' ' + person.surname + ' ' + person.address + ' Balcılar Köyü Konya')}&t=h&z=17&ie=UTF8&iwloc=&output=embed&hl=tr`}
                       title={`Harita: ${person.name}`}
                     ></iframe>
                   </div>

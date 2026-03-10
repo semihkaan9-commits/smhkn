@@ -304,6 +304,7 @@ const App: React.FC = () => {
           type: 'image',
           url: imageUrl,
           caption: `Haber: ${title}`,
+          title: title, // Store title for easier syncing
           date: new Date().toISOString().split('T')[0],
           category: 'Haber'
         };
@@ -374,6 +375,7 @@ const App: React.FC = () => {
           type: 'image',
           url: imageUrl,
           caption: `Etkinlik: ${title}`,
+          title: title, // Store title for easier syncing
           date: new Date().toISOString().split('T')[0],
           category: 'Etkinlik'
         };
@@ -486,6 +488,9 @@ const App: React.FC = () => {
 
   const handleUpdateNews = async (id: string, title: string, content: string, date: string) => {
     try {
+      const oldNews = news.find(n => n.id === id);
+      const oldTitle = oldNews?.title;
+
       setNews(prev => prev.map(n => n.id === id ? { ...n, title, content, date } : n));
 
       const { data, error } = await supabase.from('news').update({
@@ -496,6 +501,17 @@ const App: React.FC = () => {
 
       if (error) throw error;
       if (!data || data.length === 0) throw new Error('Güncellenemedi (Yetki Yok)');
+
+      // Sync Gallery if title changed
+      if (oldTitle && oldTitle !== title) {
+        await supabase.from('gallery')
+          .update({ 
+            title: title, 
+            caption: `Haber: ${title}` 
+          })
+          .eq('title', oldTitle)
+          .eq('category', 'Haber');
+      }
 
       toast.success('Haber başarıyla güncellendi.');
       await refreshData();
@@ -508,6 +524,9 @@ const App: React.FC = () => {
 
   const handleUpdateEvent = async (id: string, title: string, content: string, startDate?: string, endDate?: string) => {
     try {
+      const oldEvent = events.find(e => e.id === id);
+      const oldTitle = oldEvent?.title;
+
       setEvents(prev => prev.map(e => e.id === id ? { ...e, title, content, startDate, endDate } : e));
 
       const { data, error } = await supabase.from('events').update({
@@ -519,6 +538,17 @@ const App: React.FC = () => {
 
       if (error) throw error;
       if (!data || data.length === 0) throw new Error('Güncellenemedi (Yetki Yok)');
+
+      // Sync Gallery if title changed
+      if (oldTitle && oldTitle !== title) {
+        await supabase.from('gallery')
+          .update({ 
+            title: title, 
+            caption: `Etkinlik: ${title}` 
+          })
+          .eq('title', oldTitle)
+          .eq('category', 'Etkinlik');
+      }
 
       toast.success('Etkinlik başarıyla güncellendi.');
       await refreshData();
