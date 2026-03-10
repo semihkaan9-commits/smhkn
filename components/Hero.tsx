@@ -17,19 +17,12 @@ export const Hero: React.FC<HeroProps> = ({ heroAd, heroAdLink }) => {
           className="w-full h-full object-cover opacity-80"
         />
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-green-900/60 via-green-800/40 to-stone-50/20"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-green-950/80 via-green-900/60 to-stone-900/40"></div>
       </div>
 
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto -mt-4">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 drop-shadow-2xl animate-fade-in-up text-white">
-          Balcılar'a Hoşgeldiniz
-        </h1>
-        <p className="text-lg md:text-xl font-light mb-6 max-w-2xl mx-auto drop-shadow-lg text-green-50 animate-fade-in-up animate-delay-100">
-          Doğanın kalbinde, huzurun adresinde buluşuyoruz. Köyümüzün dijital meydanına adım atın.
-        </p>
-
-        {/* Hero Ad Area */}
-        <div className="mt-4 animate-fade-in-up animate-delay-200 px-4 flex justify-center">
+        {/* Hero Ad Area - Moved to top */}
+        <div className="mb-8 animate-fade-in-up animate-delay-200 px-4 flex justify-center">
           {heroAd ? (
             <div className="bg-white/10 backdrop-blur-sm p-2 rounded-xl border border-white/20 shadow-xl w-full max-w-2xl overflow-hidden">
               {heroAdLink ? (
@@ -43,6 +36,13 @@ export const Hero: React.FC<HeroProps> = ({ heroAd, heroAdLink }) => {
             </div>
           ) : null}
         </div>
+
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 drop-shadow-2xl animate-fade-in-up text-white">
+          Balcılar'a Hoşgeldiniz
+        </h1>
+        <p className="text-lg md:text-xl font-light mb-6 max-w-2xl mx-auto drop-shadow-lg text-green-50 animate-fade-in-up animate-delay-100">
+          Doğanın kalbinde, huzurun adresinde buluşuyoruz. Köyümüzün dijital meydanına adım atın.
+        </p>
       </div>
 
       {/* Decorative Curve Blending into White */}
