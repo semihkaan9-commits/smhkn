@@ -10,21 +10,28 @@ export const Hero: React.FC<HeroProps> = ({ heroAd, heroAdLink }) => {
     <div id="hero" className="relative h-[50vh] flex items-center justify-center text-white overflow-hidden bg-green-800">
 
       {/* Background Image with Overlay */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 bg-black">
         <img
           src="/img_8255.jpg"
           alt="Background"
-          className="w-full h-full object-cover opacity-80"
+          className="w-full h-full object-cover opacity-20"
         />
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-green-950/80 via-green-900/60 to-stone-900/40"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-green-950/95 via-green-950/90 to-black/80"></div>
       </div>
 
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto -mt-4">
-        {/* Hero Ad Area - Moved to top */}
-        <div className="mb-8 animate-fade-in-up animate-delay-200 px-4 flex justify-center">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 drop-shadow-2xl animate-fade-in-up text-white">
+          Balcılar'a Hoşgeldiniz
+        </h1>
+        <p className="text-lg md:text-xl font-light mb-6 max-w-2xl mx-auto drop-shadow-lg text-green-50 animate-fade-in-up animate-delay-100">
+          Doğanın kalbinde, huzurun adresinde buluşuyoruz. Köyümüzün dijital meydanına adım atın.
+        </p>
+
+        {/* Hero Ad Area */}
+        <div className="mt-4 animate-fade-in-up animate-delay-200 px-4 flex justify-center">
           {heroAd ? (
-            <div className="bg-white/10 backdrop-blur-sm p-2 rounded-xl border border-white/20 shadow-xl w-full max-w-2xl overflow-hidden">
+            <div className="bg-white/10 backdrop-blur-sm p-2 rounded-xl border border-white/20 shadow-xl w-full max-w-md overflow-hidden">
               {heroAdLink ? (
                 <a href={heroAdLink} target="_blank" rel="noopener noreferrer" className="block cursor-pointer w-full">
                   <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto max-h-[250px] rounded-lg object-contain" />
@@ -36,13 +43,6 @@ export const Hero: React.FC<HeroProps> = ({ heroAd, heroAdLink }) => {
             </div>
           ) : null}
         </div>
-
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 drop-shadow-2xl animate-fade-in-up text-white">
-          Balcılar'a Hoşgeldiniz
-        </h1>
-        <p className="text-lg md:text-xl font-light mb-6 max-w-2xl mx-auto drop-shadow-lg text-green-50 animate-fade-in-up animate-delay-100">
-          Doğanın kalbinde, huzurun adresinde buluşuyoruz. Köyümüzün dijital meydanına adım atın.
-        </p>
       </div>
 
       {/* Decorative Curve Blending into White */}
