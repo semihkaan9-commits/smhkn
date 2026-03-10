@@ -211,9 +211,9 @@ const App: React.FC = () => {
     setIsAuthOpen(false);
 
     if (user.role === UserRole.ADMIN || (user.role as string).toUpperCase() === 'ADMIN') {
-      toast.success('Hoşgeldin Yönetici (v1.2)');
+      toast.success('Hoşgeldin Yönetici');
     } else {
-      toast.success(`Hoş geldin, ${user.name}! (v1.2)`);
+      toast.success(`Hoş geldin, ${user.name}!`);
     }
 
     // Refresh data in background without awaiting to keep UI responsive
@@ -311,7 +311,7 @@ const App: React.FC = () => {
         await supabase.from('gallery').insert([galleryItem]);
       }
 
-      toast.success('Haber başarıyla eklendi! (v1.2)');
+      toast.success('Haber başarıyla eklendi!');
       await refreshData();
     } catch (error: any) {
       console.error('Error adding news:', error);
