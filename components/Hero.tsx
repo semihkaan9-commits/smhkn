@@ -31,7 +31,7 @@ export const Hero: React.FC<HeroProps> = ({ heroAd, heroAdLink }) => {
         {/* Hero Ad Area - Minimized and stable */}
         <div className="relative z-50 animate-fade-in-up animate-delay-200 px-4 flex justify-center w-full mt-4">
           {heroAd ? (
-            <div className="bg-white/10 backdrop-blur-sm p-1 rounded-lg border border-white/20 shadow-xl w-full max-w-[180px] overflow-hidden">
+            <div className="bg-white/10 backdrop-blur-sm p-1 rounded-lg border border-white/20 shadow-xl w-full max-w-[150px] overflow-hidden">
               {heroAdLink ? (
                 <a href={heroAdLink} target="_blank" rel="noopener noreferrer" className="block cursor-pointer w-full">
                   <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto rounded-md" />
