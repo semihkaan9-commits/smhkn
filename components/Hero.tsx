@@ -28,16 +28,16 @@ export const Hero: React.FC<HeroProps> = ({ heroAd, heroAdLink }) => {
           Doğanın kalbinde, huzurun adresinde buluşuyoruz. Köyümüzün dijital meydanına adım atın.
         </p>
 
-        {/* Hero Ad Area - Positioned with high z-index and smaller size */}
+        {/* Hero Ad Area - Responsive sizing: wider on mobile, small on desktop */}
         <div className="relative z-50 animate-fade-in-up animate-delay-200 px-4 flex justify-center w-full">
           {heroAd ? (
-            <div className="bg-white/10 backdrop-blur-sm p-1.5 rounded-lg border border-white/20 shadow-xl w-full max-w-[240px] overflow-hidden">
+            <div className="bg-white/10 backdrop-blur-sm p-1.5 rounded-lg border border-white/20 shadow-xl w-full max-w-[90%] sm:max-w-[240px] overflow-hidden">
               {heroAdLink ? (
                 <a href={heroAdLink} target="_blank" rel="noopener noreferrer" className="block cursor-pointer w-full">
-                  <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto max-h-[180px] rounded-md object-contain" />
+                  <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto max-h-[160px] sm:max-h-[180px] rounded-md object-contain" />
                 </a>
               ) : (
-                <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto max-h-[180px] rounded-md object-contain" />
+                <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto max-h-[160px] sm:max-h-[180px] rounded-md object-contain" />
               )}
               <span className="block text-[8px] text-white/60 mt-0.5 uppercase tracking-widest text-center">Sponsorlu Bağlantı</span>
             </div>
