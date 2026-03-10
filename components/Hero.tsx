@@ -17,10 +17,10 @@ export const Hero: React.FC<HeroProps> = ({ heroAd, heroAdLink }) => {
           className="w-full h-full object-cover opacity-10"
         />
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-green-950/95 via-green-950/90 to-black/90"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-green-950/98 via-green-950/95 to-black"></div>
       </div>
 
-      <div className="relative z-10 text-center px-4 max-w-4xl mx-auto flex-1 flex flex-col items-center justify-center">
+      <div className="relative z-10 text-center px-4 max-w-4xl mx-auto flex-1 flex flex-col items-center justify-center mt-12">
         <h1 className="text-4xl md:text-5xl font-bold mb-4 drop-shadow-2xl animate-fade-in-up text-white">
           Balcılar'a Hoşgeldiniz
         </h1>
@@ -28,19 +28,21 @@ export const Hero: React.FC<HeroProps> = ({ heroAd, heroAdLink }) => {
           Doğanın kalbinde, huzurun adresinde buluşuyoruz. Köyümüzün dijital meydanına adım atın.
         </p>
 
-        {/* Hero Ad Area - Horizontal banner scaling */}
+        {/* Hero Ad Area - Forced 4:1 aspect ratio on mobile */}
         <div className="relative z-50 animate-fade-in-up animate-delay-200 px-4 flex justify-center w-full">
           {heroAd ? (
-            <div className="bg-white/10 backdrop-blur-sm p-1 rounded-lg border border-white/20 shadow-xl w-full max-w-[95%] sm:max-w-xl overflow-hidden">
-              {heroAdLink ? (
-                <a href={heroAdLink} target="_blank" rel="noopener noreferrer" className="block cursor-pointer w-full">
-                  <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto rounded-md block" />
-                </a>
-              ) : (
-                <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto rounded-md block" />
-              )}
-              <div className="text-center">
-                <span className="inline-block text-[8px] text-white/60 uppercase tracking-widest">Sponsorlu Bağlantı</span>
+            <div className="bg-white/10 backdrop-blur-sm p-1 rounded-lg border border-white/20 shadow-xl w-full max-w-[95%] sm:max-w-md aspect-[4/1] overflow-hidden flex flex-col">
+              <div className="flex-1 w-full relative">
+                {heroAdLink ? (
+                  <a href={heroAdLink} target="_blank" rel="noopener noreferrer" className="absolute inset-0 block cursor-pointer">
+                    <img src={heroAd} alt="Giriş Reklamı" className="w-full h-full object-cover rounded-md" />
+                  </a>
+                ) : (
+                  <img src={heroAd} alt="Giriş Reklamı" className="w-full h-full object-cover rounded-md" />
+                )}
+              </div>
+              <div className="bg-black/40 py-0.5 text-center">
+                <span className="block text-[8px] text-white/80 uppercase tracking-widest leading-none">Sponsorlu Bağlantı</span>
               </div>
             </div>
           ) : null}
