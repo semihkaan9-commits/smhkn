@@ -28,21 +28,19 @@ export const Hero: React.FC<HeroProps> = ({ heroAd, heroAdLink }) => {
           Doğanın kalbinde, huzurun adresinde buluşuyoruz. Köyümüzün dijital meydanına adım atın.
         </p>
 
-        {/* Hero Ad Area - Forced 4:1 aspect ratio on mobile */}
-        <div className="relative z-50 animate-fade-in-up animate-delay-200 px-4 flex justify-center w-full">
+        {/* Hero Ad Area - Minimized and stable */}
+        <div className="relative z-50 animate-fade-in-up animate-delay-200 px-4 flex justify-center w-full mt-4">
           {heroAd ? (
-            <div className="bg-white/10 backdrop-blur-sm p-1 rounded-lg border border-white/20 shadow-xl w-full max-w-[95%] sm:max-w-md aspect-[4/1] overflow-hidden flex flex-col">
-              <div className="flex-1 w-full relative">
-                {heroAdLink ? (
-                  <a href={heroAdLink} target="_blank" rel="noopener noreferrer" className="absolute inset-0 block cursor-pointer">
-                    <img src={heroAd} alt="Giriş Reklamı" className="w-full h-full object-cover rounded-md" />
-                  </a>
-                ) : (
-                  <img src={heroAd} alt="Giriş Reklamı" className="w-full h-full object-cover rounded-md" />
-                )}
-              </div>
-              <div className="bg-black/40 py-0.5 text-center">
-                <span className="block text-[8px] text-white/80 uppercase tracking-widest leading-none">Sponsorlu Bağlantı</span>
+            <div className="bg-white/10 backdrop-blur-sm p-1 rounded-lg border border-white/20 shadow-xl w-full max-w-[180px] overflow-hidden">
+              {heroAdLink ? (
+                <a href={heroAdLink} target="_blank" rel="noopener noreferrer" className="block cursor-pointer w-full">
+                  <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto rounded-md" />
+                </a>
+              ) : (
+                <img src={heroAd} alt="Giriş Reklamı" className="w-full h-auto rounded-md" />
+              )}
+              <div className="text-center">
+                <span className="block text-[7px] text-white/50 uppercase tracking-widest mt-0.5">Sponsor</span>
               </div>
             </div>
           ) : null}

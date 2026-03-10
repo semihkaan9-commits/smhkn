@@ -193,7 +193,7 @@ export const WorkerSearch: React.FC<WorkerSearchProps> = ({
       )}
 
       {!searchTerm && (
-        <div className="w-full h-80 bg-stone-200 rounded-2xl border-4 border-dashed border-stone-300 flex items-center justify-center animate-fade-in-up overflow-hidden group">
+        <div className="w-full aspect-[4/1] md:aspect-none md:h-80 bg-stone-200 rounded-2xl border-4 border-dashed border-stone-300 flex items-center justify-center animate-fade-in-up overflow-hidden group relative z-50">
           {topAd ? (
             topAdLink ? (
               <a href={topAdLink} target="_blank" rel="noopener noreferrer" className="w-full h-full block">
