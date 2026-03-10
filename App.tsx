@@ -177,7 +177,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const init = async () => {
-      console.log('--- APP INITIALIZED (Version v1.2) ---');
+      console.log('--- APP INITIALIZED ---');
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         await fetchUserProfile(session.user.id);

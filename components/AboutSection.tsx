@@ -53,7 +53,7 @@ export const AboutSection: React.FC = () => {
           {/* Sabit Görsel Alanı */}
           <div className="order-1 md:order-2 h-80 md:h-full min-h-[400px] rounded-2xl overflow-hidden shadow-2xl">
             <img
-              src="https://picsum.photos/id/10/1200/800"
+              src="/img_4045.jpg"
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
               alt="Balcılar Köyü"
             />
