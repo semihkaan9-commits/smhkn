@@ -60,7 +60,7 @@ DROP POLICY IF EXISTS "Authenticated users can insert news." ON public.news;
 DROP POLICY IF EXISTS "Authors and Admins can update news" ON public.news;
 DROP POLICY IF EXISTS "Authors and Admins can delete news" ON public.news;
 CREATE POLICY "Public news are viewable by everyone." ON public.news FOR SELECT USING (true);
-CREATE POLICY "Authenticated users can insert news." ON public.news FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Authenticated users can insert news." ON public.news FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 CREATE POLICY "Authors and Admins can update news" ON public.news FOR UPDATE USING (auth.uid() = author_id OR (SELECT role FROM public.profiles WHERE id = auth.uid()) ILIKE 'admin');
 CREATE POLICY "Authors and Admins can delete news" ON public.news FOR DELETE USING (auth.uid() = author_id OR (SELECT role FROM public.profiles WHERE id = auth.uid()) ILIKE 'admin');
 
@@ -70,7 +70,7 @@ DROP POLICY IF EXISTS "Authenticated users can insert events." ON public.events;
 DROP POLICY IF EXISTS "Authors and Admins can update events" ON public.events;
 DROP POLICY IF EXISTS "Authors and Admins can delete events" ON public.events;
 CREATE POLICY "Public events are viewable by everyone." ON public.events FOR SELECT USING (true);
-CREATE POLICY "Authenticated users can insert events." ON public.events FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Authenticated users can insert events." ON public.events FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 CREATE POLICY "Authors and Admins can update events" ON public.events FOR UPDATE USING (auth.uid() = author_id OR (SELECT role FROM public.profiles WHERE id = auth.uid()) ILIKE 'admin');
 CREATE POLICY "Authors and Admins can delete events" ON public.events FOR DELETE USING (auth.uid() = author_id OR (SELECT role FROM public.profiles WHERE id = auth.uid()) ILIKE 'admin');
 
@@ -79,7 +79,7 @@ DROP POLICY IF EXISTS "Public gallery is viewable by everyone." ON public.galler
 DROP POLICY IF EXISTS "Authenticated users can insert gallery items." ON public.gallery;
 DROP POLICY IF EXISTS "Admins can delete gallery items" ON public.gallery;
 CREATE POLICY "Public gallery is viewable by everyone." ON public.gallery FOR SELECT USING (true);
-CREATE POLICY "Authenticated users can insert gallery items." ON public.gallery FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Authenticated users can insert gallery items." ON public.gallery FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 CREATE POLICY "Admins can delete gallery items" ON public.gallery FOR DELETE USING ((SELECT role FROM public.profiles WHERE id = auth.uid()) ILIKE 'admin');
 
 -- VILLAGERS

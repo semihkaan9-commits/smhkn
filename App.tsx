@@ -16,6 +16,12 @@ import { supabase } from './lib/supabase';
 
 import { Toaster, toast } from 'react-hot-toast';
 
+// Helper to check if a string is a valid UUID
+const isValidUUID = (id: string) => {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(id);
+};
+
 const App: React.FC = () => {
   // State - initialized empty, filled from Supabase via refreshData()
   const [currentUser, setCurrentUser] = useState<AnyUser | null>(null);
@@ -40,94 +46,138 @@ const App: React.FC = () => {
 
   // Helper to fetch user profile
   const fetchUserProfile = async (userId: string) => {
+    console.log('Fetching profile for userId:', userId);
     try {
       const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
-      if (error) throw error;
-
+      
       let role: UserRole = UserRole.GUEST;
-      const dbRole = profile.role?.toUpperCase();
-      if (dbRole === 'ADMIN') role = UserRole.ADMIN;
-      else if (dbRole === 'VILLAGER') role = UserRole.VILLAGER;
-
       let userData: AnyUser = {
-        id: profile.id,
-        name: profile.full_name?.split(' ')[0] || '',
-        surname: profile.full_name?.split(' ').slice(1).join(' ') || '',
+        id: userId,
+        name: 'Kullanıcı',
+        surname: '',
         role: role,
         email: undefined
       };
 
-      if (profile.role === UserRole.VILLAGER) {
-        const { data: villagerData } = await supabase.from('villagers').select('*').eq('user_id', userId).single();
-        if (villagerData) {
-          userData = { ...userData, ...villagerData, id: userId, role: UserRole.VILLAGER };
+      if (!error && profile) {
+        const dbRole = profile.role?.toUpperCase();
+        if (dbRole === 'ADMIN') role = UserRole.ADMIN;
+        else if (dbRole === 'VILLAGER') role = UserRole.VILLAGER;
+
+        userData.name = profile.full_name?.split(' ')[0] || 'Kullanıcı';
+        userData.surname = profile.full_name?.split(' ').slice(1).join(' ') || '';
+        userData.role = role;
+
+        if (profile.role === UserRole.VILLAGER) {
+          const { data: villagerData } = await supabase.from('villagers').select('*').eq('user_id', userId).single();
+          if (villagerData) {
+            userData = { ...userData, ...villagerData, id: userId, role: UserRole.VILLAGER };
+          }
         }
+      } else if (error && error.code !== 'PGRST116') {
+         console.error('Error fetching profile but setting default:', error);
       }
 
+      console.log('Setting currentUser to:', userData);
       setCurrentUser(userData);
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('General error fetching profile:', error);
+      // Ensure user is still logged in as guest if everything fails
+      setCurrentUser({
+        id: userId,
+        name: 'Kullanıcı',
+        surname: '',
+        role: UserRole.GUEST,
+        email: undefined
+      });
     }
   };
 
   const refreshData = async () => {
     try {
-      const { data: villagersData } = await supabase.from('villagers').select('*').order('name');
-      if (villagersData) {
-        setVillagers(villagersData);
-      }
+      // Individual try-catches for each table to prevent one failure from blocking everything
+      try {
+        const { data: villagersData } = await supabase.from('villagers').select('*').order('name');
+        if (villagersData) setVillagers(villagersData);
+      } catch (e) { console.error('Error fetching villagers:', e); }
 
-      const { data: guestsData } = await supabase.from('profiles').select('*').eq('role', 'guest');
-      if (guestsData) {
-        const mappedGuests: AnyUser[] = guestsData.map((g: any) => ({
-          id: g.id,
-          name: g.full_name?.split(' ')[0] || '',
-          surname: g.full_name?.split(' ').slice(1).join(' ') || '',
-          role: UserRole.GUEST,
-          email: undefined
-        }));
-        setGuests(mappedGuests);
-      }
+      try {
+        const { data: guestsData } = await supabase.from('profiles').select('*').eq('role', 'guest');
+        if (guestsData) {
+          const mappedGuests: AnyUser[] = guestsData.map((g: any) => ({
+            id: g.id,
+            name: g.full_name?.split(' ')[0] || '',
+            surname: g.full_name?.split(' ').slice(1).join(' ') || '',
+            role: UserRole.GUEST,
+            email: undefined
+          }));
+          setGuests(mappedGuests);
+        }
+      } catch (e) { console.error('Error fetching guests:', e); }
 
-      // Fetch profiles for mapping
-      const { data: profiles } = await supabase.from('profiles').select('id, full_name');
-      const profileMap = new Map(profiles?.map(p => [p.id, p.full_name]) || []);
+      try {
+        const { data: profiles } = await supabase.from('profiles').select('id, full_name');
+        const profileMap = new Map(profiles?.map(p => [p.id, p.full_name]) || []);
 
-      const { data: newsData } = await supabase.from('news').select('*').order('date', { ascending: false });
-      if (newsData) {
-        const mappedNews = newsData.map((item: any) => ({
-          ...item,
-          imageUrl: item.image_url || item.imageUrl,
-          author: profileMap.get(item.author_id) || item.author || 'Bilinmiyor'
-        }));
-        setNews(mappedNews);
-      }
+        const { data: newsData } = await supabase.from('news').select('*').order('created_at', { ascending: false });
+        if (newsData) {
+          const mappedNews = newsData.map((item: any) => ({
+            ...item,
+            imageUrl: item.image_url || item.imageUrl,
+            author: profileMap.get(item.author_id) || item.author || 'Bilinmiyor'
+          }));
+          setNews(mappedNews);
+        }
 
-      const { data: galleryData } = await supabase.from('gallery').select('*').order('date', { ascending: false });
-      if (galleryData) setGalleryItems(galleryData);
+        const { data: eventsData } = await supabase.from('events').select('*').order('created_at', { ascending: false });
+        if (eventsData) {
+          const mappedEvents = eventsData.map((item: any) => ({
+            ...item,
+            imageUrl: item.image_url || item.imageUrl,
+            startDate: item.start_date || item.startDate,
+            endDate: item.end_date || item.endDate,
+            author: profileMap.get(item.author_id) || item.author || 'Bilinmiyor'
+          }));
+          setEvents(mappedEvents);
+        }
+      } catch (e) { console.error('Error fetching CMS data:', e); }
 
-      const { data: eventsData } = await supabase.from('events').select('*').order('date', { ascending: true });
-      if (eventsData) {
-        const mappedEvents = eventsData.map((item: any) => ({
-          ...item,
-          imageUrl: item.image_url || item.imageUrl,
-          startDate: item.start_date || item.startDate,
-          endDate: item.end_date || item.endDate,
-          author: profileMap.get(item.author_id) || item.author || 'Bilinmiyor'
-        }));
-        setEvents(mappedEvents);
-      }
+      try {
+        const { data: galleryData } = await supabase.from('gallery').select('*').order('created_at', { ascending: false });
+        if (galleryData) setGalleryItems(galleryData);
+      } catch (e) { console.error('Error fetching gallery:', e); }
 
-      const { data: donationsData } = await supabase.from('donations').select('*').order('date', { ascending: false });
-      if (donationsData) setDonations(donationsData);
+      try {
+        const { data: donationsData } = await supabase.from('donations').select('*').order('created_at', { ascending: false });
+        if (donationsData) setDonations(donationsData);
+      } catch (e) { console.error('Error fetching donations:', e); }
+
+      try {
+        const { data: adsData } = await supabase.from('ads').select('*');
+        if (adsData) {
+          adsData.forEach((ad: any) => {
+            if (ad.area === 'top') {
+              setArea1Ad(ad.url);
+              setArea1AdLink(ad.link);
+            } else if (ad.area === 'bottomA') {
+              setArea2AAd(ad.url);
+              setArea2AAdLink(ad.link);
+            } else if (ad.area === 'hero') {
+              setHeroAd(ad.url);
+              setHeroAdLink(ad.link);
+            }
+          });
+        }
+      } catch (e) { console.error('Error fetching ads:', e); }
 
     } catch (error) {
-      console.error('Error refreshing data:', error);
+      console.error('Critical internal error in refreshData:', error);
     }
   };
 
   useEffect(() => {
     const init = async () => {
+      console.log('--- APP INITIALIZED (Version v1.1) ---');
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         await fetchUserProfile(session.user.id);
@@ -136,9 +186,9 @@ const App: React.FC = () => {
     };
     init();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        await fetchUserProfile(session.user.id);
+        fetchUserProfile(session.user.id);
       } else {
         setCurrentUser(null);
       }
@@ -147,25 +197,37 @@ const App: React.FC = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Auto-close modal when user is logged in
+  useEffect(() => {
+    if (currentUser) {
+      setIsAuthOpen(false);
+    }
+  }, [currentUser]);
+
   // Handlers
-  const handleLogin = async (user: AnyUser) => {
+  const handleLogin = (user: AnyUser) => {
+    console.log('handleLogin success, user state:', user);
     setCurrentUser(user);
     setIsAuthOpen(false);
 
-    if (user.role === UserRole.ADMIN || (user.role as string) === 'admin') {
-      toast.success('Hoşgeldin Yönetici');
+    if (user.role === UserRole.ADMIN || (user.role as string).toUpperCase() === 'ADMIN') {
+      toast.success('Hoşgeldin Yönetici (v1.1)');
     } else {
-      toast.success(`Hoş geldin, ${user.name}!`);
+      toast.success(`Hoş geldin, ${user.name}! (v1.1)`);
     }
 
-    await refreshData();
+    // Refresh data in background without awaiting to keep UI responsive
+    refreshData();
+    
+    // Also trigger profile fetch to ensure role is correct from DB
+    fetchUserProfile(user.id);
   };
 
-  const handleRegister = async (user: AnyUser) => {
+  const handleRegister = (user: AnyUser) => {
     setCurrentUser(user);
     setIsAuthOpen(false);
     toast.success('Kayıt başarılı! Hoş geldiniz.');
-    await refreshData();
+    refreshData();
   };
 
   const handleLogout = async () => {
@@ -178,46 +240,96 @@ const App: React.FC = () => {
     }
   };
 
-  const handleUpdateAd = (area: 'top' | 'bottomA' | 'hero', url: string | null, link: string | null) => {
-    if (area === 'top') {
-      setArea1Ad(url);
-      setArea1AdLink(link);
-    } else if (area === 'bottomA') {
-      setArea2AAd(url);
-      setArea2AAdLink(link);
-    } else if (area === 'hero') {
-      setHeroAd(url);
-      setHeroAdLink(link);
+  const handleUpdateAd = async (area: 'top' | 'bottomA' | 'hero', url: string | null, link: string | null) => {
+    try {
+      if (area === 'top') {
+        setArea1Ad(url);
+        setArea1AdLink(link);
+      } else if (area === 'bottomA') {
+        setArea2AAd(url);
+        setArea2AAdLink(link);
+      } else if (area === 'hero') {
+        setHeroAd(url);
+        setHeroAdLink(link);
+      }
+
+      const { error } = await supabase.from('ads').upsert({
+        area,
+        url,
+        link,
+        updated_at: new Date().toISOString()
+      }).select();
+
+      if (error) throw error;
+      toast.success('Reklam alanı güncellendi ve kaydedildi.');
+    } catch (error: any) {
+      console.error('Error saving ad:', error);
+      toast.error(`Reklam güncellenemedi: ${error.message || 'Yetki Yok'}`);
     }
   };
 
   const handleAddNews = async (title: string, content: string, imageUrl?: string) => {
     try {
-      if (!currentUser) return;
+      if (!currentUser) {
+        toast.error('Lütfen önce giriş yapın.');
+        return;
+      }
 
-      const newNews = {
+      const newNews: any = {
         title,
         content,
-        image_url: imageUrl,
-        date: new Date().toLocaleDateString('tr-TR'),
-        author_id: currentUser.id,
+        image_url: imageUrl || '',
+        date: new Date().toISOString().split('T')[0],
       };
 
-      const { error } = await supabase.from('news').insert([newNews]);
-      if (error) throw error;
+      // Only add author_id if it's a valid UUID to prevent database errors
+      if (currentUser && currentUser.id && isValidUUID(currentUser.id)) {
+        newNews.author_id = currentUser.id;
+      }
 
-      toast.success('Haber başarıyla eklendi!');
+      const { data, error } = await supabase.from('news').insert([newNews]).select();
+      if (error) {
+        if (error.code === '42501') {
+          await supabase.auth.signOut();
+          setCurrentUser(null);
+          toast.error('Oturum süreniz dolmuş veya geçersiz. Lütfen tekrar giriş yapın.');
+          return;
+        }
+        throw error;
+      }
+
+      // Fotoğrafı galeriye de ekle
+      if (imageUrl) {
+        const galleryItem = {
+          type: 'image',
+          url: imageUrl,
+          caption: `Haber: ${title}`,
+          date: new Date().toISOString().split('T')[0],
+          category: 'Haber'
+        };
+        await supabase.from('gallery').insert([galleryItem]);
+      }
+
+      toast.success('Haber başarıyla eklendi! (v1.1)');
       await refreshData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding news:', error);
-      toast.error('Haber eklenirken bir hata oluştu.');
+      toast.error(`Haber eklenirken hata: ${error?.message || 'Bilinmeyen hata'}`);
     }
   };
 
   const handleDeleteNews = async (id: string) => {
     try {
       const { data, error } = await supabase.from('news').delete().eq('id', id).select();
-      if (error) throw error;
+      if (error) {
+        if (error.code === '42501') {
+          await supabase.auth.signOut();
+          setCurrentUser(null);
+          toast.error('Oturum süreniz dolmuş veya geçersiz. Lütfen tekrar giriş yapın.');
+          return;
+        }
+        throw error;
+      }
       if (!data || data.length === 0) throw new Error('Silinemedi (Yetki Yok)');
 
       toast.success('Haber silindi.');
@@ -232,24 +344,37 @@ const App: React.FC = () => {
     try {
       if (!currentUser) return;
 
-      const newEvent = {
+      const newEvent: any = {
         title,
         content,
         image_url: imageUrl,
-        date: new Date().toLocaleDateString('tr-TR'),
+        date: new Date().toISOString().split('T')[0],
         start_date: startDate,
         end_date: endDate,
-        author_id: currentUser.id
       };
 
-      const { error } = await supabase.from('events').insert([newEvent]);
-      if (error) throw error;
+      // Only add author_id if it's a valid UUID
+      if (currentUser && currentUser.id && isValidUUID(currentUser.id)) {
+        newEvent.author_id = currentUser.id;
+      }
+
+      const { error } = await supabase.from('events').insert([newEvent]).select();
+      if (error) {
+        if (error.code === '42501') {
+          await supabase.auth.signOut();
+          setCurrentUser(null);
+          toast.error('Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.');
+          return;
+        }
+        throw error;
+      }
 
       if (imageUrl) {
         const galleryItem = {
-          title: `Etkinlik: ${title}`,
-          imageUrl,
-          date: new Date().toLocaleDateString('tr-TR'),
+          type: 'image',
+          url: imageUrl,
+          caption: `Etkinlik: ${title}`,
+          date: new Date().toISOString().split('T')[0],
           category: 'Etkinlik'
         };
         await supabase.from('gallery').insert([galleryItem]);
@@ -257,9 +382,9 @@ const App: React.FC = () => {
 
       toast.success('Etkinlik başarıyla oluşturuldu!');
       await refreshData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding event:', error);
-      toast.error('Etkinlik oluşturulurken hata oluştu.');
+      toast.error(`Etkinlik oluşturulurken hata: ${error.message || 'Bilinmeyen hata'}`);
     }
   };
 
@@ -286,21 +411,22 @@ const App: React.FC = () => {
     }
   };
 
-  const handleAddGalleryItem = async (title: string, imageUrl: string, category: string) => {
+  const handleAddGalleryItem = async (type: 'image' | 'video', url: string, caption: string) => {
     try {
       const newItem = {
-        title,
-        imageUrl,
-        category,
-        date: new Date().toLocaleDateString('tr-TR')
+        type,
+        url,
+        caption,
+        date: new Date().toISOString().split('T')[0],
+        category: 'Genel'
       };
-      const { error } = await supabase.from('gallery').insert([newItem]);
+      const { error } = await supabase.from('gallery').insert([newItem]).select();
       if (error) throw error;
-      toast.success('Fotoğraf galeriye eklendi.');
+      toast.success('Medya galeriye eklendi.');
       await refreshData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding gallery item:', error);
-      toast.error('Galeri güncellenemedi.');
+      toast.error(`Galeri güncellenemedi: ${error.message || 'Bilinmeyen hata'}`);
     }
   };
 

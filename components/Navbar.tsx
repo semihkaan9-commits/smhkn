@@ -27,10 +27,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser, onLogout, onOpenAut
             if (onLogoClick) onLogoClick();
             scrollToSection('hero');
           }}>
-            <div className="bg-white p-1 rounded-full group-hover:scale-110 transition-transform shadow-sm">
-              <img src="/logo.png" alt="Balcılar Köyü" className="w-10 h-10 object-cover rounded-full" />
+            <div className="bg-white/10 p-1.5 rounded-full group-hover:scale-110 transition-transform shadow-sm flex items-center justify-center">
+              <img 
+                src="/logo.png" 
+                alt="Balcılar Köyü" 
+                className="w-10 h-10 md:w-12 md:h-12 object-cover rounded-full" 
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = 'https://ui-avatars.com/api/?name=BK&background=0D8B41&color=fff';
+                }}
+              />
             </div>
-            <span className="font-bold text-xl tracking-tight">Balcılar Köyü</span>
+            <span className="font-bold text-xl tracking-tight hidden sm:block">Balcılar Köyü</span>
           </div>
 
           {/* Desktop/Tablet Navigation - Centered */}
