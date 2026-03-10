@@ -249,13 +249,13 @@ const App: React.FC = () => {
         url,
         link,
         updated_at: new Date().toISOString()
-      });
+      }).select();
 
       if (error) throw error;
       toast.success('Reklam alanı güncellendi ve kaydedildi.');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving ad:', error);
-      toast.error('Reklam güncellendi ama kaydedilemedi (Yetki Yok).');
+      toast.error(`Reklam güncellenemedi: ${error.message || 'Yetki Yok'}`);
     }
   };
 
@@ -340,7 +340,7 @@ const App: React.FC = () => {
         author_id: currentUser.id,
       };
 
-      const { error } = await supabase.from('events').insert([newEvent]);
+      const { error } = await supabase.from('events').insert([newEvent]).select();
       if (error) {
         if (error.code === '42501') {
           await supabase.auth.signOut();
@@ -363,9 +363,9 @@ const App: React.FC = () => {
 
       toast.success('Etkinlik başarıyla oluşturuldu!');
       await refreshData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding event:', error);
-      toast.error('Etkinlik oluşturulurken hata oluştu.');
+      toast.error(`Etkinlik oluşturulurken hata: ${error.message || 'Bilinmeyen hata'}`);
     }
   };
 
@@ -400,13 +400,13 @@ const App: React.FC = () => {
         caption,
         date: new Date().toISOString().split('T')[0]
       };
-      const { error } = await supabase.from('gallery').insert([newItem]);
+      const { error } = await supabase.from('gallery').insert([newItem]).select();
       if (error) throw error;
       toast.success('Medya galeriye eklendi.');
       await refreshData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding gallery item:', error);
-      toast.error('Galeri güncellenemedi.');
+      toast.error(`Galeri güncellenemedi: ${error.message || 'Bilinmeyen hata'}`);
     }
   };
 
