@@ -193,14 +193,14 @@ export const WorkerSearch: React.FC<WorkerSearchProps> = ({
       )}
 
       {!searchTerm && (
-        <div className="w-full aspect-[4/1] md:h-80 bg-stone-200 rounded-2xl border-4 border-dashed border-stone-300 flex items-center justify-center animate-fade-in-up overflow-hidden group relative z-50">
+        <div className="w-full h-80 bg-stone-200 rounded-2xl border-4 border-dashed border-stone-300 flex items-center justify-center animate-fade-in-up overflow-hidden group">
           {topAd ? (
             topAdLink ? (
               <a href={topAdLink} target="_blank" rel="noopener noreferrer" className="w-full h-full block">
-                <img src={topAd} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" alt="Üst Reklam" />
+                <img src={topAd} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Üst Reklam" />
               </a>
             ) : (
-              <img src={topAd} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" alt="Üst Reklam" />
+              <img src={topAd} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Üst Reklam" />
             )
           ) : (
             <div className="text-center">
