@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { GalleryItem, UserRole, AnyUser } from '../types';
 import { Image as ImageIcon, Video, Plus, X, Upload, Link as LinkIcon, Trash2 } from 'lucide-react';
 import { DeleteModal } from './DeleteModal';
+import { EditableText } from './EditableText';
 
 interface GallerySectionProps {
   items: GalleryItem[];
@@ -73,9 +74,11 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ items, currentUs
           <div>
             <h2 className="text-3xl font-bold text-green-900 mb-2 flex items-center gap-2">
               <ImageIcon className="text-green-600" />
-              Fotoğraf ve Video Galerisi
+              <EditableText textKey="gallery.title" defaultText="Fotoğraf ve Video Galerisi" />
             </h2>
-            <p className="text-stone-600">Köyümüzden manzaralar ve anılar.</p>
+            <p className="text-stone-600">
+              <EditableText textKey="gallery.desc" defaultText="Köyümüzden manzaralar ve anılar." />
+            </p>
           </div>
 
           {isAdmin && (
@@ -235,7 +238,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ items, currentUs
               onClick={onShowAll}
               className="bg-green-100 hover:bg-green-200 text-green-800 px-8 py-3 rounded-full font-bold transition-colors shadow-sm flex items-center gap-2"
             >
-              Tüm Galeriye Bak ({items.length})
+              <EditableText textKey="gallery.show_all" defaultText="Tüm Galeriye Bak" /> ({items.length})
             </button>
           </div>
         )}

@@ -3,6 +3,7 @@ import { NewsItem, UserRole, AnyUser } from '../types';
 import { Calendar, UserCircle, Plus, Megaphone, Trash2, X, Upload, Link as LinkIcon, Pencil } from 'lucide-react';
 import { DeleteModal } from './DeleteModal';
 import { EditNewsModal } from './EditNewsModal';
+import { EditableText } from './EditableText';
 
 interface NewsSectionProps {
   news: NewsItem[];
@@ -82,9 +83,11 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, currentUser, onA
           <div>
             <h2 className="text-3xl font-bold text-green-900 mb-2 flex items-center gap-2">
               <Megaphone className="text-green-600" />
-              Köyden Haberler
+              <EditableText textKey="news.title" defaultText="Köyden Haberler" />
             </h2>
-            <p className="text-stone-600">Köyümüzdeki son gelişmeler ve duyurular.</p>
+            <p className="text-stone-600">
+              <EditableText textKey="news.desc" defaultText="Köyümüzdeki son gelişmeler ve duyurular." />
+            </p>
           </div>
 
           {isAdmin && (
@@ -263,7 +266,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, currentUser, onA
               onClick={onShowAll}
               className="bg-green-100 hover:bg-green-200 text-green-800 px-8 py-3 rounded-full font-bold transition-colors shadow-sm flex items-center gap-2"
             >
-              Tüm Haberleri Gör ({news.length})
+              <EditableText textKey="news.show_all" defaultText="Tüm Haberleri Gör" /> ({news.length})
             </button>
           </div>
         )}

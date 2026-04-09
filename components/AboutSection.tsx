@@ -1,5 +1,6 @@
 import React from 'react';
 import { Map, Info, User } from 'lucide-react';
+import { EditableText } from './EditableText';
 
 export const AboutSection: React.FC = () => {
   return (
@@ -11,12 +12,11 @@ export const AboutSection: React.FC = () => {
               <span className="text-green-600">
                 <Info />
               </span>
-              Köyümüz Hakkında
+              <EditableText textKey="about.title" defaultText="Köyümüz Hakkında" />
             </h2>
             <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
               <p>
-                Balcılar, doğanın tüm renklerini barındıran, tarihi dokusu ve misafirperver halkıyla bölgenin incisi konumundadır.
-                Tarım ve hayvancılığın modern yöntemlerle yapıldığı köyümüzde, geleneksel yaşam kültürü de yaşatılmaya devam etmektedir.
+                <EditableText textKey="about.desc" defaultText="Balcılar, doğanın tüm renklerini barındıran, tarihi dokusu ve misafirperver halkıyla bölgenin incisi konumundadır. Tarım ve hayvancılığın modern yöntemlerle yapıldığı köyümüzde, geleneksel yaşam kültürü de yaşatılmaya devam etmektedir." />
               </p>
 
               <div className="bg-green-50 p-6 rounded-xl border border-green-100">
@@ -25,8 +25,8 @@ export const AboutSection: React.FC = () => {
                     <User size={24} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900">Köy Muhtarı</h4>
-                    <p className="text-gray-600">Ahmet Yılmaz</p>
+                    <h4 className="font-bold text-gray-900"><EditableText textKey="about.muhtar_title" defaultText="Köy Muhtarı" /></h4>
+                    <p className="text-gray-600"><EditableText textKey="about.muhtar_name" defaultText="Ahmet Yılmaz" /></p>
                   </div>
                 </div>
 
@@ -35,14 +35,14 @@ export const AboutSection: React.FC = () => {
                     <Map size={24} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900">Konum</h4>
+                    <h4 className="font-bold text-gray-900"><EditableText textKey="about.location_title" defaultText="Konum" /></h4>
                     <a
                       href="https://www.google.com/maps/search/?api=1&query=Balcılar+Köyü+Taşkent+Konya"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-gray-600 hover:text-green-700 hover:underline transition-colors block"
                     >
-                      Taşkent/Konya
+                      <EditableText textKey="about.location_name" defaultText="Taşkent/Konya" />
                     </a>
                   </div>
                 </div>

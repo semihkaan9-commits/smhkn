@@ -1,4 +1,5 @@
 import React from 'react';
+import { EditableText } from './EditableText';
 
 interface HeroProps {
   heroAd?: string | null;
@@ -22,10 +23,10 @@ export const Hero: React.FC<HeroProps> = ({ heroAd, heroAdLink }) => {
 
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto flex-1 flex flex-col items-center justify-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-4 drop-shadow-2xl animate-fade-in-up text-white">
-          Balcılar'a Hoşgeldiniz
+          <EditableText textKey="hero.title" defaultText="Balcılar'a Hoşgeldiniz" />
         </h1>
         <p className="text-lg md:text-xl font-light mb-8 max-w-2xl mx-auto drop-shadow-lg text-green-50 animate-fade-in-up animate-delay-100">
-          Doğanın kalbinde, huzurun adresinde buluşuyoruz. Köyümüzün dijital meydanına adım atın.
+          <EditableText textKey="hero.subtitle" defaultText="Doğanın kalbinde, huzurun adresinde buluşuyoruz. Köyümüzün dijital meydanına adım atın." />
         </p>
 
         {/* Hero Ad Area - Responsive sizing: wider on mobile, small on desktop */}

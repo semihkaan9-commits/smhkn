@@ -1,5 +1,6 @@
 import React from 'react';
 import { TreePine } from 'lucide-react';
+import { EditableText } from './EditableText';
 
 interface FooterProps {
   currentUser: any;
@@ -14,10 +15,10 @@ export const Footer: React.FC<FooterProps> = ({ currentUser }) => {
             <div className="bg-white/10 p-1.5 rounded-full">
               <img src="/logo.png" alt="Balcılar Köyü" className="w-8 h-8 object-cover rounded-full" />
             </div>
-            <span className="text-xl font-bold">Balcılar Köyü</span>
-            <span className="hidden md:inline text-sm text-green-100/60 ml-4 border-l border-white/20 pl-4">Muhtarlık: 0555 055 55 55</span>
+            <span className="text-xl font-bold"><EditableText textKey="footer.title" defaultText="Balcılar Köyü" /></span>
+            <span className="hidden md:inline text-sm text-green-100/60 ml-4 border-l border-white/20 pl-4"><EditableText textKey="footer.contact" defaultText="Muhtarlık: 0555 055 55 55" /></span>
           </div>
-          <div className="md:hidden text-sm text-green-100/60 mt-2">Muhtarlık: 0555 055 55 55</div>
+          <div className="md:hidden text-sm text-green-100/60 mt-2"><EditableText textKey="footer.contact" defaultText="Muhtarlık: 0555 055 55 55" /></div>
           {/* Original copyright line removed from here */}
         </div>
       </div>
