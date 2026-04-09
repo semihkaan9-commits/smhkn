@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { UserRole, AnyUser } from '../types';
 import { LogOut, User, TreePine, Menu, X } from 'lucide-react';
 
@@ -61,6 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
+    <>
     <nav className="sticky top-0 z-50 bg-green-800/95 backdrop-blur-sm text-white shadow-lg transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -129,7 +131,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     </div>
                   ) : (
                     <button onClick={() => {
-                        if (dynamicSections.length >= 12) {
+                        if (dynamicSections.length >= 4) {
                           setShowLimitModal(true);
                         } else {
                           setIsAddingSection(true);
@@ -237,17 +239,18 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
       )}
+    </nav>
 
       {/* Limit Modal */}
-      {showLimitModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      {showLimitModal && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center animate-fade-in-up">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-200">
               <span className="text-red-600 text-4xl font-black">!</span>
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-3">Maksimum Ekleme Sınırına Ulaştınız!</h3>
             <p className="text-gray-600 mb-6 bg-gray-50 p-4 rounded-lg text-sm border border-gray-100">
-              Sitenin düzenini korumak amacıyla menüye <strong>en fazla 12 sekme</strong> eklenebilir. Yeni sekme eklemek istiyorsanız lütfen sayfanın aşağısından mevcut sekmelerden birini silin.
+              Sitenin düzenini korumak amacıyla menüye <strong>en fazla 4 sekme</strong> eklenebilir. Yeni sekme eklemek istiyorsanız lütfen sayfanın aşağısından mevcut sekmelerden birini silin.
             </p>
             <button
               onClick={() => setShowLimitModal(false)}
@@ -256,8 +259,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               Anladım
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
-    </nav>
+    </>
   );
 };
