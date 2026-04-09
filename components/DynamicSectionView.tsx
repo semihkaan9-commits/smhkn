@@ -27,6 +27,7 @@ export const DynamicSectionView: React.FC<DynamicSectionViewProps> = ({
   const [newImageUrl, setNewImageUrl] = useState('');
   const [uploadMode, setUploadMode] = useState<'URL' | 'FILE'>('URL');
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [deleteSectionModalOpen, setDeleteSectionModalOpen] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -75,17 +76,16 @@ export const DynamicSectionView: React.FC<DynamicSectionViewProps> = ({
     }
   };
 
-  const handleDeleteSection = async () => {
-    if (window.confirm('Bu sekmeyi SİLMEK istediğinize emin misiniz? İçindeki tüm gönderiler de silinir.')) {
-      try {
-        const { error } = await supabase.from('dynamic_sections').delete().eq('id', section.id);
-        if (error) throw error;
-        toast.success('Sekme başarıyla silindi.');
-        refreshData();
-      } catch (err) {
-        toast.error('Sekme silinirken hata oluştu');
-      }
+  const handleDeleteSectionConfirm = async () => {
+    try {
+      const { error } = await supabase.from('dynamic_sections').delete().eq('id', section.id);
+      if (error) throw error;
+      toast.success('Sekme başarıyla silindi.');
+      refreshData();
+    } catch (err) {
+      toast.error('Sekme silinirken hata oluştu');
     }
+    setDeleteSectionModalOpen(false);
   };
 
   return (
@@ -226,7 +226,7 @@ export const DynamicSectionView: React.FC<DynamicSectionViewProps> = ({
         {isAdmin && (
            <div className="text-center mt-12 pt-6 border-t border-gray-200 border-dashed">
               <button 
-                onClick={handleDeleteSection}
+                onClick={() => setDeleteSectionModalOpen(true)}
                 className="text-red-500 text-sm font-medium px-4 py-2 hover:bg-red-50 rounded transition-colors"
                 title="Tüm sekmeyi ve içeriklerini kaldır"
               >
@@ -245,6 +245,15 @@ export const DynamicSectionView: React.FC<DynamicSectionViewProps> = ({
           }}
           title="İçerik Silinsin Mi?"
           description="Bu içerik kalıcı olarak kaldırılacaktır."
+        />
+
+        {/* Delete Confirmation Modal for Section */}
+        <DeleteModal
+          isOpen={deleteSectionModalOpen}
+          onClose={() => setDeleteSectionModalOpen(false)}
+          onConfirm={handleDeleteSectionConfirm}
+          title="Sekme Silinsin Mi?"
+          description={`Bu sekmeyi SİLMEK istediğinize emin misiniz? (İçindeki tüm gönderiler de kalıcı olarak silinir.)`}
         />
       </div>
     </div>
