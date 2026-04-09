@@ -129,7 +129,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     </div>
                   ) : (
                     <button onClick={() => {
-                        if (dynamicSections.length >= 12) {
+                        if (dynamicSections.length >= 6) {
                           setShowLimitModal(true);
                         } else {
                           setIsAddingSection(true);
@@ -247,7 +247,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-3">Maksimum Ekleme Sınırına Ulaştınız!</h3>
             <p className="text-gray-600 mb-6 bg-gray-50 p-4 rounded-lg text-sm border border-gray-100">
-              Sitenin düzenini korumak amacıyla menüye <strong>en fazla 12 sekme</strong> eklenebilir. Yeni sekme eklemek istiyorsanız lütfen sayfanın aşağısından mevcut sekmelerden birini silin.
+              Sitenin düzenini korumak amacıyla menüye <strong>en fazla 6 sekme</strong> eklenebilir. Yeni sekme eklemek istiyorsanız lütfen sayfanın aşağısından mevcut sekmelerden birini silin.
             </p>
             <button
               onClick={() => setShowLimitModal(false)}
