@@ -9,10 +9,12 @@ CREATE TABLE IF NOT EXISTS page_content (
 
 ALTER TABLE page_content ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Herkes görebilir page_content" ON page_content;
 CREATE POLICY "Herkes görebilir page_content" 
 ON page_content FOR SELECT 
 USING (true);
 
+DROP POLICY IF EXISTS "Sadece admin ekleyebilir page_content" ON page_content;
 CREATE POLICY "Sadece admin ekleyebilir page_content" 
 ON page_content FOR INSERT 
 WITH CHECK (
@@ -23,6 +25,7 @@ WITH CHECK (
   )
 );
 
+DROP POLICY IF EXISTS "Sadece admin silebilir page_content" ON page_content;
 CREATE POLICY "Sadece admin silebilir page_content" 
 ON page_content FOR DELETE 
 USING (
@@ -33,6 +36,7 @@ USING (
   )
 );
 
+DROP POLICY IF EXISTS "Sadece admin güncelleyebilir page_content" ON page_content;
 CREATE POLICY "Sadece admin güncelleyebilir page_content" 
 ON page_content FOR UPDATE 
 USING (
@@ -62,10 +66,12 @@ CREATE TABLE IF NOT EXISTS dynamic_sections (
 
 ALTER TABLE dynamic_sections ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Herkes görebilir dynamic_sections" ON dynamic_sections;
 CREATE POLICY "Herkes görebilir dynamic_sections" 
 ON dynamic_sections FOR SELECT 
 USING (true);
 
+DROP POLICY IF EXISTS "Sadece admin insert yapabilir dynamic_sections" ON dynamic_sections;
 CREATE POLICY "Sadece admin insert yapabilir dynamic_sections" 
 ON dynamic_sections FOR INSERT 
 WITH CHECK (
@@ -76,6 +82,7 @@ WITH CHECK (
   )
 );
 
+DROP POLICY IF EXISTS "Sadece admin silebilir dynamic_sections" ON dynamic_sections;
 CREATE POLICY "Sadece admin silebilir dynamic_sections" 
 ON dynamic_sections FOR DELETE 
 USING (
@@ -86,6 +93,7 @@ USING (
   )
 );
 
+DROP POLICY IF EXISTS "Sadece admin güncelleyebilir dynamic_sections" ON dynamic_sections;
 CREATE POLICY "Sadece admin güncelleyebilir dynamic_sections" 
 ON dynamic_sections FOR UPDATE 
 USING (
