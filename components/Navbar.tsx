@@ -207,6 +207,42 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             ))}
 
+            {/* Admin Add Tab for Mobile */}
+            {isAdmin && (
+              <div className="mt-2 px-3 pb-2">
+                {isAddingSection ? (
+                  <div className="flex flex-col items-stretch gap-2 bg-white/10 p-3 rounded-md border border-green-500/50">
+                    <input 
+                      type="text" 
+                      value={newSectionTitle}
+                      onChange={e => setNewSectionTitle(e.target.value)}
+                      placeholder="Sekme Adı..."
+                      className="text-black text-sm px-3 py-2 rounded outline-none focus:ring-2 focus:ring-green-400 w-full"
+                      autoFocus
+                    />
+                    <div className="flex gap-2">
+                       <button onClick={handleAddSection} className="flex-1 bg-green-500 text-white rounded px-3 py-2 text-sm font-bold hover:bg-green-600 shadow-[0_0_10px_rgba(0,0,0,0.2)]">Ekle</button>
+                       <button onClick={() => setIsAddingSection(false)} className="flex-1 bg-white text-green-900 rounded px-3 py-2 text-sm font-bold hover:bg-gray-100 shadow-[0_0_10px_rgba(0,0,0,0.2)]">İptal</button>
+                    </div>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => {
+                        if (dynamicSections.length >= 4) {
+                          setShowLimitModal(true);
+                          setIsMobileMenuOpen(false);
+                        } else {
+                          setIsAddingSection(true);
+                        }
+                    }} 
+                    className="w-full border-2 border-dashed border-green-400/50 hover:border-green-300 hover:bg-green-800 transition-colors rounded-lg py-3 flex items-center justify-center gap-2 text-green-100 font-medium"
+                  >
+                    <span>Yeni Sekme Ekle</span> <span className="text-xl font-bold">+</span>
+                  </button>
+                )}
+              </div>
+            )}
+
             <div className="border-t border-green-800 my-2 pt-2">
               {currentUser ? (
                 <div className="flex items-center justify-between px-3 py-2">
