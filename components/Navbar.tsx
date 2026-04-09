@@ -28,6 +28,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAddingSection, setIsAddingSection] = useState(false);
   const [newSectionTitle, setNewSectionTitle] = useState('');
+  const [showLimitModal, setShowLimitModal] = useState(false);
 
   const handleMobileNav = (id: string) => {
     scrollToSection(id);
@@ -127,7 +128,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <button onClick={() => setIsAddingSection(false)} className="bg-gray-200 text-gray-700 rounded px-2 py-1 text-xs font-bold hover:bg-gray-300">İptal</button>
                     </div>
                   ) : (
-                    <button onClick={() => setIsAddingSection(true)} title="Yeni Sekme Ekle" className="bg-green-700/50 hover:bg-green-600 text-white border border-green-400 rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg transition-transform hover:scale-110 shadow">
+                    <button onClick={() => {
+                        if (dynamicSections.length >= 12) {
+                          setShowLimitModal(true);
+                        } else {
+                          setIsAddingSection(true);
+                        }
+                      }} 
+                      title="Yeni Sekme Ekle" className="bg-green-700/50 hover:bg-green-600 text-white border border-green-400 rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg transition-transform hover:scale-110 shadow">
                       +
                     </button>
                   )}
@@ -226,6 +234,27 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Limit Modal */}
+      {showLimitModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center animate-fade-in-up">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-200">
+              <span className="text-red-600 text-4xl font-black">!</span>
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">Maksimum Ekleme Sınırına Ulaştınız!</h3>
+            <p className="text-gray-600 mb-6 bg-gray-50 p-4 rounded-lg text-sm border border-gray-100">
+              Sitenin düzenini korumak amacıyla menüye <strong>en fazla 12 sekme</strong> eklenebilir. Yeni sekme eklemek istiyorsanız lütfen sayfanın aşağısından mevcut sekmelerden birini silin.
+            </p>
+            <button
+              onClick={() => setShowLimitModal(false)}
+              className="bg-green-600 hover:bg-green-700 text-white w-full py-3 rounded-lg font-bold transition-all shadow-md transform hover:scale-105"
+            >
+              Anladım
+            </button>
           </div>
         </div>
       )}
