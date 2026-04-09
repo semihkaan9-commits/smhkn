@@ -3,6 +3,7 @@ import { Villager, UserRole, AnyUser } from '../types';
 import { Search, Phone, MapPin, BadgeCheck, Navigation, Star, Trash2, Pencil } from 'lucide-react';
 import { DeleteModal } from './DeleteModal';
 import { EditVillagerModal } from './EditVillagerModal';
+import { EditableText } from './EditableText';
 
 interface WorkerSearchProps {
   villagers: Villager[];
@@ -62,11 +63,15 @@ export const WorkerSearch: React.FC<WorkerSearchProps> = ({
   return (
     <section id="workers" className="py-16 px-4 max-w-7xl mx-auto">
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-green-900 mb-4">Köy Rehberi & İş İlanları</h2>
+        <h2 className="text-3xl font-bold text-green-900 mb-4">
+          <EditableText textKey="workers.title" defaultText="Köy Rehberi & İş İlanları" />
+        </h2>
         <p className="text-stone-600 max-w-xl mx-auto">
-          Köyümüzde yapılacak bir işiniz mi var? Aradığınız ustayı veya yardımcıyı buradan kolayca bulabilirsiniz.
+          <EditableText as="span" textKey="workers.desc" defaultText="Köyümüzde yapılacak bir işiniz mi var? Aradığınız ustayı veya yardımcıyı buradan kolayca bulabilirsiniz." />
           <br />
-          <span className="text-xs text-green-600 font-medium">Not: En yüksek puanlı üyeler en üstte listelenir.</span>
+          <span className="text-xs text-green-600 font-medium">
+            <EditableText textKey="workers.note" defaultText="Not: En yüksek puanlı üyeler en üstte listelenir." />
+          </span>
         </p>
       </div>
 

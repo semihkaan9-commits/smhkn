@@ -4,6 +4,7 @@ import { Calendar, UserCircle, Plus, Megaphone, Trash2, X, Upload, Link as LinkI
 import { DeleteModal } from './DeleteModal';
 import { toast } from 'react-hot-toast';
 import { EditEventModal } from './EditEventModal';
+import { EditableText } from './EditableText';
 
 interface EventSectionProps {
     events: EventItem[];
@@ -120,9 +121,11 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
                     <div>
                         <h2 className="text-3xl font-bold text-green-900 mb-2 flex items-center gap-2">
                             <Calendar className="text-green-600" />
-                            Etkinlik Duyuruları
+                            <EditableText textKey="events.title" defaultText="Etkinlik Duyuruları" />
                         </h2>
-                        <p className="text-stone-600">Köyümüzdeki yaklaşan etkinlikler ve organizasyonlar.</p>
+                        <p className="text-stone-600">
+                            <EditableText textKey="events.desc" defaultText="Köyümüzdeki yaklaşan etkinlikler ve organizasyonlar." />
+                        </p>
                     </div>
 
                     {isAdmin && (
@@ -335,7 +338,7 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
                             onClick={onShowAll}
                             className="bg-green-100 hover:bg-green-200 text-green-800 px-8 py-3 rounded-full font-bold transition-colors shadow-sm flex items-center gap-2"
                         >
-                            Tüm Etkinlikleri Gör ({events.length})
+                            <EditableText textKey="events.show_all" defaultText="Tüm Etkinlikleri Gör" /> ({events.length})
                         </button>
                     </div>
                 )}

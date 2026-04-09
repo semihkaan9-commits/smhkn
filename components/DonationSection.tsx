@@ -1,5 +1,6 @@
 import React from 'react';
 import { CreditCard, Landmark } from 'lucide-react';
+import { EditableText } from './EditableText';
 
 interface DonationSectionProps {
     bottomAAd?: string | null;
@@ -16,9 +17,11 @@ export const DonationSection: React.FC<DonationSectionProps> = ({
                 <div className="text-center mb-10">
                     <h2 className="text-3xl font-bold text-green-900 mb-2 flex items-center justify-center gap-2">
                         <Landmark className="text-green-600" />
-                        Bağış Bilgileri
+                        <EditableText textKey="donations.title" defaultText="Bağış Bilgileri" />
                     </h2>
-                    <p className="text-stone-600">Köyümüzün ihtiyaçları ve gelişimi için desteklerinizi bekleriz.</p>
+                    <p className="text-stone-600">
+                        <EditableText textKey="donations.desc" defaultText="Köyümüzün ihtiyaçları ve gelişimi için desteklerinizi bekleriz." />
+                    </p>
                 </div>
 
                 <div className="max-w-4xl mx-auto bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-400 p-6 rounded-lg shadow-sm mb-10">
@@ -27,10 +30,10 @@ export const DonationSection: React.FC<DonationSectionProps> = ({
                             <CreditCard size={32} />
                         </div>
                         <div className="w-full">
-                            <h3 className="text-lg font-bold text-gray-800 mb-1">Bağış Hesabı Bilgileri</h3>
+                            <h3 className="text-lg font-bold text-gray-800 mb-1"><EditableText textKey="donations.box_title" defaultText="Bağış Hesabı Bilgileri" /></h3>
                             <div className="bg-white/60 p-3 rounded-md mb-2 font-mono text-gray-700 border border-yellow-100">
-                                <p className="font-bold">Alıcı: Alata-Balcılar Yardımlaşma ve Dayanışma Derneği</p>
-                                <p>IBAN: TR12 0000 0000 0000 0000 0000 00</p>
+                                <p className="font-bold"><EditableText textKey="donations.recipient" defaultText="Alıcı: Alata-Balcılar Yardımlaşma ve Dayanışma Derneği" /></p>
+                                <p><EditableText textKey="donations.iban" defaultText="IBAN: TR12 0000 0000 0000 0000 0000 00" /></p>
                             </div>
                         </div>
                     </div>

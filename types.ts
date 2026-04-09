@@ -60,4 +60,11 @@ export interface Donation {
   date: string;
 }
 
+export interface DynamicSection {
+  id: string;
+  title: string;
+  content: string;
+  order_index: number;
+}
+
 export type AnyUser = User | Villager;

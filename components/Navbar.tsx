@@ -2,20 +2,61 @@ import React, { useState } from 'react';
 import { UserRole, AnyUser } from '../types';
 import { LogOut, User, TreePine, Menu, X } from 'lucide-react';
 
+import { EditableText } from './EditableText';
+import { supabase } from '../lib/supabase';
+import { toast } from 'react-hot-toast';
+
 interface NavbarProps {
   currentUser: AnyUser | null;
   onLogout: () => void;
   onOpenAuth: () => void;
   scrollToSection: (id: string) => void;
   onLogoClick?: () => void;
+  dynamicSections?: any[];
+  refreshData?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ currentUser, onLogout, onOpenAuth, scrollToSection, onLogoClick }) => {
+export const Navbar: React.FC<NavbarProps> = ({ 
+  currentUser, 
+  onLogout, 
+  onOpenAuth, 
+  scrollToSection, 
+  onLogoClick,
+  dynamicSections = [],
+  refreshData
+}) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAddingSection, setIsAddingSection] = useState(false);
+  const [newSectionTitle, setNewSectionTitle] = useState('');
 
   const handleMobileNav = (id: string) => {
     scrollToSection(id);
     setIsMobileMenuOpen(false);
+  };
+
+  const isAdmin = currentUser?.role === UserRole.ADMIN || (currentUser?.role as string)?.toUpperCase() === 'ADMIN';
+
+  const handleAddSection = async () => {
+    if (!newSectionTitle.trim()) return;
+    try {
+      const newId = crypto.randomUUID();
+      const { error } = await supabase.from('dynamic_sections').insert([{
+        id: newId,
+        title: newSectionTitle,
+        content: '<p>Yeni sekme içeriği buraya gelecek...</p>',
+        order_index: dynamicSections.length
+      }]);
+      if (error) {
+        console.error("Insert error:", error);
+        throw error;
+      }
+      toast.success('Yeni sekme eklendi!');
+      setNewSectionTitle('');
+      setIsAddingSection(false);
+      if (refreshData) refreshData();
+    } catch (err: any) {
+      toast.error(`Hata oluştu: ${err.message || 'Bilinmeyen hata'}`);
+    }
   };
 
   return (
@@ -44,12 +85,54 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser, onLogout, onOpenAut
           {/* Desktop/Tablet Navigation - Centered */}
           <div className="hidden md:block flex-1 mx-4">
             <div className="flex items-center justify-center space-x-1 lg:space-x-4">
-              <button onClick={() => scrollToSection('workers')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">Köy Rehberi</button>
-              <button onClick={() => scrollToSection('news')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">Haberler</button>
-              <button onClick={() => scrollToSection('events')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">Etkinlikler</button>
-              <button onClick={() => scrollToSection('gallery')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">Galeri</button>
-              <button onClick={() => scrollToSection('donations')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">Bağış</button>
-              <button onClick={() => scrollToSection('about')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">Hakkında</button>
+              <button onClick={() => scrollToSection('workers')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                <EditableText textKey="nav.workers" defaultText="Köy Rehberi" />
+              </button>
+              <button onClick={() => scrollToSection('news')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                <EditableText textKey="nav.news" defaultText="Haberler" />
+              </button>
+              <button onClick={() => scrollToSection('events')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                <EditableText textKey="nav.events" defaultText="Etkinlikler" />
+              </button>
+              <button onClick={() => scrollToSection('gallery')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                <EditableText textKey="nav.gallery" defaultText="Galeri" />
+              </button>
+              <button onClick={() => scrollToSection('donations')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                <EditableText textKey="nav.donations" defaultText="Bağış" />
+              </button>
+              <button onClick={() => scrollToSection('about')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                <EditableText textKey="nav.about" defaultText="Hakkında" />
+              </button>
+              
+              {dynamicSections.map(ds => (
+                <button key={ds.id} onClick={() => scrollToSection(`ds-${ds.id}`)} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                  <EditableText textKey={`ds.title.${ds.id}`} defaultText={ds.title} />
+                </button>
+              ))}
+
+              {isAdmin && (
+                <div className="relative flex items-center ml-2">
+                  {isAddingSection ? (
+                    <div className="flex items-center gap-2 bg-white p-1 rounded-md shadow-lg border border-green-300">
+                      <input 
+                        type="text" 
+                        value={newSectionTitle}
+                        onChange={e => setNewSectionTitle(e.target.value)}
+                        placeholder="Sekme Adı..."
+                        className="text-black text-sm px-2 py-1 rounded w-32 outline-none focus:ring-2 focus:ring-green-500"
+                        autoFocus
+                        onKeyDown={e => { if (e.key === 'Enter') handleAddSection(); if (e.key === 'Escape') setIsAddingSection(false); }}
+                      />
+                      <button onClick={handleAddSection} className="bg-green-600 text-white rounded px-2 py-1 text-xs font-bold hover:bg-green-700">Ekle</button>
+                      <button onClick={() => setIsAddingSection(false)} className="bg-gray-200 text-gray-700 rounded px-2 py-1 text-xs font-bold hover:bg-gray-300">İptal</button>
+                    </div>
+                  ) : (
+                    <button onClick={() => setIsAddingSection(true)} title="Yeni Sekme Ekle" className="bg-green-700/50 hover:bg-green-600 text-white border border-green-400 rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg transition-transform hover:scale-110 shadow">
+                      +
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -101,12 +184,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser, onLogout, onOpenAut
       {isMobileMenuOpen && (
         <div className="md:hidden bg-green-900 border-t border-green-700 absolute w-full left-0 animate-fade-in-up shadow-2xl">
           <div className="px-4 pt-2 pb-6 space-y-1">
-            <button onClick={() => handleMobileNav('workers')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800">Köy Rehberi</button>
-            <button onClick={() => handleMobileNav('news')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800">Haberler</button>
-            <button onClick={() => handleMobileNav('events')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800">Etkinlikler</button>
-            <button onClick={() => handleMobileNav('gallery')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800">Galeri</button>
-            <button onClick={() => handleMobileNav('donations')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800">Bağış</button>
-            <button onClick={() => handleMobileNav('about')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800">Hakkında</button>
+            <button onClick={() => handleMobileNav('workers')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800"><EditableText textKey="nav.workers" defaultText="Köy Rehberi" /></button>
+            <button onClick={() => handleMobileNav('news')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800"><EditableText textKey="nav.news" defaultText="Haberler" /></button>
+            <button onClick={() => handleMobileNav('events')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800"><EditableText textKey="nav.events" defaultText="Etkinlikler" /></button>
+            <button onClick={() => handleMobileNav('gallery')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800"><EditableText textKey="nav.gallery" defaultText="Galeri" /></button>
+            <button onClick={() => handleMobileNav('donations')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800"><EditableText textKey="nav.donations" defaultText="Bağış" /></button>
+            <button onClick={() => handleMobileNav('about')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800"><EditableText textKey="nav.about" defaultText="Hakkında" /></button>
+
+            {dynamicSections.map(ds => (
+              <button key={`mobile-ds-${ds.id}`} onClick={() => handleMobileNav(`ds-${ds.id}`)} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800">
+                <EditableText textKey={`ds.title.${ds.id}`} defaultText={ds.title} />
+              </button>
+            ))}
 
             <div className="border-t border-green-800 my-2 pt-2">
               {currentUser ? (

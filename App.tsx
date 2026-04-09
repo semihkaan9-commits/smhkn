@@ -11,7 +11,8 @@ import { AuthModal } from './components/AuthModal';
 import { InstallPWA } from './components/InstallPWA';
 import { EventSection } from './components/EventSection';
 import { AdManager } from './components/AdManager';
-import { Villager, NewsItem, GalleryItem, Donation, UserRole, AnyUser, EventItem } from './types';
+import { ContentContext, EditableText } from './components/EditableText';
+import { Villager, NewsItem, GalleryItem, Donation, UserRole, AnyUser, EventItem, DynamicSection } from './types';
 import { supabase } from './lib/supabase';
 
 import { Toaster, toast } from 'react-hot-toast';
@@ -43,6 +44,10 @@ const App: React.FC = () => {
 
   // View State
   const [currentView, setCurrentView] = useState<'home' | 'all-news' | 'all-events' | 'all-gallery'>('home');
+
+  // Dynamic Content & Sections
+  const [pageContent, setPageContent] = useState<Record<string, string>>({});
+  const [dynamicSections, setDynamicSections] = useState<DynamicSection[]>([]);
 
   // Helper to fetch user profile
   const fetchUserProfile = async (userId: string) => {
@@ -169,6 +174,20 @@ const App: React.FC = () => {
           });
         }
       } catch (e) { console.error('Error fetching ads:', e); }
+
+      try {
+        const { data: contentData } = await supabase.from('page_content').select('*');
+        if (contentData) {
+          setPageContent(Object.fromEntries(contentData.map((d: any) => [d.key, d.value])));
+        }
+      } catch (e) { console.error('Error fetching content:', e); }
+
+      try {
+        const { data: sectionsData } = await supabase.from('dynamic_sections').select('*').order('order_index');
+        if (sectionsData) {
+          setDynamicSections(sectionsData);
+        }
+      } catch (e) { console.error('Error fetching dynamic sections:', e); }
 
     } catch (error) {
       console.error('Critical internal error in refreshData:', error);
@@ -621,8 +640,23 @@ const App: React.FC = () => {
     }
   };
 
+  const updatePageContent = async (key: string, value: string) => {
+    try {
+      setPageContent(prev => ({ ...prev, [key]: value }));
+      const { error } = await supabase
+        .from('page_content')
+        .upsert({ key, value, updated_at: new Date().toISOString() });
+      if (error) throw error;
+    } catch (err: any) {
+      console.error("Error saving content:", err);
+      toast.error("Metin güncellenemedi.");
+    }
+  };
+
+  const isAdminUser = currentUser?.role === UserRole.ADMIN || (currentUser?.role as string)?.toUpperCase() === 'ADMIN';
 
   return (
+    <ContentContext.Provider value={{ content: pageContent, updateContent: updatePageContent, isAdmin: isAdminUser }}>
     <div className="min-h-screen flex flex-col">
       <Toaster position="top-center" />
       <InstallPWA />
@@ -632,6 +666,8 @@ const App: React.FC = () => {
         onOpenAuth={() => setIsAuthOpen(true)}
         scrollToSection={scrollToSection}
         onLogoClick={handleLogoClick}
+        dynamicSections={dynamicSections}
+        refreshData={refreshData}
       />
 
       {/* Admin Reklam Paneli */}
@@ -681,6 +717,38 @@ const App: React.FC = () => {
               limit={3}
               onShowAll={() => setCurrentView('all-events')}
             />
+
+            {/* Render dynamic sections right above gallery section */}
+            {currentView === 'home' && dynamicSections.map((ds) => (
+              <div id={`ds-${ds.id}`} key={ds.id} className="py-16 bg-white shrink">
+                <div className="max-w-7xl mx-auto px-4">
+                  <h2 className="text-3xl font-bold text-center text-green-800 mb-8">
+                    <EditableText textKey={`ds.title.${ds.id}`} defaultText={ds.title} />
+                  </h2>
+                  <div className="prose max-w-none text-gray-700 relative">
+                     <EditableText as="div" textKey={`ds.content.${ds.id}`} defaultText={ds.content || "Yeni sekme içeriği buraya gelecek..."} />
+                  </div>
+                  {isAdminUser && (
+                    <div className="text-center mt-4">
+                      <button 
+                        onClick={async () => {
+                          if (window.confirm('Bu sekmeyi silmek istediğinize emin misiniz?')) {
+                            const { error } = await supabase.from('dynamic_sections').delete().eq('id', ds.id);
+                            if (!error) {
+                              toast.success('Sekme silindi.');
+                              refreshData();
+                            }
+                          }
+                        }}
+                        className="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600"
+                      >
+                        Sekmeyi Sil
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
 
             <GallerySection
               items={galleryItems}
@@ -763,6 +831,7 @@ const App: React.FC = () => {
         guests={guests}
       />
     </div>
+    </ContentContext.Provider>
   );
 };
 
