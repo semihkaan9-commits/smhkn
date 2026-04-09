@@ -12,7 +12,8 @@ import { InstallPWA } from './components/InstallPWA';
 import { EventSection } from './components/EventSection';
 import { AdManager } from './components/AdManager';
 import { ContentContext, EditableText } from './components/EditableText';
-import { Villager, NewsItem, GalleryItem, Donation, UserRole, AnyUser, EventItem, DynamicSection } from './types';
+import { Villager, NewsItem, GalleryItem, Donation, UserRole, AnyUser, EventItem, DynamicSection, DynamicItem } from './types';
+import { DynamicSectionView } from './components/DynamicSectionView';
 import { supabase } from './lib/supabase';
 
 import { Toaster, toast } from 'react-hot-toast';
@@ -48,6 +49,7 @@ const App: React.FC = () => {
   // Dynamic Content & Sections
   const [pageContent, setPageContent] = useState<Record<string, string>>({});
   const [dynamicSections, setDynamicSections] = useState<DynamicSection[]>([]);
+  const [dynamicItems, setDynamicItems] = useState<DynamicItem[]>([]);
 
   // Helper to fetch user profile
   const fetchUserProfile = async (userId: string) => {
@@ -187,7 +189,12 @@ const App: React.FC = () => {
         if (sectionsData) {
           setDynamicSections(sectionsData);
         }
-      } catch (e) { console.error('Error fetching dynamic sections:', e); }
+        
+        const { data: itemsData } = await supabase.from('dynamic_items').select('*').order('created_at', { ascending: false });
+        if (itemsData) {
+          setDynamicItems(itemsData);
+        }
+      } catch (e) { console.error('Error fetching dynamic sections/items:', e); }
 
     } catch (error) {
       console.error('Critical internal error in refreshData:', error);
@@ -720,34 +727,13 @@ const App: React.FC = () => {
 
             {/* Render dynamic sections right above gallery section */}
             {currentView === 'home' && dynamicSections.map((ds) => (
-              <div id={`ds-${ds.id}`} key={ds.id} className="py-16 bg-white shrink">
-                <div className="max-w-7xl mx-auto px-4">
-                  <h2 className="text-3xl font-bold text-center text-green-800 mb-8">
-                    <EditableText textKey={`ds.title.${ds.id}`} defaultText={ds.title} />
-                  </h2>
-                  <div className="prose max-w-none text-gray-700 relative">
-                     <EditableText as="div" textKey={`ds.content.${ds.id}`} defaultText={ds.content || "Yeni sekme içeriği buraya gelecek..."} />
-                  </div>
-                  {isAdminUser && (
-                    <div className="text-center mt-4">
-                      <button 
-                        onClick={async () => {
-                          if (window.confirm('Bu sekmeyi silmek istediğinize emin misiniz?')) {
-                            const { error } = await supabase.from('dynamic_sections').delete().eq('id', ds.id);
-                            if (!error) {
-                              toast.success('Sekme silindi.');
-                              refreshData();
-                            }
-                          }
-                        }}
-                        className="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600"
-                      >
-                        Sekmeyi Sil
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <DynamicSectionView 
+                key={ds.id} 
+                section={ds} 
+                items={dynamicItems.filter(item => item.section_id === ds.id)} 
+                currentUser={currentUser}
+                refreshData={refreshData}
+              />
             ))}
 
             <GallerySection
