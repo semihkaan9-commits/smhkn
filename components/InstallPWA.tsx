@@ -1,139 +1,119 @@
 import React, { useState, useEffect } from 'react';
-import { Download, Share, PlusSquare, X, MonitorDown } from 'lucide-react';
+import { MonitorDown, X, Share } from 'lucide-react';
 
-interface BeforeInstallPromptEvent extends Event {
-    prompt: () => Promise<void>;
-    userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-}
-
-export const InstallPWA: React.FC = () => {
-    const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-    const [showIOSModal, setShowIOSModal] = useState(false);
-    const [isIOS, setIsIOS] = useState(false);
+export const InstallPWA = () => {
+    const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
     const [isStandalone, setIsStandalone] = useState(false);
-    const [isVisible, setIsVisible] = useState(false);
+    const [isIOS, setIsIOS] = useState(false);
+    const [showIOSModal, setShowIOSModal] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        // Check if running in standalone mode (already installed)
-        const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches ||
-            (window.navigator as any).standalone ||
-            document.referrer.includes('android-app://');
+        setMounted(true);
 
-        setIsStandalone(isInStandaloneMode);
+        const checkStandalone = () => {
+            const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                          (window.navigator as any).standalone === true || 
+                          document.referrer.includes('android-app://');
+            setIsStandalone(isPWA);
+            return isPWA;
+        };
 
-        // Detect iOS
-        const userAgent = window.navigator.userAgent.toLowerCase();
-        const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
-        setIsIOS(isIosDevice);
+        checkStandalone();
 
-        // If already installed, don't show anything
-        if (isInStandaloneMode) return;
+        const ua = window.navigator.userAgent.toLowerCase();
+        const isIOSDevice = /iphone|ipad|ipod/.test(ua);
+        setIsIOS(isIOSDevice);
 
-        // Show button after a delay to not be intrusive
-        const timer = setTimeout(() => {
-            setIsVisible(true);
-        }, 2000);
-
-        // Android: Listen for beforeinstallprompt
-        const handleBeforeInstallPrompt = (e: Event) => {
+        const handleBeforeInstallPrompt = (e: any) => {
             e.preventDefault();
-            setDeferredPrompt(e as BeforeInstallPromptEvent);
-            setIsVisible(true);
+            setDeferredPrompt(e);
         };
 
         window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+        window.matchMedia('(display-mode: standalone)').addEventListener('change', checkStandalone);
 
         return () => {
-            clearTimeout(timer);
             window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+            window.matchMedia('(display-mode: standalone)').removeEventListener('change', checkStandalone);
         };
     }, []);
 
     const handleInstallClick = async () => {
         if (isIOS) {
-            // iOS doesn't support programmatic install, show instructions
             setShowIOSModal(true);
-        } else if (deferredPrompt) {
-            // Android/Chrome: Trigger the install prompt
+            return;
+        }
+
+        if (deferredPrompt) {
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
             if (outcome === 'accepted') {
                 setDeferredPrompt(null);
-                setIsVisible(false);
             }
         } else {
-            // Fallback for desktop or non-supported browsers
-            alert("Uygulamayı yüklemek için tarayıcınızın menüsünden 'Ana Ekrana Ekle' veya 'Uygulamayı Yükle' seçeneğini kullanabilirsiniz.");
+            // Fallback for Android/Chrome if prompt isn't ready
+            alert("Lütfen tarayıcı menüsünden 'Ana Ekrana Ekle' (Add to Home Screen) seçeneğini kullanın.");
         }
     };
 
-    // Don't render if installed
-    if (isStandalone || !isVisible) return null;
+    if (!mounted) return null;
+    if (isStandalone) return null;
+    
+    // Only show if prompt is available OR it's an iOS device
+    if (!deferredPrompt && !isIOS) return null;
 
     return (
         <>
-            {/* Floating Install Button */}
-            <button
-                onClick={handleInstallClick}
-                className="fixed bottom-6 right-6 z-50 bg-green-600 hover:bg-green-700 text-white p-4 rounded-full shadow-xl flex items-center gap-2 transition-all hover:scale-110 animate-fade-in-up"
-                title="Uygulamayı Yükle"
-            >
-                <MonitorDown size={24} />
-                <span className="hidden md:inline font-bold">Uygulamayı Yükle</span>
-            </button>
+            {/* Pure Floating Action Button instead of banner */}
+            <div className="fixed bottom-6 right-6 z-[80] animate-fade-in-up">
+                <button 
+                    onClick={handleInstallClick}
+                    className="relative bg-gradient-to-br from-[#805894] to-[#5A3E68] text-white p-4 rounded-full shadow-[0_8px_30px_rgba(128,88,148,0.4)] hover:scale-110 active:scale-95 transition-all flex items-center justify-center group"
+                >
+                    <MonitorDown size={28} strokeWidth={2.5}/>
+                    {/* Pulsing ring effect */}
+                    <span className="absolute inset-0 rounded-full animate-ping bg-[#805894] opacity-40"></span>
+                </button>
+            </div>
 
-            {/* iOS Instruction Modal */}
+            {/* iOS Custom Install Modal */}
             {showIOSModal && (
-                <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-stone-50 rounded-t-2xl sm:rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl relative">
-                        <button
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl relative text-center">
+                        <button 
                             onClick={() => setShowIOSModal(false)}
-                            className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 bg-gray-200 rounded-full p-1"
+                            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 bg-gray-50 rounded-full transition-colors"
                         >
                             <X size={20} />
                         </button>
-
-                        <div className="p-6 text-center">
-                            <div className="w-16 h-16 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <Download size={32} />
+                        
+                        <div className="mx-auto w-16 h-16 bg-[#805894]/10 text-[#805894] rounded-2xl flex items-center justify-center mb-6">
+                            <Share size={32} />
+                        </div>
+                        
+                        <h3 className="text-xl font-bold text-gray-900 mb-3">Uygulamayı iPhone'a Yükle</h3>
+                        <p className="text-gray-600 text-sm mb-6 leading-relaxed">
+                            Köyümüzün uygulamasına anında erişmek için Ana Ekrana ekleyin.
+                        </p>
+                        
+                        <div className="space-y-4 text-left bg-gray-50 p-5 rounded-2xl border border-gray-100">
+                            <div className="flex items-center gap-4">
+                                <div className="bg-white w-8 h-8 rounded-full shadow-sm flex items-center justify-center text-[#805894] font-bold text-sm shrink-0">1</div>
+                                <p className="text-sm text-gray-600">Tarayıcının alt menüsündeki <b className="text-gray-900">Paylaş</b> (<Share size={14} className="inline mb-1"/>) ikonuna dokunun.</p>
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">Ana Ekrana Ekle</h3>
-                            <p className="text-gray-600 text-sm mb-6">
-                                iPhone ve iPad cihazlarda uygulamayı yüklemek için aşağıdaki adımları izleyin:
-                            </p>
-
-                            <div className="space-y-4 text-left">
-                                <div className="flex items-center gap-4 bg-white p-3 rounded-lg border border-gray-200">
-                                    <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-600 rounded-full font-bold">1</span>
-                                    <div className="text-sm text-gray-700">
-                                        Tarayıcı altındaki <span className="font-bold text-blue-600 inline-flex items-center mx-1"><Share size={14} /> Paylaş</span> butonuna basın.
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-4 bg-white p-3 rounded-lg border border-gray-200">
-                                    <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-600 rounded-full font-bold">2</span>
-                                    <div className="text-sm text-gray-700">
-                                        Açılan menüde aşağı kaydırıp <span className="font-bold text-gray-800 inline-flex items-center mx-1"><PlusSquare size={14} /> Ana Ekrana Ekle</span> seçeneğine dokunun.
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-4 bg-white p-3 rounded-lg border border-gray-200">
-                                    <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-600 rounded-full font-bold">3</span>
-                                    <div className="text-sm text-gray-700">
-                                        Sağ üst köşedeki <span className="font-bold text-blue-600">Ekle</span> butonuna basarak tamamlayın.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mt-6 pt-4 border-t border-gray-200">
-                                <button
-                                    onClick={() => setShowIOSModal(false)}
-                                    className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition-colors"
-                                >
-                                    Anladım
-                                </button>
+                            <div className="flex items-center gap-4">
+                                <div className="bg-white w-8 h-8 rounded-full shadow-sm flex items-center justify-center text-[#805894] font-bold text-sm shrink-0">2</div>
+                                <p className="text-sm text-gray-600">Menüyü kaydırın ve <b className="text-gray-900">Ana Ekrana Ekle</b> seçeneğine dokunun.</p>
                             </div>
                         </div>
-                        {/* iOS Pointer Arrow */}
-                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-stone-50 rotate-45 translate-y-2 sm:hidden"></div>
+
+                        <button 
+                            onClick={() => setShowIOSModal(false)}
+                            className="w-full mt-6 bg-[#805894] hover:bg-[#6c487e] text-white font-bold py-3 rounded-xl transition-colors"
+                        >
+                            Anladım
+                        </button>
                     </div>
                 </div>
             )}

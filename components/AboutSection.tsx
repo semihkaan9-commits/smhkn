@@ -8,8 +8,8 @@ export const AboutSection: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="order-2 md:order-1">
-            <h2 className="text-3xl font-bold text-green-900 mb-6 flex items-center gap-2">
-              <span className="text-green-600">
+            <h2 className="text-3xl font-bold text-[#805894] mb-6 flex items-center gap-2">
+              <span className="text-[#805894]">
                 <Info />
               </span>
               <EditableText textKey="about.title" defaultText="Köyümüz Hakkında" />
@@ -19,9 +19,9 @@ export const AboutSection: React.FC = () => {
                 <EditableText textKey="about.desc" defaultText="Balcılar, doğanın tüm renklerini barındıran, tarihi dokusu ve misafirperver halkıyla bölgenin incisi konumundadır. Tarım ve hayvancılığın modern yöntemlerle yapıldığı köyümüzde, geleneksel yaşam kültürü de yaşatılmaya devam etmektedir." />
               </p>
 
-              <div className="bg-green-50 p-6 rounded-xl border border-green-100">
+              <div className="bg-[#805894]/10 p-6 rounded-xl border border-[#805894]">
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="bg-white p-2 rounded-full shadow-sm text-green-700">
+                  <div className="bg-white p-2 rounded-full shadow-sm text-[#805894]">
                     <User size={24} />
                   </div>
                   <div>
@@ -31,7 +31,7 @@ export const AboutSection: React.FC = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="bg-white p-2 rounded-full shadow-sm text-green-700">
+                  <div className="bg-white p-2 rounded-full shadow-sm text-[#805894]">
                     <Map size={24} />
                   </div>
                   <div>
@@ -40,7 +40,7 @@ export const AboutSection: React.FC = () => {
                       href="https://www.google.com/maps/search/?api=1&query=Balcılar+Köyü+Taşkent+Konya"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-600 hover:text-green-700 hover:underline transition-colors block"
+                      className="text-gray-600 hover:text-[#805894] hover:underline transition-colors block"
                     >
                       <EditableText textKey="about.location_name" defaultText="Taşkent/Konya" />
                     </a>

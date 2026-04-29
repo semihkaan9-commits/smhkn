@@ -49,9 +49,9 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({ isOpen, onClose, o
             <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
             <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in-up">
 
-                <div className="bg-green-600 px-6 py-4 flex justify-between items-center text-white">
+                <div className="bg-[#805894] px-6 py-4 flex justify-between items-center text-white">
                     <h3 className="text-xl font-bold">Haberi Düzenle</h3>
-                    <button onClick={onClose} className="hover:bg-green-700 p-1 rounded-full transition-colors">
+                    <button onClick={onClose} className="hover:bg-[#805894] p-1 rounded-full transition-colors">
                         <X size={24} />
                     </button>
                 </div>
@@ -63,7 +63,7 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({ isOpen, onClose, o
                             type="text"
                             value={title}
                             onChange={e => setTitle(e.target.value)}
-                            className="w-full border-b-2 border-gray-200 focus:border-green-500 outline-none py-2 bg-transparent text-black transition-colors"
+                            className="w-full border-b-2 border-gray-200 focus:border-[#805894] outline-none py-2 bg-transparent text-black transition-colors"
                         />
                     </div>
 
@@ -75,7 +75,7 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({ isOpen, onClose, o
                                 value={date}
                                 onChange={e => setDate(e.target.value)}
                                 placeholder="GG.AA.YYYY"
-                                className="w-full border-b-2 border-gray-200 focus:border-green-500 outline-none py-2 bg-transparent text-black transition-colors pl-8"
+                                className="w-full border-b-2 border-gray-200 focus:border-[#805894] outline-none py-2 bg-transparent text-black transition-colors pl-8"
                             />
                             <Calendar size={16} className="absolute left-0 top-3 text-gray-400" />
                         </div>
@@ -88,7 +88,7 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({ isOpen, onClose, o
                             value={content}
                             onChange={e => setContent(e.target.value)}
                             rows={6}
-                            className="w-full border rounded-lg border-gray-200 focus:border-green-500 outline-none p-3 bg-transparent text-black transition-colors resize-none"
+                            className="w-full border rounded-lg border-gray-200 focus:border-[#805894] outline-none p-3 bg-transparent text-black transition-colors resize-none"
                         />
                     </div>
 
@@ -100,7 +100,7 @@ export const EditNewsModal: React.FC<EditNewsModalProps> = ({ isOpen, onClose, o
 
                     <button
                         type="submit"
-                        className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition-colors shadow-md flex items-center justify-center gap-2 mt-4"
+                        className="w-full bg-[#805894] hover:bg-[#805894] text-white font-bold py-3 rounded-lg transition-colors shadow-md flex items-center justify-center gap-2 mt-4"
                     >
                         <Save size={20} />
                         Değişiklikleri Kaydet

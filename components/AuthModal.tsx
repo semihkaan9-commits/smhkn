@@ -168,13 +168,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
         <div className="p-8">
           <div className="flex justify-center mb-6 border-b border-gray-100 pb-4">
             <button
-              className={`px-6 py-2 font-semibold transition-colors ${mode === 'LOGIN' ? 'text-green-600 border-b-2 border-green-600' : 'text-gray-400'}`}
+              className={`px-6 py-2 font-semibold transition-colors ${mode === 'LOGIN' ? 'text-[#805894] border-b-2 border-[#805894]' : 'text-gray-400'}`}
               onClick={() => setMode('LOGIN')}
             >
               Giriş Yap
             </button>
             <button
-              className={`px-6 py-2 font-semibold transition-colors ${mode === 'REGISTER' ? 'text-green-600 border-b-2 border-green-600' : 'text-gray-400'}`}
+              className={`px-6 py-2 font-semibold transition-colors ${mode === 'REGISTER' ? 'text-[#805894] border-b-2 border-[#805894]' : 'text-gray-400'}`}
               onClick={() => setMode('REGISTER')}
             >
               Kayıt Ol
@@ -194,7 +194,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                       placeholder="ad@ornek.com"
-                      className="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-green-500 focus:ring-green-500 bg-white text-black"
+                      className="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-[#805894] focus:ring-[#805894] bg-white text-black"
                     />
                   </div>
 
@@ -204,7 +204,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
                       type="password"
                       value={password}
                       onChange={e => setPassword(e.target.value)}
-                      className="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-green-500 focus:ring-green-500 bg-white text-black"
+                      className="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-[#805894] focus:ring-[#805894] bg-white text-black"
                     />
                   </div>
                 </div>
@@ -213,7 +213,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
               <button 
                 type="submit" 
                 disabled={isLoading}
-                className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition-colors shadow-md mt-6"
+                className="w-full bg-[#805894] hover:bg-[#805894] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition-colors shadow-md mt-6"
               >
                 {isLoading ? 'Giriş Yapılıyor...' : 'Giriş Yap'}
               </button>
@@ -225,14 +225,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
                 <div className="flex bg-gray-100 p-1 rounded-lg">
                   <button
                     type="button"
-                    className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${registerType === UserRole.GUEST ? 'bg-white shadow text-green-700' : 'text-gray-500 hover:text-gray-700'}`}
+                    className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${registerType === UserRole.GUEST ? 'bg-white shadow text-[#805894]' : 'text-gray-500 hover:text-gray-700'}`}
                     onClick={() => setRegisterType(UserRole.GUEST)}
                   >
                     Misafir
                   </button>
                   <button
                     type="button"
-                    className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${registerType === UserRole.VILLAGER ? 'bg-white shadow text-green-700' : 'text-gray-500 hover:text-gray-700'}`}
+                    className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${registerType === UserRole.VILLAGER ? 'bg-white shadow text-[#805894]' : 'text-gray-500 hover:text-gray-700'}`}
                     onClick={() => setRegisterType(UserRole.VILLAGER)}
                   >
                     Köy Sakini
@@ -243,28 +243,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase">İsim</label>
-                  <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full border-b-2 border-gray-200 focus:border-green-500 outline-none py-2 bg-transparent text-black transition-colors" />
+                  <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full border-b-2 border-gray-200 focus:border-[#805894] outline-none py-2 bg-transparent text-black transition-colors" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase">Soyisim</label>
-                  <input type="text" value={surname} onChange={e => setSurname(e.target.value)} className="w-full border-b-2 border-gray-200 focus:border-green-500 outline-none py-2 bg-transparent text-black transition-colors" />
+                  <input type="text" value={surname} onChange={e => setSurname(e.target.value)} className="w-full border-b-2 border-gray-200 focus:border-[#805894] outline-none py-2 bg-transparent text-black transition-colors" />
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase">E-Posta</label>
-                <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full border-b-2 border-gray-200 focus:border-green-500 outline-none py-2 bg-transparent text-black transition-colors" />
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full border-b-2 border-gray-200 focus:border-[#805894] outline-none py-2 bg-transparent text-black transition-colors" />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase">Şifre</label>
-                <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full border-b-2 border-gray-200 focus:border-green-500 outline-none py-2 bg-transparent text-black transition-colors" />
+                <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full border-b-2 border-gray-200 focus:border-[#805894] outline-none py-2 bg-transparent text-black transition-colors" />
               </div>
 
               {registerType === UserRole.VILLAGER && (
                 <div className="space-y-4 pt-2 animate-fade-in-up">
-                  <div className="bg-green-50 p-4 rounded-lg space-y-3 border border-green-100">
-                    <h4 className="font-semibold text-green-800 text-sm">Köy Sakini Bilgileri</h4>
+                  <div className="bg-[#805894]/10 p-4 rounded-lg space-y-3 border border-[#805894]">
+                    <h4 className="font-semibold text-[#805894] text-sm">Köy Sakini Bilgileri</h4>
                     <div>
                       <label className="block text-xs font-bold text-gray-500">Meslek (Örn: Tesisatçı, Çiftçi)</label>
                       <input type="text" value={profession} onChange={e => setProfession(e.target.value)} className="w-full bg-white text-black rounded border border-gray-200 p-2 text-sm mt-1" />
@@ -290,7 +290,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
               <button 
                 type="submit" 
                 disabled={isLoading}
-                className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition-colors shadow-md"
+                className="w-full bg-[#805894] hover:bg-[#805894] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition-colors shadow-md"
               >
                 {isLoading ? 'Kayıt Yapılıyor...' : 'Kayıt Ol'}
               </button>

@@ -8,7 +8,7 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ currentUser }) => {
   return (
-    <footer className="bg-green-900 text-white py-12">
+    <footer className="bg-[#805894] text-white py-12">
       <div className="max-w-7xl mx-auto px-4 text-center md:text-left md:flex justify-between items-center">
         <div className="mb-6 md:mb-0">
           <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
@@ -16,9 +16,9 @@ export const Footer: React.FC<FooterProps> = ({ currentUser }) => {
               <img src="/logo.png" alt="Balcılar Köyü" className="w-8 h-8 object-cover rounded-full" />
             </div>
             <span className="text-xl font-bold"><EditableText textKey="footer.title" defaultText="Balcılar Köyü" /></span>
-            <span className="hidden md:inline text-sm text-green-100/60 ml-4 border-l border-white/20 pl-4"><EditableText textKey="footer.contact" defaultText="Muhtarlık: 0555 055 55 55" /></span>
+            <span className="hidden md:inline text-sm text-white/60 ml-4 border-l border-white/20 pl-4"><EditableText textKey="footer.contact" defaultText="Muhtarlık: 0555 055 55 55" /></span>
           </div>
-          <div className="md:hidden text-sm text-green-100/60 mt-2"><EditableText textKey="footer.contact" defaultText="Muhtarlık: 0555 055 55 55" /></div>
+          <div className="md:hidden text-sm text-white/60 mt-2"><EditableText textKey="footer.contact" defaultText="Muhtarlık: 0555 055 55 55" /></div>
           {/* Original copyright line removed from here */}
         </div>
       </div>
