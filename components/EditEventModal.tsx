@@ -55,9 +55,9 @@ export const EditEventModal: React.FC<EditEventModalProps> = ({ isOpen, onClose,
             <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
             <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in-up">
 
-                <div className="bg-green-600 px-6 py-4 flex justify-between items-center text-white">
+                <div className="bg-[#805894] px-6 py-4 flex justify-between items-center text-white">
                     <h3 className="text-xl font-bold">Etkinliği Düzenle</h3>
-                    <button onClick={onClose} className="hover:bg-green-700 p-1 rounded-full transition-colors">
+                    <button onClick={onClose} className="hover:bg-[#805894] p-1 rounded-full transition-colors">
                         <X size={24} />
                     </button>
                 </div>
@@ -69,7 +69,7 @@ export const EditEventModal: React.FC<EditEventModalProps> = ({ isOpen, onClose,
                             type="text"
                             value={title}
                             onChange={e => setTitle(e.target.value)}
-                            className="w-full border-b-2 border-gray-200 focus:border-green-500 outline-none py-2 bg-transparent text-black transition-colors"
+                            className="w-full border-b-2 border-gray-200 focus:border-[#805894] outline-none py-2 bg-transparent text-black transition-colors"
                         />
                     </div>
 
@@ -80,7 +80,7 @@ export const EditEventModal: React.FC<EditEventModalProps> = ({ isOpen, onClose,
                                 type="datetime-local"
                                 value={startDate}
                                 onChange={e => setStartDate(e.target.value)}
-                                className="w-full border-b-2 border-gray-200 focus:border-green-500 outline-none py-2 bg-transparent text-black transition-colors"
+                                className="w-full border-b-2 border-gray-200 focus:border-[#805894] outline-none py-2 bg-transparent text-black transition-colors"
                             />
                         </div>
                         <div>
@@ -89,7 +89,7 @@ export const EditEventModal: React.FC<EditEventModalProps> = ({ isOpen, onClose,
                                 type="datetime-local"
                                 value={endDate}
                                 onChange={e => setEndDate(e.target.value)}
-                                className="w-full border-b-2 border-gray-200 focus:border-green-500 outline-none py-2 bg-transparent text-black transition-colors"
+                                className="w-full border-b-2 border-gray-200 focus:border-[#805894] outline-none py-2 bg-transparent text-black transition-colors"
                             />
                         </div>
                     </div>
@@ -100,7 +100,7 @@ export const EditEventModal: React.FC<EditEventModalProps> = ({ isOpen, onClose,
                             value={content}
                             onChange={e => setContent(e.target.value)}
                             rows={6}
-                            className="w-full border rounded-lg border-gray-200 focus:border-green-500 outline-none p-3 bg-transparent text-black transition-colors resize-none"
+                            className="w-full border rounded-lg border-gray-200 focus:border-[#805894] outline-none p-3 bg-transparent text-black transition-colors resize-none"
                         />
                     </div>
 
@@ -113,7 +113,7 @@ export const EditEventModal: React.FC<EditEventModalProps> = ({ isOpen, onClose,
 
                     <button
                         type="submit"
-                        className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition-colors shadow-md flex items-center justify-center gap-2 mt-4"
+                        className="w-full bg-[#805894] hover:bg-[#805894] text-white font-bold py-3 rounded-lg transition-colors shadow-md flex items-center justify-center gap-2 mt-4"
                     >
                         <Save size={20} />
                         Değişiklikleri Kaydet

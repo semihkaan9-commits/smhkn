@@ -95,7 +95,7 @@ export const DynamicSectionView: React.FC<DynamicSectionViewProps> = ({
         {/* Section Header */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-10">
           <div className="text-center md:text-left">
-            <h2 className="text-3xl font-bold text-green-900 mb-2">
+            <h2 className="text-3xl font-bold text-[#805894] mb-2">
               <EditableText textKey={`ds.title.${section.id}`} defaultText={section.title} />
             </h2>
             <div className="text-gray-600 prose max-w-none relative">
@@ -107,7 +107,7 @@ export const DynamicSectionView: React.FC<DynamicSectionViewProps> = ({
             <div className="flex gap-2 mt-4 md:mt-0">
                <button
                   onClick={() => setShowForm(!showForm)}
-                  className="bg-green-700 hover:bg-green-800 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-md"
+                  className="bg-[#805894] hover:bg-[#805894] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-md"
                 >
                   <Plus size={20} />
                   {showForm ? 'Paneli Kapat' : 'İçerik Ekle'}
@@ -118,8 +118,8 @@ export const DynamicSectionView: React.FC<DynamicSectionViewProps> = ({
 
         {/* Add Form */}
         {isAdmin && showForm && (
-          <div className="bg-stone-50 p-6 rounded-xl shadow-lg mb-10 animate-fade-in-up border border-green-200">
-            <h3 className="text-lg font-bold mb-4 text-green-800">Yeni İçerik Ekle</h3>
+          <div className="bg-stone-50 p-6 rounded-xl shadow-lg mb-10 animate-fade-in-up border border-[#805894]">
+            <h3 className="text-lg font-bold mb-4 text-[#805894]">Yeni İçerik Ekle</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Başlık</label>
@@ -127,7 +127,7 @@ export const DynamicSectionView: React.FC<DynamicSectionViewProps> = ({
                   type="text"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 bg-white text-black"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#805894] bg-white text-black"
                   placeholder="Başlık..."
                   required
                 />
@@ -139,14 +139,14 @@ export const DynamicSectionView: React.FC<DynamicSectionViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setUploadMode('URL')}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded text-xs font-medium transition-colors ${uploadMode === 'URL' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700'}`}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded text-xs font-medium transition-colors ${uploadMode === 'URL' ? 'bg-[#805894] text-white' : 'bg-gray-100 text-gray-700'}`}
                   >
                     <LinkIcon size={14} /> Link
                   </button>
                   <button
                     type="button"
                     onClick={() => setUploadMode('FILE')}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded text-xs font-medium transition-colors ${uploadMode === 'FILE' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700'}`}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded text-xs font-medium transition-colors ${uploadMode === 'FILE' ? 'bg-[#805894] text-white' : 'bg-gray-100 text-gray-700'}`}
                   >
                     <Upload size={14} /> Cihazdan
                   </button>
@@ -157,7 +157,7 @@ export const DynamicSectionView: React.FC<DynamicSectionViewProps> = ({
                     type="url"
                     value={newImageUrl}
                     onChange={(e) => setNewImageUrl(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 bg-white text-black"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#805894] bg-white text-black"
                     placeholder="https://..."
                   />
                 ) : (
@@ -166,7 +166,7 @@ export const DynamicSectionView: React.FC<DynamicSectionViewProps> = ({
                       type="file"
                       accept="image/*"
                       onChange={handleFileChange}
-                      className="w-full p-2 border border-gray-300 rounded-lg bg-white text-black file:py-2 file:px-4 file:rounded-full file:bg-green-50 file:text-green-700"
+                      className="w-full p-2 border border-gray-300 rounded-lg bg-white text-black file:py-2 file:px-4 file:rounded-full file:bg-[#805894]/10 file:text-[#805894]"
                     />
                   </div>
                 )}
@@ -178,12 +178,12 @@ export const DynamicSectionView: React.FC<DynamicSectionViewProps> = ({
                   value={newContent}
                   onChange={(e) => setNewContent(e.target.value)}
                   rows={4}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 bg-white text-black"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#805894] bg-white text-black"
                   placeholder="Detaylar..."
                 />
               </div>
               <div className="flex justify-end pt-2">
-                <button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium">
+                <button type="submit" className="bg-[#805894] hover:bg-[#805894] text-white px-6 py-2 rounded-lg font-medium">
                   Kaydet
                 </button>
               </div>

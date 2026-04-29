@@ -63,7 +63,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <>
-    <nav className="sticky top-0 z-50 bg-green-800/95 backdrop-blur-sm text-white shadow-lg transition-all duration-300">
+    <nav className="sticky top-0 z-50 bg-[#805894]/95 backdrop-blur-sm text-white shadow-lg transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -88,27 +88,27 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Desktop/Tablet Navigation - Centered */}
           <div className="hidden md:block flex-1 mx-4">
             <div className="flex items-center justify-center space-x-1 lg:space-x-4">
-              <button onClick={() => scrollToSection('workers')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              <button onClick={() => scrollToSection('workers')} className="whitespace-nowrap hover:bg-[#805894] px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
                 <EditableText textKey="nav.workers" defaultText="Köy Rehberi" />
               </button>
-              <button onClick={() => scrollToSection('news')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              <button onClick={() => scrollToSection('news')} className="whitespace-nowrap hover:bg-[#805894] px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
                 <EditableText textKey="nav.news" defaultText="Haberler" />
               </button>
-              <button onClick={() => scrollToSection('events')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              <button onClick={() => scrollToSection('events')} className="whitespace-nowrap hover:bg-[#805894] px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
                 <EditableText textKey="nav.events" defaultText="Etkinlikler" />
               </button>
-              <button onClick={() => scrollToSection('gallery')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              <button onClick={() => scrollToSection('gallery')} className="whitespace-nowrap hover:bg-[#805894] px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
                 <EditableText textKey="nav.gallery" defaultText="Galeri" />
               </button>
-              <button onClick={() => scrollToSection('donations')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              <button onClick={() => scrollToSection('donations')} className="whitespace-nowrap hover:bg-[#805894] px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
                 <EditableText textKey="nav.donations" defaultText="Bağış" />
               </button>
-              <button onClick={() => scrollToSection('about')} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              <button onClick={() => scrollToSection('about')} className="whitespace-nowrap hover:bg-[#805894] px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
                 <EditableText textKey="nav.about" defaultText="Hakkında" />
               </button>
               
               {dynamicSections.map(ds => (
-                <button key={ds.id} onClick={() => scrollToSection(`ds-${ds.id}`)} className="whitespace-nowrap hover:bg-green-700 px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                <button key={ds.id} onClick={() => scrollToSection(`ds-${ds.id}`)} className="whitespace-nowrap hover:bg-[#805894] px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
                   <EditableText textKey={`ds.title.${ds.id}`} defaultText={ds.title} />
                 </button>
               ))}
@@ -116,17 +116,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               {isAdmin && (
                 <div className="relative flex items-center ml-2">
                   {isAddingSection ? (
-                    <div className="flex items-center gap-2 bg-white p-1 rounded-md shadow-lg border border-green-300">
+                    <div className="flex items-center gap-2 bg-white p-1 rounded-md shadow-lg border border-[#805894]">
                       <input 
                         type="text" 
                         value={newSectionTitle}
                         onChange={e => setNewSectionTitle(e.target.value)}
                         placeholder="Sekme Adı..."
-                        className="text-black text-sm px-2 py-1 rounded w-32 outline-none focus:ring-2 focus:ring-green-500"
+                        className="text-black text-sm px-2 py-1 rounded w-32 outline-none focus:ring-2 focus:ring-[#805894]"
                         autoFocus
                         onKeyDown={e => { if (e.key === 'Enter') handleAddSection(); if (e.key === 'Escape') setIsAddingSection(false); }}
                       />
-                      <button onClick={handleAddSection} className="bg-green-600 text-white rounded px-2 py-1 text-xs font-bold hover:bg-green-700">Ekle</button>
+                      <button onClick={handleAddSection} className="bg-[#805894] text-white rounded px-2 py-1 text-xs font-bold hover:bg-[#805894]">Ekle</button>
                       <button onClick={() => setIsAddingSection(false)} className="bg-gray-200 text-gray-700 rounded px-2 py-1 text-xs font-bold hover:bg-gray-300">İptal</button>
                     </div>
                   ) : (
@@ -137,7 +137,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           setIsAddingSection(true);
                         }
                       }} 
-                      title="Yeni Sekme Ekle" className="bg-green-700/50 hover:bg-green-600 text-white border border-green-400 rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg transition-transform hover:scale-110 shadow">
+                      title="Yeni Sekme Ekle" className="bg-[#805894]/50 hover:bg-[#805894] text-white border border-[#805894] rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg transition-transform hover:scale-110 shadow">
                       +
                     </button>
                   )}
@@ -154,7 +154,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <p className="text-sm font-semibold">
                     {(currentUser.role === UserRole.ADMIN || currentUser.role === 'admin') ? 'Hoşgeldin Yönetici' : `${currentUser.name} ${currentUser.surname}`}
                   </p>
-                  <p className="text-xs text-green-200">
+                  <p className="text-xs text-white">
                     {(currentUser.role === UserRole.ADMIN || currentUser.role === 'admin') ? 'Yönetici' :
                       (currentUser.role === UserRole.VILLAGER || currentUser.role === 'villager') ? 'Köy Sakini' : 'Misafir'}
                   </p>
@@ -170,7 +170,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             ) : (
               <button
                 onClick={onOpenAuth}
-                className="bg-white text-green-800 hover:bg-green-100 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 transition-all shadow-md whitespace-nowrap"
+                className="bg-white text-[#805894] hover:bg-[#805894]/10 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2 transition-all shadow-md whitespace-nowrap"
               >
                 <User size={18} />
                 <span>Giriş / Kayıt</span>
@@ -182,7 +182,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-white hover:text-green-200 focus:outline-none p-2"
+              className="text-white hover:text-white focus:outline-none p-2"
             >
               {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
@@ -192,17 +192,17 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-green-900 border-t border-green-700 absolute w-full left-0 animate-fade-in-up shadow-2xl">
+        <div className="md:hidden bg-[#805894] border-t border-[#805894] absolute w-full left-0 animate-fade-in-up shadow-2xl">
           <div className="px-4 pt-2 pb-6 space-y-1">
-            <button onClick={() => handleMobileNav('workers')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800"><EditableText textKey="nav.workers" defaultText="Köy Rehberi" /></button>
-            <button onClick={() => handleMobileNav('news')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800"><EditableText textKey="nav.news" defaultText="Haberler" /></button>
-            <button onClick={() => handleMobileNav('events')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800"><EditableText textKey="nav.events" defaultText="Etkinlikler" /></button>
-            <button onClick={() => handleMobileNav('gallery')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800"><EditableText textKey="nav.gallery" defaultText="Galeri" /></button>
-            <button onClick={() => handleMobileNav('donations')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800"><EditableText textKey="nav.donations" defaultText="Bağış" /></button>
-            <button onClick={() => handleMobileNav('about')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800"><EditableText textKey="nav.about" defaultText="Hakkında" /></button>
+            <button onClick={() => handleMobileNav('workers')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-[#805894]"><EditableText textKey="nav.workers" defaultText="Köy Rehberi" /></button>
+            <button onClick={() => handleMobileNav('news')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-[#805894]"><EditableText textKey="nav.news" defaultText="Haberler" /></button>
+            <button onClick={() => handleMobileNav('events')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-[#805894]"><EditableText textKey="nav.events" defaultText="Etkinlikler" /></button>
+            <button onClick={() => handleMobileNav('gallery')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-[#805894]"><EditableText textKey="nav.gallery" defaultText="Galeri" /></button>
+            <button onClick={() => handleMobileNav('donations')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-[#805894]"><EditableText textKey="nav.donations" defaultText="Bağış" /></button>
+            <button onClick={() => handleMobileNav('about')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-[#805894]"><EditableText textKey="nav.about" defaultText="Hakkında" /></button>
 
             {dynamicSections.map(ds => (
-              <button key={`mobile-ds-${ds.id}`} onClick={() => handleMobileNav(`ds-${ds.id}`)} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-green-800">
+              <button key={`mobile-ds-${ds.id}`} onClick={() => handleMobileNav(`ds-${ds.id}`)} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-[#805894]">
                 <EditableText textKey={`ds.title.${ds.id}`} defaultText={ds.title} />
               </button>
             ))}
@@ -211,18 +211,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             {isAdmin && (
               <div className="mt-2 px-3 pb-2">
                 {isAddingSection ? (
-                  <div className="flex flex-col items-stretch gap-2 bg-white/10 p-3 rounded-md border border-green-500/50">
+                  <div className="flex flex-col items-stretch gap-2 bg-white/10 p-3 rounded-md border border-[#805894]/50">
                     <input 
                       type="text" 
                       value={newSectionTitle}
                       onChange={e => setNewSectionTitle(e.target.value)}
                       placeholder="Sekme Adı..."
-                      className="text-black text-sm px-3 py-2 rounded outline-none focus:ring-2 focus:ring-green-400 w-full"
+                      className="text-black text-sm px-3 py-2 rounded outline-none focus:ring-2 focus:ring-[#805894] w-full"
                       autoFocus
                     />
                     <div className="flex gap-2">
-                       <button onClick={handleAddSection} className="flex-1 bg-green-500 text-white rounded px-3 py-2 text-sm font-bold hover:bg-green-600 shadow-[0_0_10px_rgba(0,0,0,0.2)]">Ekle</button>
-                       <button onClick={() => setIsAddingSection(false)} className="flex-1 bg-white text-green-900 rounded px-3 py-2 text-sm font-bold hover:bg-gray-100 shadow-[0_0_10px_rgba(0,0,0,0.2)]">İptal</button>
+                       <button onClick={handleAddSection} className="flex-1 bg-[#805894] text-white rounded px-3 py-2 text-sm font-bold hover:bg-[#805894] shadow-[0_0_10px_rgba(0,0,0,0.2)]">Ekle</button>
+                       <button onClick={() => setIsAddingSection(false)} className="flex-1 bg-white text-[#805894] rounded px-3 py-2 text-sm font-bold hover:bg-gray-100 shadow-[0_0_10px_rgba(0,0,0,0.2)]">İptal</button>
                     </div>
                   </div>
                 ) : (
@@ -235,7 +235,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           setIsAddingSection(true);
                         }
                     }} 
-                    className="w-full border-2 border-dashed border-green-400/50 hover:border-green-300 hover:bg-green-800 transition-colors rounded-lg py-3 flex items-center justify-center gap-2 text-green-100 font-medium"
+                    className="w-full border-2 border-dashed border-[#805894]/50 hover:border-[#805894] hover:bg-[#805894] transition-colors rounded-lg py-3 flex items-center justify-center gap-2 text-white font-medium"
                   >
                     <span>Yeni Sekme Ekle</span> <span className="text-xl font-bold">+</span>
                   </button>
@@ -243,14 +243,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
             )}
 
-            <div className="border-t border-green-800 my-2 pt-2">
+            <div className="border-t border-[#805894] my-2 pt-2">
               {currentUser ? (
                 <div className="flex items-center justify-between px-3 py-2">
                   <div>
                     <p className="text-sm font-semibold">
                       {(currentUser.role === UserRole.ADMIN || currentUser.role === 'admin') ? 'Hoşgeldin Yönetici' : `${currentUser.name} ${currentUser.surname}`}
                     </p>
-                    <p className="text-xs text-green-300">
+                    <p className="text-xs text-white">
                       {(currentUser.role === UserRole.ADMIN || currentUser.role === 'admin') ? 'Yönetici' :
                         (currentUser.role === UserRole.VILLAGER || currentUser.role === 'villager') ? 'Köy Sakini' : 'Misafir'}
                     </p>
@@ -265,7 +265,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               ) : (
                 <button
                   onClick={() => { onOpenAuth(); setIsMobileMenuOpen(false); }}
-                  className="w-full bg-white text-green-800 px-4 py-3 rounded-lg font-bold flex items-center justify-center gap-2 mt-2"
+                  className="w-full bg-white text-[#805894] px-4 py-3 rounded-lg font-bold flex items-center justify-center gap-2 mt-2"
                 >
                   <User size={20} />
                   <span>Giriş / Kayıt</span>
@@ -290,7 +290,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </p>
             <button
               onClick={() => setShowLimitModal(false)}
-              className="bg-green-600 hover:bg-green-700 text-white w-full py-3 rounded-lg font-bold transition-all shadow-md transform hover:scale-105"
+              className="bg-[#805894] hover:bg-[#805894] text-white w-full py-3 rounded-lg font-bold transition-all shadow-md transform hover:scale-105"
             >
               Anladım
             </button>

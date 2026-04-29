@@ -1,36 +1,34 @@
 import React, { useState } from 'react';
 import { Layout, Image as ImageIcon, Upload, Link as LinkIcon, Trash2, CheckCircle2 } from 'lucide-react';
 
+interface AdData { url: string; link: string | null; }
+
 interface AdManagerProps {
-  onUpdateAd: (area: 'top' | 'bottomA' | 'hero', url: string | null, link: string | null) => void;
-  currentTopAd: string | null;
-  currentTopAdLink: string | null;
-  currentBottomAAd: string | null;
-  currentBottomAAdLink: string | null;
-  currentHeroAd: string | null;
-  currentHeroAdLink: string | null;
+  onUpdateAd: (areaId: string, url: string | null, link: string | null) => void;
+  adsMap: Record<string, AdData>;
 }
 
 export const AdManager: React.FC<AdManagerProps> = ({
   onUpdateAd,
-  currentTopAd,
-  currentTopAdLink,
-  currentBottomAAd,
-  currentBottomAAdLink,
-  currentHeroAd,
-  currentHeroAdLink
+  adsMap
 }) => {
-  const [selectedArea, setSelectedArea] = useState<'top' | 'bottomA' | 'hero'>('hero');
+  const [selectedAreaGroup, setSelectedAreaGroup] = useState<'hero' | 'top' | 'bottomA'>('hero');
+  const [selectedSlot, setSelectedSlot] = useState<number>(1);
+  
   const [uploadMode, setUploadMode] = useState<'URL' | 'FILE'>('URL');
   const [url, setUrl] = useState('');
   const [linkInput, setLinkInput] = useState('');
 
+  const currentAreaId = `${selectedAreaGroup}${selectedSlot}`;
+
+  React.useEffect(() => {
+    setSelectedSlot(1);
+  }, [selectedAreaGroup]);
+
   // Update link input when area changes
   React.useEffect(() => {
-    if (selectedArea === 'hero') setLinkInput(currentHeroAdLink || '');
-    else if (selectedArea === 'top') setLinkInput(currentTopAdLink || '');
-    else if (selectedArea === 'bottomA') setLinkInput(currentBottomAAdLink || '');
-  }, [selectedArea, currentHeroAdLink, currentTopAdLink, currentBottomAAdLink]);
+    setLinkInput(adsMap[currentAreaId]?.link || '');
+  }, [currentAreaId, adsMap]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -38,7 +36,7 @@ export const AdManager: React.FC<AdManagerProps> = ({
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
-        onUpdateAd(selectedArea, result, linkInput.trim() || null);
+        onUpdateAd(currentAreaId, result, linkInput.trim() || null);
         e.target.value = ""; // Reset input
       };
       reader.readAsDataURL(file);
@@ -48,21 +46,55 @@ export const AdManager: React.FC<AdManagerProps> = ({
   const handleUrlSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (url.trim()) {
-      onUpdateAd(selectedArea, url.trim(), linkInput.trim() || null);
+      onUpdateAd(currentAreaId, url.trim(), linkInput.trim() || null);
       setUrl('');
     }
   };
 
   const getCurrentPreviewAd = () => {
-    if (selectedArea === 'hero') return currentHeroAd;
-    if (selectedArea === 'top') return currentTopAd;
-    return currentBottomAAd;
+    return adsMap[currentAreaId]?.url || null;
   };
 
   const getAreaLabel = () => {
-    if (selectedArea === 'hero') return 'GİRİŞ ALANI (HERO)';
-    if (selectedArea === 'top') return '1. ALAN (ÜST)';
-    return '2. ALAN (A)';
+    if (selectedAreaGroup === 'hero') return `GİRİŞ ALANI - ${selectedSlot}. REKLAM`;
+    if (selectedAreaGroup === 'top') return `1. ALAN - 1/${selectedSlot}. ALAN`;
+    return `ALT REKLAM - ${selectedSlot}. ALAN`;
+  };
+
+  const renderSlotSelectors = () => {
+    if (selectedAreaGroup === 'hero') {
+      return (
+        <div className="flex gap-2 flex-wrap mt-2">
+          {[1,2,3,4,5].map(num => (
+            <button key={num} onClick={() => setSelectedSlot(num)} className={`px-3 py-1 text-xs font-bold rounded-lg border-2 ${selectedSlot === num ? 'border-orange-500 bg-orange-100 text-orange-700' : 'border-gray-200 text-gray-500 bg-white'}`}>
+              {num}. Reklam
+            </button>
+          ))}
+        </div>
+      );
+    }
+    if (selectedAreaGroup === 'top') {
+      return (
+        <div className="flex gap-2 flex-wrap mt-2">
+          {[1,2].map(num => (
+            <button key={num} onClick={() => setSelectedSlot(num)} className={`px-3 py-1 text-xs font-bold rounded-lg border-2 ${selectedSlot === num ? 'border-orange-500 bg-orange-100 text-orange-700' : 'border-gray-200 text-gray-500 bg-white'}`}>
+              1/{num}. Alan
+            </button>
+          ))}
+        </div>
+      );
+    }
+    if (selectedAreaGroup === 'bottomA') {
+      return (
+        <div className="flex gap-2 flex-wrap mt-2">
+          {[1,2,3].map(num => (
+            <button key={num} onClick={() => setSelectedSlot(num)} className={`px-3 py-1 text-xs font-bold rounded-lg border-2 ${selectedSlot === num ? 'border-orange-500 bg-orange-100 text-orange-700' : 'border-gray-200 text-gray-500 bg-white'}`}>
+              {num}. Parça
+            </button>
+          ))}
+        </div>
+      );
+    }
   };
 
   return (
@@ -78,7 +110,7 @@ export const AdManager: React.FC<AdManagerProps> = ({
               <p className="text-sm text-gray-500 font-medium">Sitedeki ilan alanlarını buradan anlık yönetin.</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-[10px] font-black text-white bg-green-500 px-3 py-1.5 rounded-full shadow-sm animate-pulse">
+          <div className="flex items-center gap-2 text-[10px] font-black text-white bg-[#805894] px-3 py-1.5 rounded-full shadow-sm animate-pulse">
             <CheckCircle2 size={12} /> SİSTEM ÇALIŞIYOR
           </div>
         </div>
@@ -89,43 +121,39 @@ export const AdManager: React.FC<AdManagerProps> = ({
             <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">1. ALAN SEÇİMİ</h3>
             <div className="flex flex-col gap-3">
 
-              <button
-                type="button"
-                onClick={() => setSelectedArea('hero')}
-                className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all duration-300 ${selectedArea === 'hero' ? 'border-orange-500 bg-orange-50 ring-4 ring-orange-100 scale-[1.02]' : 'border-gray-100 bg-white hover:border-gray-300 shadow-sm'}`}
-              >
-                <div className="text-left">
-                  <span className={`block font-black text-lg ${selectedArea === 'hero' ? 'text-orange-700' : 'text-gray-700'}`}>GİRİŞ ALANI</span>
-                  <span className="text-xs text-gray-500 font-medium">Hero / Karşılama</span>
-                </div>
-                {selectedArea === 'hero' ? <CheckCircle2 className="text-orange-600" size={24} /> : <div className="w-6 h-6 rounded-full border-2 border-gray-200"></div>}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedArea('top')}
-                className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all duration-300 ${selectedArea === 'top' ? 'border-orange-500 bg-orange-50 ring-4 ring-orange-100 scale-[1.02]' : 'border-gray-100 bg-white hover:border-gray-300 shadow-sm'}`}
-              >
-                <div className="text-left">
-                  <span className={`block font-black text-lg ${selectedArea === 'top' ? 'text-orange-700' : 'text-gray-700'}`}>1. ALAN</span>
-                  <span className="text-xs text-gray-500 font-medium">Üst (İş Arama)</span>
-                </div>
-                {selectedArea === 'top' ? <CheckCircle2 className="text-orange-600" size={24} /> : <div className="w-6 h-6 rounded-full border-2 border-gray-200"></div>}
-              </button>
-
-              <div className="grid grid-cols-1 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setSelectedArea('bottomA')}
-                  className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all duration-300 ${selectedArea === 'bottomA' ? 'border-orange-500 bg-orange-50 ring-4 ring-orange-100 scale-[1.02]' : 'border-gray-100 bg-white hover:border-gray-300 shadow-sm'}`}
-                >
+              <div className={`p-4 rounded-2xl border-2 transition-all duration-300 ${selectedAreaGroup === 'hero' ? 'border-orange-500 bg-orange-50 ring-4 ring-orange-100 scale-[1.02]' : 'border-gray-100 bg-white hover:border-gray-300 shadow-sm'}`}>
+                <button type="button" onClick={() => setSelectedAreaGroup('hero')} className="flex items-center justify-between w-full">
                   <div className="text-left">
-                    <span className={`block font-black text-sm ${selectedArea === 'bottomA' ? 'text-orange-700' : 'text-gray-700'}`}>BAĞIŞ / ALT SOL</span>
+                    <span className={`block font-black text-lg ${selectedAreaGroup === 'hero' ? 'text-orange-700' : 'text-gray-700'}`}>GİRİŞ ALANI</span>
+                    <span className="text-xs text-gray-500 font-medium">Hero / Karşılama</span>
+                  </div>
+                  {selectedAreaGroup === 'hero' ? <CheckCircle2 className="text-orange-600" size={24} /> : <div className="w-6 h-6 rounded-full border-2 border-gray-200"></div>}
+                </button>
+                {selectedAreaGroup === 'hero' && renderSlotSelectors()}
+              </div>
+
+              <div className={`p-4 rounded-2xl border-2 transition-all duration-300 ${selectedAreaGroup === 'top' ? 'border-orange-500 bg-orange-50 ring-4 ring-orange-100 scale-[1.02]' : 'border-gray-100 bg-white hover:border-gray-300 shadow-sm'}`}>
+                <button type="button" onClick={() => setSelectedAreaGroup('top')} className="flex items-center justify-between w-full">
+                  <div className="text-left">
+                    <span className={`block font-black text-lg ${selectedAreaGroup === 'top' ? 'text-orange-700' : 'text-gray-700'}`}>1. ALAN</span>
+                    <span className="text-xs text-gray-500 font-medium">Üst (İş Arama)</span>
+                  </div>
+                  {selectedAreaGroup === 'top' ? <CheckCircle2 className="text-orange-600" size={24} /> : <div className="w-6 h-6 rounded-full border-2 border-gray-200"></div>}
+                </button>
+                {selectedAreaGroup === 'top' && renderSlotSelectors()}
+              </div>
+
+              <div className={`p-4 rounded-2xl border-2 transition-all duration-300 ${selectedAreaGroup === 'bottomA' ? 'border-orange-500 bg-orange-50 ring-4 ring-orange-100 scale-[1.02]' : 'border-gray-100 bg-white hover:border-gray-300 shadow-sm'}`}>
+                <button type="button" onClick={() => setSelectedAreaGroup('bottomA')} className="flex items-center justify-between w-full">
+                  <div className="text-left">
+                    <span className={`block font-black text-sm ${selectedAreaGroup === 'bottomA' ? 'text-orange-700' : 'text-gray-700'}`}>BAĞIŞ / ALT SOL</span>
                     <span className="text-[10px] text-gray-500 font-medium">Bağış Bölümü</span>
                   </div>
-                  {selectedArea === 'bottomA' && <CheckCircle2 className="text-orange-600" size={16} />}
+                  {selectedAreaGroup === 'bottomA' ? <CheckCircle2 className="text-orange-600" size={24} /> : <div className="w-6 h-6 rounded-full border-2 border-gray-200"></div>}
                 </button>
+                {selectedAreaGroup === 'bottomA' && renderSlotSelectors()}
               </div>
+
             </div>
           </div>
 
@@ -194,7 +222,7 @@ export const AdManager: React.FC<AdManagerProps> = ({
               )}
 
               <button
-                onClick={() => onUpdateAd(selectedArea, null, null)}
+                onClick={() => onUpdateAd(currentAreaId, null, null)}
                 className="w-full flex items-center justify-center gap-2 py-3 text-xs font-black text-red-600 hover:bg-red-50 rounded-xl transition-all border border-transparent hover:border-red-200"
               >
                 <Trash2 size={16} /> REKLAMI TAMAMEN KALDIR
@@ -211,7 +239,7 @@ export const AdManager: React.FC<AdManagerProps> = ({
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center bg-gray-800 text-gray-500">
                   <ImageIcon size={48} className="mb-2 opacity-20" />
-                  <span className="font-black italic text-sm uppercase">{selectedArea === 'hero' ? 'Giriş Alanı' : selectedArea + ' Alanı'} Boş</span>
+                  <span className="font-black italic text-sm uppercase">{getAreaLabel()} Boş</span>
                 </div>
               )}
               <div className="absolute bottom-4 left-4 right-4 bg-orange-600 text-white text-[10px] px-3 py-1.5 rounded-lg font-black uppercase text-center shadow-lg">

@@ -35,13 +35,8 @@ const App: React.FC = () => {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [donations, setDonations] = useState<Donation[]>([]);
 
-  // Reklam Durumları - 3 Bağımsız Alan + Hero
-  const [area1Ad, setArea1Ad] = useState<string | null>(null);
-  const [area1AdLink, setArea1AdLink] = useState<string | null>(null);
-  const [area2AAd, setArea2AAd] = useState<string | null>(null);
-  const [area2AAdLink, setArea2AAdLink] = useState<string | null>(null);
-  const [heroAd, setHeroAd] = useState<string | null>(null);
-  const [heroAdLink, setHeroAdLink] = useState<string | null>(null);
+  // Reklam Durumları - Dictionary mapping area key to Ad Data
+  const [adsMap, setAdsMap] = useState<Record<string, {url: string, link: string | null}>>({});
 
   // View State
   const [currentView, setCurrentView] = useState<'home' | 'all-news' | 'all-events' | 'all-gallery'>('home');
@@ -162,18 +157,11 @@ const App: React.FC = () => {
       try {
         const { data: adsData } = await supabase.from('ads').select('*');
         if (adsData) {
+          const newAdsMap: Record<string, {url: string, link: string | null}> = {};
           adsData.forEach((ad: any) => {
-            if (ad.area === 'top') {
-              setArea1Ad(ad.url);
-              setArea1AdLink(ad.link);
-            } else if (ad.area === 'bottomA') {
-              setArea2AAd(ad.url);
-              setArea2AAdLink(ad.link);
-            } else if (ad.area === 'hero') {
-              setHeroAd(ad.url);
-              setHeroAdLink(ad.link);
-            }
+            newAdsMap[ad.area] = { url: ad.url, link: ad.link };
           });
+          setAdsMap(newAdsMap);
         }
       } catch (e) { console.error('Error fetching ads:', e); }
 
@@ -266,21 +254,12 @@ const App: React.FC = () => {
     }
   };
 
-  const handleUpdateAd = async (area: 'top' | 'bottomA' | 'hero', url: string | null, link: string | null) => {
+  const handleUpdateAd = async (areaId: string, url: string | null, link: string | null) => {
     try {
-      if (area === 'top') {
-        setArea1Ad(url);
-        setArea1AdLink(link);
-      } else if (area === 'bottomA') {
-        setArea2AAd(url);
-        setArea2AAdLink(link);
-      } else if (area === 'hero') {
-        setHeroAd(url);
-        setHeroAdLink(link);
-      }
+      setAdsMap(prev => ({ ...prev, [areaId]: { url: url || '', link } }));
 
       const { error } = await supabase.from('ads').upsert({
-        area,
+        area: areaId,
         url,
         link,
         updated_at: new Date().toISOString()
@@ -681,25 +660,19 @@ const App: React.FC = () => {
       {currentUser?.role === UserRole.ADMIN && currentView === 'home' && (
         <AdManager
           onUpdateAd={handleUpdateAd}
-          currentTopAd={area1Ad}
-          currentTopAdLink={area1AdLink}
-          currentBottomAAd={area2AAd}
-          currentBottomAAdLink={area2AAdLink}
-          currentHeroAd={heroAd}
-          currentHeroAdLink={heroAdLink}
+          adsMap={adsMap}
         />
       )}
 
       <main className="flex-grow">
         {currentView === 'home' && (
           <>
-            <Hero heroAd={heroAd} heroAdLink={heroAdLink} />
+            <Hero adsMap={adsMap} />
 
             <WorkerSearch
               villagers={villagers}
               onRateVillager={handleRateVillager}
-              topAd={area1Ad}
-              topAdLink={area1AdLink}
+              adsMap={adsMap}
               currentUser={currentUser}
               onDeleteVillager={handleDeleteVillager}
               onUpdateVillager={handleUpdateVillager}
@@ -746,8 +719,7 @@ const App: React.FC = () => {
             />
 
             <DonationSection
-              bottomAAd={area2AAd}
-              bottomAAdLink={area2AAdLink}
+              adsMap={adsMap}
             />
 
             <AboutSection />
@@ -757,7 +729,7 @@ const App: React.FC = () => {
         {currentView === 'all-news' && (
           <div className="pt-24 pb-10">
             <div className="max-w-7xl mx-auto px-4 mb-6">
-              <button onClick={() => setCurrentView('home')} className="flex items-center text-green-700 font-bold hover:underline mb-4">
+              <button onClick={() => setCurrentView('home')} className="flex items-center text-[#805894] font-bold hover:underline mb-4">
                 ← Ana Sayfaya Dön
               </button>
             </div>
@@ -774,7 +746,7 @@ const App: React.FC = () => {
         {currentView === 'all-events' && (
           <div className="pt-24 pb-10">
             <div className="max-w-7xl mx-auto px-4 mb-6">
-              <button onClick={() => setCurrentView('home')} className="flex items-center text-green-700 font-bold hover:underline mb-4">
+              <button onClick={() => setCurrentView('home')} className="flex items-center text-[#805894] font-bold hover:underline mb-4">
                 ← Ana Sayfaya Dön
               </button>
             </div>
@@ -791,7 +763,7 @@ const App: React.FC = () => {
         {currentView === 'all-gallery' && (
           <div className="pt-24 pb-10">
             <div className="max-w-7xl mx-auto px-4 mb-6">
-              <button onClick={() => setCurrentView('home')} className="flex items-center text-green-700 font-bold hover:underline mb-4">
+              <button onClick={() => setCurrentView('home')} className="flex items-center text-[#805894] font-bold hover:underline mb-4">
                 ← Ana Sayfaya Dön
               </button>
             </div>

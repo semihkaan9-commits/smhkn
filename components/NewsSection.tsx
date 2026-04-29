@@ -81,8 +81,8 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, currentUser, onA
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center mb-10">
           <div>
-            <h2 className="text-3xl font-bold text-green-900 mb-2 flex items-center gap-2">
-              <Megaphone className="text-green-600" />
+            <h2 className="text-3xl font-bold text-[#805894] mb-2 flex items-center gap-2">
+              <Megaphone className="text-[#805894]" />
               <EditableText textKey="news.title" defaultText="Köyden Haberler" />
             </h2>
             <p className="text-stone-600">
@@ -93,7 +93,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, currentUser, onA
           {isAdmin && (
             <button
               onClick={() => setShowForm(!showForm)}
-              className="mt-4 md:mt-0 bg-green-700 hover:bg-green-800 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-md"
+              className="mt-4 md:mt-0 bg-[#805894] hover:bg-[#805894] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-md"
             >
               <Plus size={20} />
               {showForm ? 'Paneli Kapat' : 'Haber Ekle'}
@@ -103,8 +103,8 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, currentUser, onA
 
         {/* Admin Form */}
         {isAdmin && showForm && (
-          <div className="bg-white p-6 rounded-xl shadow-lg mb-10 animate-fade-in-up border border-green-200">
-            <h3 className="text-lg font-bold mb-4 text-green-800">Yeni Duyuru Yayınla</h3>
+          <div className="bg-white p-6 rounded-xl shadow-lg mb-10 animate-fade-in-up border border-[#805894]">
+            <h3 className="text-lg font-bold mb-4 text-[#805894]">Yeni Duyuru Yayınla</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Başlık</label>
@@ -112,7 +112,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, currentUser, onA
                   type="text"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-black"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#805894] focus:border-transparent bg-white text-black"
                   placeholder="Duyuru başlığı..."
                   required
                 />
@@ -125,14 +125,14 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, currentUser, onA
                   <button
                     type="button"
                     onClick={() => setUploadMode('URL')}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded text-xs font-medium transition-colors ${uploadMode === 'URL' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700'}`}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded text-xs font-medium transition-colors ${uploadMode === 'URL' ? 'bg-[#805894] text-white' : 'bg-gray-100 text-gray-700'}`}
                   >
                     <LinkIcon size={14} /> Link
                   </button>
                   <button
                     type="button"
                     onClick={() => setUploadMode('FILE')}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded text-xs font-medium transition-colors ${uploadMode === 'FILE' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700'}`}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded text-xs font-medium transition-colors ${uploadMode === 'FILE' ? 'bg-[#805894] text-white' : 'bg-gray-100 text-gray-700'}`}
                   >
                     <Upload size={14} /> Cihazdan
                   </button>
@@ -143,7 +143,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, currentUser, onA
                     type="url"
                     value={newImageUrl}
                     onChange={(e) => setNewImageUrl(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-black"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#805894] focus:border-transparent bg-white text-black"
                     placeholder="https://..."
                   />
                 ) : (
@@ -152,9 +152,9 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, currentUser, onA
                       type="file"
                       accept="image/*"
                       onChange={handleFileChange}
-                      className="w-full p-2 border border-gray-300 rounded-lg bg-white text-black file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                      className="w-full p-2 border border-gray-300 rounded-lg bg-white text-black file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#805894]/10 file:text-[#805894] hover:file:bg-[#805894]/10"
                     />
-                    {newImageUrl && <p className="text-xs text-green-600 mt-1">Görsel seçildi.</p>}
+                    {newImageUrl && <p className="text-xs text-[#805894] mt-1">Görsel seçildi.</p>}
                   </div>
                 )}
                 <p className="text-xs text-gray-500 mt-1">* Eklenen fotoğraf otomatik olarak galeriye de düşecektir.</p>
@@ -166,13 +166,13 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, currentUser, onA
                   value={newContent}
                   onChange={(e) => setNewContent(e.target.value)}
                   rows={4}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-black"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#805894] focus:border-transparent bg-white text-black"
                   placeholder="Duyuru detayları..."
                   required
                 />
               </div>
               <div className="flex justify-end">
-                <button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                <button type="submit" className="bg-[#805894] hover:bg-[#805894] text-white px-6 py-2 rounded-lg font-medium transition-colors">
                   Yayınla
                 </button>
               </div>
@@ -186,7 +186,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, currentUser, onA
             displayedNews.map((item) => (
               <div
                 key={item.id}
-                className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border-l-4 border-green-600 flex flex-col h-full relative group"
+                className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border-l-4 border-[#805894] flex flex-col h-full relative group"
               >
                 {/* Clickable Wrapper for Content */}
                 <div
@@ -195,13 +195,23 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, currentUser, onA
                 >
                   {item.imageUrl && (
                     <div className="h-48 w-full overflow-hidden bg-gray-100 relative rounded-tr-xl">
-                      <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      {item.imageUrl.includes('instagram.com') ? (
+                        <iframe 
+                          src={`${item.imageUrl.split('?')[0]}${item.imageUrl.split('?')[0].endsWith('/') ? '' : '/'}embed`} 
+                          className="w-full h-full border-none pointer-events-none scale-150 origin-top" 
+                          frameBorder="0" 
+                          scrolling="no" 
+                          allowtransparency="true">
+                        </iframe>
+                      ) : (
+                        <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      )}
                     </div>
                   )}
 
                   <div className="p-6 flex flex-col flex-grow">
                     <div className="mb-4">
-                      <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-green-700 transition-colors">{item.title}</h3>
+                      <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-[#805894] transition-colors">{item.title}</h3>
                       <div className="flex items-center text-xs text-gray-400 gap-4">
                         <span className="flex items-center gap-1"><Calendar size={14} /> {item.date}</span>
                         <span className="flex items-center gap-1"><UserCircle size={14} /> {item.author}</span>
@@ -210,7 +220,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, currentUser, onA
                     <p className="text-gray-600 leading-relaxed line-clamp-3 mb-4">
                       {item.content}
                     </p>
-                    <div className="mt-auto text-green-600 text-sm font-medium">
+                    <div className="mt-auto text-[#805894] text-sm font-medium">
                       Detayları Görüntüle →
                     </div>
                   </div>
@@ -252,7 +262,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, currentUser, onA
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${currentPage === page ? 'bg-green-700 text-white shadow-lg scale-110' : 'bg-white text-gray-600 hover:bg-green-50 border border-gray-200'}`}
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${currentPage === page ? 'bg-[#805894] text-white shadow-lg scale-110' : 'bg-white text-gray-600 hover:bg-[#805894]/10 border border-gray-200'}`}
               >
                 {page}
               </button>
@@ -264,12 +274,36 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, currentUser, onA
           <div className="flex justify-center mt-10">
             <button
               onClick={onShowAll}
-              className="bg-green-100 hover:bg-green-200 text-green-800 px-8 py-3 rounded-full font-bold transition-colors shadow-sm flex items-center gap-2"
+              className="bg-[#805894]/10 hover:bg-[#805894]/10 text-[#805894] px-8 py-3 rounded-full font-bold transition-colors shadow-sm flex items-center gap-2"
             >
               <EditableText textKey="news.show_all" defaultText="Tüm Haberleri Gör" /> ({news.length})
             </button>
           </div>
         )}
+
+        {/* Instagram / Social Feed Component */}
+        <div className="mt-24 pt-12 border-t border-[#805894]/10">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-extrabold text-[#805894] mb-3 flex items-center justify-center gap-3">
+              <svg className="w-8 h-8 text-[#805894]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+              Köyümüzden Kareler
+            </h2>
+            <p className="text-gray-500 font-medium">
+              Tüm detayları ve kareleri <a href="https://instagram.com/alatabalcilardernegi" target="_blank" rel="noopener noreferrer" className="font-bold text-[#805894] hover:underline">@alatabalcilardernegi</a> Instagram hesabımız üzerinden takip edebilirsiniz.
+            </p>
+          </div>
+
+          <div className="w-full bg-white rounded-3xl overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.06)] border border-gray-100 p-2 sm:p-5 min-h-[400px] flex items-center justify-center">
+             {/* Instagram Embed Target Area - Will render HTML code nicely within bounds */}
+             <div className="w-full h-full custom-ig-wrapper" dangerouslySetInnerHTML={{__html: `
+                 <!-- Aşağıdaki kod Curator.io veya Behold.so'dan alacağınız embed kodunu barındırır. -->
+                 <!-- Örnek bir Elfsight / Curator / Behold entegrasyonu: -->
+                 <div id="curator-feed-default-feed-layout" data-username="alatabalcilardernegi"><a href="https://curator.io" target="_blank" class="crt-logo crt-tag">Powered by Curator.io</a></div>
+                 <!-- Javascript kodları component mount edildiğinde harici olarak da çalıştırılabilir -->
+             `}} />
+          </div>
+        </div>
+
       </div>
 
       {/* Delete Confirmation Modal */}
@@ -304,8 +338,18 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ news, currentUser, onA
             </button>
 
             {selectedNews.imageUrl && (
-              <div className="w-full h-64 sm:h-80">
-                <img src={selectedNews.imageUrl} alt={selectedNews.title} className="w-full h-full object-cover" />
+              <div className="w-full h-64 sm:h-96">
+                {selectedNews.imageUrl.includes('instagram.com') ? (
+                  <iframe 
+                    src={`${selectedNews.imageUrl.split('?')[0]}${selectedNews.imageUrl.split('?')[0].endsWith('/') ? '' : '/'}embed`} 
+                    className="w-full h-full border-none" 
+                    frameBorder="0" 
+                    scrolling="no" 
+                    allowtransparency="true">
+                  </iframe>
+                ) : (
+                  <img src={selectedNews.imageUrl} alt={selectedNews.title} className="w-full h-full object-cover" />
+                )}
               </div>
             )}
 

@@ -119,8 +119,8 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
             <div className="max-w-7xl mx-auto">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-10">
                     <div>
-                        <h2 className="text-3xl font-bold text-green-900 mb-2 flex items-center gap-2">
-                            <Calendar className="text-green-600" />
+                        <h2 className="text-3xl font-bold text-[#805894] mb-2 flex items-center gap-2">
+                            <Calendar className="text-[#805894]" />
                             <EditableText textKey="events.title" defaultText="Etkinlik Duyuruları" />
                         </h2>
                         <p className="text-stone-600">
@@ -131,7 +131,7 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
                     {isAdmin && (
                         <button
                             onClick={() => setShowForm(!showForm)}
-                            className="mt-4 md:mt-0 bg-green-700 hover:bg-green-800 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-md"
+                            className="mt-4 md:mt-0 bg-[#805894] hover:bg-[#805894] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-md"
                         >
                             <Plus size={20} />
                             {showForm ? 'Paneli Kapat' : 'Etkinlik Ekle'}
@@ -141,8 +141,8 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
 
                 {/* Admin Form */}
                 {isAdmin && showForm && (
-                    <div className="bg-stone-50 p-6 rounded-xl shadow-lg mb-10 animate-fade-in-up border border-green-200">
-                        <h3 className="text-lg font-bold mb-4 text-green-800">Yeni Etkinlik Paylaş</h3>
+                    <div className="bg-stone-50 p-6 rounded-xl shadow-lg mb-10 animate-fade-in-up border border-[#805894]">
+                        <h3 className="text-lg font-bold mb-4 text-[#805894]">Yeni Etkinlik Paylaş</h3>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 mb-2">Başlık</label>
@@ -150,7 +150,7 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
                                     type="text"
                                     value={newTitle}
                                     onChange={(e) => setNewTitle(e.target.value)}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-black transition-all"
+                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#805894] focus:border-transparent bg-white text-black transition-all"
                                     placeholder="Etkinlik başlığı..."
                                     required
                                 />
@@ -164,7 +164,7 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
                                             type="datetime-local"
                                             value={startDate}
                                             onChange={(e) => setStartDate(e.target.value)}
-                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 bg-white text-black transition-all appearance-none"
+                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#805894] bg-white text-black transition-all appearance-none"
                                         />
                                     </div>
                                     <p className="text-xs text-gray-500">Etkinliğin başlayacağı tarih ve saat.</p>
@@ -177,7 +177,7 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
                                             type="datetime-local"
                                             value={endDate}
                                             onChange={(e) => setEndDate(e.target.value)}
-                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 bg-white text-black transition-all appearance-none"
+                                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#805894] bg-white text-black transition-all appearance-none"
                                         />
                                     </div>
                                     <p className="text-xs text-gray-500">Etkinliğin biteceği tarih ve saat.</p>
@@ -191,14 +191,14 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
                                     <button
                                         type="button"
                                         onClick={() => setUploadMode('URL')}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${uploadMode === 'URL' ? 'bg-green-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${uploadMode === 'URL' ? 'bg-[#805894] text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                                     >
                                         <LinkIcon size={16} /> Link
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => setUploadMode('FILE')}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${uploadMode === 'FILE' ? 'bg-green-600 text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${uploadMode === 'FILE' ? 'bg-[#805894] text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
                                     >
                                         <Upload size={16} /> Cihazdan
                                     </button>
@@ -209,7 +209,7 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
                                         type="url"
                                         value={newImageUrl}
                                         onChange={(e) => setNewImageUrl(e.target.value)}
-                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-black transition-all"
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#805894] focus:border-transparent bg-white text-black transition-all"
                                         placeholder="https://örnek-görsel.com/image.jpg"
                                     />
                                 ) : (
@@ -218,11 +218,11 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
                                             type="file"
                                             accept="image/*"
                                             onChange={handleFileChange}
-                                            className="w-full p-2 border border-dashed border-gray-400 rounded-lg bg-gray-50 text-black file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700 cursor-pointer"
+                                            className="w-full p-2 border border-dashed border-gray-400 rounded-lg bg-gray-50 text-black file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#805894] file:text-white hover:file:bg-[#805894] cursor-pointer"
                                         />
                                     </div>
                                 )}
-                                {newImageUrl && <p className="text-xs text-green-600 mt-2 flex items-center gap-1"><span className="w-2 h-2 bg-green-500 rounded-full"></span> Görsel kullanıma hazır.</p>}
+                                {newImageUrl && <p className="text-xs text-[#805894] mt-2 flex items-center gap-1"><span className="w-2 h-2 bg-[#805894] rounded-full"></span> Görsel kullanıma hazır.</p>}
                                 <p className="text-xs text-gray-400 mt-2">* Eklenen fotoğraf otomatik olarak galeriye de eklenecektir.</p>
                             </div>
 
@@ -232,13 +232,13 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
                                     value={newContent}
                                     onChange={(e) => setNewContent(e.target.value)}
                                     rows={4}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white text-black transition-all"
+                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#805894] focus:border-transparent bg-white text-black transition-all"
                                     placeholder="Etkinlik detaylarını buraya yazınız..."
                                     required
                                 />
                             </div>
                             <div className="flex justify-end pt-2">
-                                <button type="submit" className="bg-green-700 hover:bg-green-800 text-white px-8 py-3 rounded-lg font-bold shadow-lg transform hover:-translate-y-0.5 transition-all">
+                                <button type="submit" className="bg-[#805894] hover:bg-[#805894] text-white px-8 py-3 rounded-lg font-bold shadow-lg transform hover:-translate-y-0.5 transition-all">
                                     Etkinliği Paylaş
                                 </button>
                             </div>
@@ -262,7 +262,7 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
                                     {item.imageUrl && (
                                         <div className="h-48 w-full overflow-hidden bg-gray-200 relative rounded-t-xl">
                                             <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                                            <div className="absolute top-2 right-2 bg-green-600 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
+                                            <div className="absolute top-2 right-2 bg-[#805894] text-white text-xs font-bold px-2 py-1 rounded shadow-sm">
                                                 ETKİNLİK
                                             </div>
                                         </div>
@@ -270,9 +270,9 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
 
                                     <div className="p-6 flex flex-col flex-grow">
                                         <div className="mb-4">
-                                            <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-green-700 transition-colors">{item.title}</h3>
+                                            <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-[#805894] transition-colors">{item.title}</h3>
                                             <div className="flex flex-col text-xs text-gray-500 gap-2 mt-3">
-                                                <span className="flex items-center gap-2 bg-green-50 px-2 py-1 rounded w-fit text-green-700 font-medium">
+                                                <span className="flex items-center gap-2 bg-[#805894]/10 px-2 py-1 rounded w-fit text-[#805894] font-medium">
                                                     <Calendar size={14} />
                                                     {item.startDate ? formatDateRange(item.startDate, item.endDate) : item.date}
                                                 </span>
@@ -282,7 +282,7 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
                                         <p className="text-gray-600 leading-relaxed line-clamp-3 mb-4 text-sm">
                                             {item.content}
                                         </p>
-                                        <div className="mt-auto text-green-600 text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                                        <div className="mt-auto text-[#805894] text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
                                             Detayları İncele <span>→</span>
                                         </div>
                                     </div>
@@ -324,7 +324,7 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
                             <button
                                 key={page}
                                 onClick={() => setCurrentPage(page)}
-                                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${currentPage === page ? 'bg-green-700 text-white shadow-lg scale-110' : 'bg-white text-gray-600 hover:bg-green-50 border border-gray-200'}`}
+                                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${currentPage === page ? 'bg-[#805894] text-white shadow-lg scale-110' : 'bg-white text-gray-600 hover:bg-[#805894]/10 border border-gray-200'}`}
                             >
                                 {page}
                             </button>
@@ -336,7 +336,7 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
                     <div className="flex justify-center mt-10">
                         <button
                             onClick={onShowAll}
-                            className="bg-green-100 hover:bg-green-200 text-green-800 px-8 py-3 rounded-full font-bold transition-colors shadow-sm flex items-center gap-2"
+                            className="bg-[#805894]/10 hover:bg-[#805894]/10 text-[#805894] px-8 py-3 rounded-full font-bold transition-colors shadow-sm flex items-center gap-2"
                         >
                             <EditableText textKey="events.show_all" defaultText="Tüm Etkinlikleri Gör" /> ({events.length})
                         </button>
@@ -387,7 +387,7 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, currentUser,
                         <div className="p-8">
                             <h2 className="text-3xl font-bold text-gray-900 mb-3">{selectedEvent.title}</h2>
                             <div className="flex flex-col sm:flex-row sm:items-center text-sm text-gray-500 gap-4 mb-6 pb-6 border-b border-gray-100">
-                                <span className="flex items-center gap-2 font-medium text-green-700 bg-green-50 w-fit px-3 py-1.5 rounded-full border border-green-100">
+                                <span className="flex items-center gap-2 font-medium text-[#805894] bg-[#805894]/10 w-fit px-3 py-1.5 rounded-full border border-[#805894]">
                                     <Calendar size={18} />
                                     {selectedEvent.startDate ? formatDateRange(selectedEvent.startDate, selectedEvent.endDate) : selectedEvent.date}
                                 </span>

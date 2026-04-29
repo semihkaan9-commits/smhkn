@@ -73,7 +73,7 @@ export const EditableText: React.FC<EditableTextProps> = ({
         onBlur={handleSave}
         onKeyDown={handleKeyDown}
         onClick={(e) => e.stopPropagation()}
-        className={`bg-white text-black border border-green-500 rounded px-1 focus:outline-none focus:ring-2 focus:ring-green-500 z-10 relative ${className}`}
+        className={`bg-white text-black border border-[#805894] rounded px-1 focus:outline-none focus:ring-2 focus:ring-[#805894] z-10 relative ${className}`}
         style={{ width: `${Math.max(draft.length, 5)}ch` }}
       />
     );
