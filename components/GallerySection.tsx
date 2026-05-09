@@ -4,6 +4,12 @@ import { Image as ImageIcon, Video, Plus, X, Upload, Link as LinkIcon, Trash2 } 
 import { DeleteModal } from './DeleteModal';
 import { EditableText } from './EditableText';
 
+const getYoutubeVideoId = (url: string) => {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+};
+
 interface GallerySectionProps {
   items: GalleryItem[];
   currentUser: AnyUser | null;
@@ -189,7 +195,13 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ items, currentUs
                   <img src={item.url} alt={item.caption} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                 ) : (
                   <div className="w-full h-full bg-black flex items-center justify-center relative group-hover:scale-110 transition-transform duration-700">
-                    <video src={item.url} className="w-full h-full object-cover opacity-80" />
+                    {(() => {
+                      const ytId = getYoutubeVideoId(item.url);
+                      if (ytId) {
+                        return <img src={`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`} className="w-full h-full object-cover opacity-80" alt={item.caption} />;
+                      }
+                      return <video src={item.url} className="w-full h-full object-cover opacity-80" />;
+                    })()}
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="bg-white/20 backdrop-blur-sm p-3 rounded-full">
                         <Video className="text-white w-8 h-8" />
@@ -268,7 +280,25 @@ export const GallerySection: React.FC<GallerySectionProps> = ({ items, currentUs
               {selectedItem.type === 'image' ? (
                 <img src={selectedItem.url} alt={selectedItem.caption} className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl" />
               ) : (
-                <video controls autoPlay src={selectedItem.url} className="max-w-full max-h-[70vh] rounded-lg shadow-2xl bg-black" />
+                (() => {
+                  const ytId = getYoutubeVideoId(selectedItem.url);
+                  if (ytId) {
+                    return (
+                      <div className="w-full w-[80vw] max-w-4xl aspect-video rounded-lg shadow-2xl overflow-hidden bg-black">
+                        <iframe
+                          width="100%"
+                          height="100%"
+                          src={`https://www.youtube.com/embed/${ytId}?autoplay=1`}
+                          title="YouTube video player"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        ></iframe>
+                      </div>
+                    );
+                  }
+                  return <video controls autoPlay src={selectedItem.url} className="max-w-full max-h-[70vh] rounded-lg shadow-2xl bg-black" />;
+                })()
               )}
               {selectedItem.caption && (
                 <div className="mt-4 text-center">

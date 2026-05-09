@@ -121,12 +121,6 @@ export const DonationSection: React.FC<DonationSectionProps> = ({
 }) => {
     const bottomAds = [1, 2, 3].map(n => adsMap[`bottomA${n}`]).filter(Boolean);
 
-    const handleCopy = (e: React.MouseEvent) => {
-        const text = e.currentTarget.parentElement?.querySelector('p')?.innerText || "TR12 0000 0000 0000 0000 0000 00";
-        navigator.clipboard.writeText(text);
-        toast.success("IBAN Kopyalandı!");
-    };
-    
     return (
         <section id="donations" className="py-20 px-4 bg-stone-50 overflow-hidden relative">
             <div className="absolute top-0 right-0 w-1/3 h-[400px] bg-gradient-to-b from-[#805894]/5 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
@@ -160,24 +154,39 @@ export const DonationSection: React.FC<DonationSectionProps> = ({
                                 Banka hesabımıza doğrudan transfer yaparak derneğimize katkıda bulunabilirsiniz. Lütfen açıklama kısmına adınızı soyadınızı yazın.
                             </p>
                             
-                            <div className="bg-gray-50 rounded-xl p-5 border border-gray-100 relative">
-                                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Alıcı Ünvanı</p>
-                                <p className="text-sm font-semibold text-gray-800 mb-4 leading-snug">
+                            <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 relative">
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Alıcı Ünvanı</p>
+                                <p className="text-sm font-semibold text-gray-800 mb-3 leading-snug">
                                     <EditableText textKey="donations.recipient" defaultText="Alata-Balcılar Yardımlaşma ve Dayanışma Derneği" />
                                 </p>
                                 
-                                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">IBAN Numarası</p>
-                                <div className="flex items-center justify-between gap-4">
-                                    <p className="text-[13px] sm:text-sm font-mono font-bold text-[#805894] break-all">
-                                        <EditableText textKey="donations.iban" defaultText="TR12 0000 0000 0000 0000 0000 00" />
-                                    </p>
-                                    <button 
-                                        className="p-2 text-gray-400 hover:text-[#805894] hover:bg-[#805894]/10 rounded-lg transition-colors cursor-pointer shrink-0"
-                                        title="Kopyala"
-                                        onClick={handleCopy}
-                                    >
-                                        <Copy size={18} />
-                                    </button>
+                                <div className="space-y-2">
+                                    {[
+                                        { title: "Genel Bağış IBAN", key: "iban_genel", default: "TR12 0000 0000 0000 0000 0000 01" },
+                                        { title: "Hafız-Öğrenci IBAN", key: "iban_hafiz", default: "TR12 0000 0000 0000 0000 0000 02" },
+                                        { title: "Cami IBAN", key: "iban_cami", default: "TR12 0000 0000 0000 0000 0000 03" },
+                                        { title: "Zekat IBAN", key: "iban_zekat", default: "TR12 0000 0000 0000 0000 0000 04" }
+                                    ].map((iban, idx) => (
+                                        <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4 bg-white p-2.5 rounded-lg border border-gray-100 shadow-sm">
+                                            <div className="flex-1">
+                                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{iban.title}</p>
+                                                <p className="text-xs sm:text-[13px] font-mono font-bold text-[#805894] break-all mt-0.5">
+                                                    <EditableText textKey={`donations.${iban.key}`} defaultText={iban.default} />
+                                                </p>
+                                            </div>
+                                            <button 
+                                                className="p-1.5 text-gray-400 hover:text-[#805894] hover:bg-[#805894]/10 rounded-md transition-colors cursor-pointer shrink-0 self-end sm:self-center"
+                                                title={`${iban.title} Kopyala`}
+                                                onClick={(e) => {
+                                                    const text = e.currentTarget.parentElement?.querySelector('.font-mono')?.textContent?.trim() || iban.default;
+                                                    navigator.clipboard.writeText(text);
+                                                    toast.success(`${iban.title} Kopyalandı!`);
+                                                }}
+                                            >
+                                                <Copy size={16} />
+                                            </button>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
