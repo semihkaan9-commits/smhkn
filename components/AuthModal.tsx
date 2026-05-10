@@ -30,13 +30,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
   const [profession, setProfession] = useState('');
   const [address, setAddress] = useState('');
   const [contact, setContact] = useState('');
+  const [businessCardUrl, setBusinessCardUrl] = useState('');
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBusinessCardUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   if (!isOpen) return null;
 
   const resetForm = () => {
     // setUsername(''); 
     setPassword(''); setName(''); setSurname('');
-    setEmail(''); setNickname(''); setProfession(''); setAddress(''); setContact('');
+    setEmail(''); setNickname(''); setProfession(''); setAddress(''); setContact(''); setBusinessCardUrl('');
   };
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -130,7 +142,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
             address,
             contact,
             email: email.trim(),
-            rating: 0
+            rating: 0,
+            business_card_url: businessCardUrl
           });
         }
 
@@ -282,6 +295,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
                     <div>
                       <label className="block text-xs font-bold text-gray-500">Adres</label>
                       <textarea value={address} onChange={e => setAddress(e.target.value)} rows={2} className="w-full bg-white text-black rounded border border-gray-200 p-2 text-sm mt-1" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-500">Kartvizit Fotoğrafı (Opsiyonel)</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="w-full mt-1 p-2 border border-gray-200 rounded text-xs bg-white text-black file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-[#805894]/10 file:text-[#805894] hover:file:bg-[#805894]/20"
+                      />
+                      {businessCardUrl && <p className="text-xs text-[#805894] mt-1">Kartvizit seçildi.</p>}
+                      <p className="text-[10px] text-red-500 mt-2 font-semibold">
+                        Kartvizit Eklenmesi Durumunda Kartvizitiniz Sergilenecektir Daha İyi Hizmet Verebilmemiz İçin Kutucukları Eksiksiz Bir Şekilde Dolduralım!
+                      </p>
                     </div>
                   </div>
                 </div>

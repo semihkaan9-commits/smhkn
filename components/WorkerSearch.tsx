@@ -34,11 +34,15 @@ export const WorkerSearch: React.FC<WorkerSearchProps> = ({
     let result = villagers;
     if (searchTerm) {
       const lowerTerm = searchTerm.toLocaleLowerCase('tr-TR');
-      result = villagers.filter(v =>
-        v.profession.toLocaleLowerCase('tr-TR').includes(lowerTerm) ||
-        v.name.toLocaleLowerCase('tr-TR').includes(lowerTerm) ||
-        v.surname.toLocaleLowerCase('tr-TR').includes(lowerTerm)
-      );
+      if (lowerTerm === 'esnaf') {
+        result = villagers;
+      } else {
+        result = villagers.filter(v =>
+          v.profession.toLocaleLowerCase('tr-TR').includes(lowerTerm) ||
+          v.name.toLocaleLowerCase('tr-TR').includes(lowerTerm) ||
+          v.surname.toLocaleLowerCase('tr-TR').includes(lowerTerm)
+        );
+      }
     }
     return result.sort((a, b) => b.rating - a.rating);
   }, [searchTerm, villagers]);
@@ -125,7 +129,7 @@ export const WorkerSearch: React.FC<WorkerSearchProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in-up">
           {filteredVillagers.length > 0 ? (
             filteredVillagers.map((person) => (
-              <div key={person.id} className="relative bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-shadow border-t-4 border-[#805894] flex flex-col h-full group">
+              <div key={person.id} className={`relative bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow border-t-4 border-[#805894] flex flex-col group ${person.business_card_url ? 'h-[350px] p-0 overflow-hidden' : 'h-full p-6'}`}>
 
                 {/* Admin Actions */}
                 {currentUser?.role === UserRole.ADMIN && (
@@ -147,77 +151,89 @@ export const WorkerSearch: React.FC<WorkerSearchProps> = ({
                   </div>
                 )}
 
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">{person.name} {person.surname}</h3>
-                    {person.nickname && <p className="text-sm text-gray-500 italic">"{person.nickname}"</p>}
+                {person.business_card_url ? (
+                  <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                    <img 
+                      src={person.business_card_url} 
+                      alt={`${person.name} ${person.surname} Kartvizit`} 
+                      className="w-full h-full object-contain"
+                    />
                   </div>
-                  <BadgeCheck className="text-[#805894]" />
-                </div>
-
-                <div className="flex items-center mb-4">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      onClick={() => onRateVillager(person.id, star)}
-                      className="focus:outline-none transition-transform hover:scale-110"
-                    >
-                      <Star
-                        size={18}
-                        className={`${star <= person.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                      />
-                    </button>
-                  ))}
-                  <span className="ml-2 text-xs text-gray-500">({person.rating}/5)</span>
-                </div>
-
-                <div className="space-y-4 mt-auto">
-                  <div className="inline-block bg-[#805894]/10 text-[#805894] px-3 py-1 rounded-full text-sm font-semibold">
-                    {person.profession}
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <MapPin size={20} className="shrink-0 text-[#805894] mt-1" />
-                    <div className="flex-grow">
-                      <span className="text-gray-600 text-sm block mb-2">{person.address}</span>
-                      <a
-                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(person.address + (person.address.toLowerCase().includes('konya') ? '' : ' Balcılar Köyü Konya'))}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100 transition-colors"
-                      >
-                        <Navigation size={12} /> Yol Tarifi
-                      </a>
+                ) : (
+                  <>
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900">{person.name} {person.surname}</h3>
+                        {person.nickname && <p className="text-sm text-gray-500 italic">"{person.nickname}"</p>}
+                      </div>
+                      <BadgeCheck className="text-[#805894]" />
                     </div>
-                  </div>
 
-                  {/* Google Maps Preview */}
-                  <div className="w-full h-40 rounded-lg overflow-hidden border border-gray-200 mt-2 shadow-inner">
-                    <iframe
-                      width="100%"
-                      height="100%"
-                      frameBorder="0"
-                      scrolling="no"
-                      marginHeight={0}
-                      marginWidth={0}
-                      src={`https://maps.google.com/maps?q=${encodeURIComponent(person.address + (person.address.toLowerCase().includes('konya') ? '' : ' Balcılar Köyü Konya'))}&t=m&z=15&ie=UTF8&iwloc=A&output=embed&hl=tr`}
-                      title={`Harita: ${person.name}`}
-                    ></iframe>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-3 pt-2 border-t border-gray-100">
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Phone size={18} className="text-[#805894]" />
-                      <span className="font-mono text-sm">{person.contact}</span>
+                    <div className="flex items-center mb-4">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          onClick={() => onRateVillager(person.id, star)}
+                          className="focus:outline-none transition-transform hover:scale-110"
+                        >
+                          <Star
+                            size={18}
+                            className={`${star <= person.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                          />
+                        </button>
+                      ))}
+                      <span className="ml-2 text-xs text-gray-500">({person.rating}/5)</span>
                     </div>
-                    <a
-                      href={`tel:${person.contact}`}
-                      className="bg-[#805894] hover:bg-[#805894] text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
-                    >
-                      <Phone size={14} /> Ara
-                    </a>
-                  </div>
-                </div>
+
+                    <div className="space-y-4 mt-auto">
+                      <div className="inline-block bg-[#805894]/10 text-[#805894] px-3 py-1 rounded-full text-sm font-semibold">
+                        {person.profession}
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <MapPin size={20} className="shrink-0 text-[#805894] mt-1" />
+                        <div className="flex-grow">
+                          <span className="text-gray-600 text-sm block mb-2">{person.address}</span>
+                          <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(person.address + (person.address.toLowerCase().includes('konya') ? '' : ' Balcılar Köyü Konya'))}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100 transition-colors"
+                          >
+                            <Navigation size={12} /> Yol Tarifi
+                          </a>
+                        </div>
+                      </div>
+
+                      {/* Google Maps Preview */}
+                      <div className="w-full h-40 rounded-lg overflow-hidden border border-gray-200 mt-2 shadow-inner">
+                        <iframe
+                          width="100%"
+                          height="100%"
+                          frameBorder="0"
+                          scrolling="no"
+                          marginHeight={0}
+                          marginWidth={0}
+                          src={`https://maps.google.com/maps?q=${encodeURIComponent(person.address + (person.address.toLowerCase().includes('konya') ? '' : ' Balcılar Köyü Konya'))}&t=m&z=15&ie=UTF8&iwloc=A&output=embed&hl=tr`}
+                          title={`Harita: ${person.name}`}
+                        ></iframe>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-3 pt-2 border-t border-gray-100">
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <Phone size={18} className="text-[#805894]" />
+                          <span className="font-mono text-sm">{person.contact}</span>
+                        </div>
+                        <a
+                          href={`tel:${person.contact}`}
+                          className="bg-[#805894] hover:bg-[#805894] text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                        >
+                          <Phone size={14} /> Ara
+                        </a>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             ))
           ) : (

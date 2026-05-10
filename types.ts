@@ -19,6 +19,7 @@ export interface Villager extends User {
   address: string;
   contact: string;
   rating: number; // 0-5 stars
+  business_card_url?: string;
 }
 
 export interface NewsItem {
