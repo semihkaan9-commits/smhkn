@@ -15,6 +15,7 @@ import { ContentContext, EditableText } from './components/EditableText';
 import { Villager, NewsItem, GalleryItem, Donation, UserRole, AnyUser, EventItem, DynamicSection, DynamicItem } from './types';
 import { DynamicSectionView } from './components/DynamicSectionView';
 import { supabase } from './lib/supabase';
+import { Analytics } from '@vercel/analytics/react';
 
 import { Toaster, toast } from 'react-hot-toast';
 
@@ -788,6 +789,7 @@ const App: React.FC = () => {
         villagers={villagers}
         guests={guests}
       />
+      <Analytics />
     </div>
     </ContentContext.Provider>
   );
