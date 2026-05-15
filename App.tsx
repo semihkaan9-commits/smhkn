@@ -16,6 +16,7 @@ import { Villager, NewsItem, GalleryItem, Donation, UserRole, AnyUser, EventItem
 import { DynamicSectionView } from './components/DynamicSectionView';
 import { supabase } from './lib/supabase';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 import { Toaster, toast } from 'react-hot-toast';
 
@@ -790,6 +791,7 @@ const App: React.FC = () => {
         guests={guests}
       />
       <Analytics />
+      <SpeedInsights />
     </div>
     </ContentContext.Provider>
   );
