@@ -12,6 +12,7 @@ import { InstallPWA } from './components/InstallPWA';
 import { EventSection } from './components/EventSection';
 import { AdManager } from './components/AdManager';
 import { ContentContext, EditableText } from './components/EditableText';
+import { EditVillagerModal } from './components/EditVillagerModal';
 import { Villager, NewsItem, GalleryItem, Donation, UserRole, AnyUser, EventItem, DynamicSection, DynamicItem } from './types';
 import { DynamicSectionView } from './components/DynamicSectionView';
 import { supabase } from './lib/supabase';
