@@ -17,6 +17,7 @@ export const EditVillagerModal: React.FC<EditVillagerModalProps> = ({ isOpen, on
     const [profession, setProfession] = useState('');
     const [address, setAddress] = useState('');
     const [contact, setContact] = useState('');
+    const [businessCardUrl, setBusinessCardUrl] = useState('');
 
     useEffect(() => {
         if (villager) {
@@ -26,10 +27,22 @@ export const EditVillagerModal: React.FC<EditVillagerModalProps> = ({ isOpen, on
             setProfession(villager.profession);
             setAddress(villager.address || ''); // Assuming address exists on type, fallback if not
             setContact(villager.contact || '');
+            setBusinessCardUrl(villager.business_card_url || '');
         }
     }, [villager]);
 
     if (!isOpen || !villager) return null;
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setBusinessCardUrl(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -46,7 +59,8 @@ export const EditVillagerModal: React.FC<EditVillagerModalProps> = ({ isOpen, on
             nickname: nickname || undefined,
             profession,
             address,
-            contact
+            contact,
+            business_card_url: businessCardUrl
         };
 
         onSave(updatedVillager);
@@ -128,6 +142,22 @@ export const EditVillagerModal: React.FC<EditVillagerModalProps> = ({ isOpen, on
                             onChange={e => setAddress(e.target.value)}
                             rows={3}
                             className="w-full border rounded-lg border-gray-200 focus:border-[#805894] outline-none p-3 bg-transparent text-black transition-colors resize-none"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Kartvizit Fotoğrafı</label>
+                        {businessCardUrl && (
+                            <div className="mb-2">
+                                <p className="text-xs text-gray-500 mb-1">Mevcut Kartvizit:</p>
+                                <img src={businessCardUrl} alt="Kartvizit" className="h-20 w-auto rounded border border-gray-200" />
+                            </div>
+                        )}
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="w-full p-2 border border-gray-200 rounded text-xs bg-white text-black file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-[#805894]/10 file:text-[#805894] hover:file:bg-[#805894]/20"
                         />
                     </div>
 

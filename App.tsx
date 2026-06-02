@@ -30,6 +30,7 @@ const App: React.FC = () => {
   // State - initialized empty, filled from Supabase via refreshData()
   const [currentUser, setCurrentUser] = useState<AnyUser | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [villagers, setVillagers] = useState<Villager[]>([]);
   const [guests, setGuests] = useState<AnyUser[]>([]);
   const [news, setNews] = useState<NewsItem[]>([]);
@@ -612,7 +613,8 @@ const App: React.FC = () => {
         nickname: updatedVillager.nickname,
         profession: updatedVillager.profession,
         address: updatedVillager.address,
-        contact: updatedVillager.contact
+        contact: updatedVillager.contact,
+        business_card_url: updatedVillager.business_card_url
       }).eq('id', updatedVillager.id).select();
 
       if (error) throw error;
@@ -656,6 +658,7 @@ const App: React.FC = () => {
         onLogoClick={handleLogoClick}
         dynamicSections={dynamicSections}
         refreshData={refreshData}
+        onEditProfile={() => setIsEditProfileOpen(true)}
       />
 
       {/* Admin Reklam Paneli */}
@@ -792,6 +795,16 @@ const App: React.FC = () => {
       />
       <Analytics />
       <SpeedInsights />
+
+      <EditVillagerModal
+        isOpen={isEditProfileOpen}
+        onClose={() => setIsEditProfileOpen(false)}
+        onSave={(updated) => {
+          handleUpdateVillager(updated);
+          setIsEditProfileOpen(false);
+        }}
+        villager={villagers.find(v => (v as any).user_id === currentUser?.id || v.id === currentUser?.id) || null}
+      />
     </div>
     </ContentContext.Provider>
   );

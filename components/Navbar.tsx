@@ -15,6 +15,7 @@ interface NavbarProps {
   onLogoClick?: () => void;
   dynamicSections?: any[];
   refreshData?: () => void;
+  onEditProfile?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ 
@@ -24,7 +25,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   scrollToSection, 
   onLogoClick,
   dynamicSections = [],
-  refreshData
+  refreshData,
+  onEditProfile
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAddingSection, setIsAddingSection] = useState(false);
@@ -159,6 +161,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                       (currentUser.role === UserRole.VILLAGER || currentUser.role === 'villager') ? 'Köy Sakini' : 'Misafir'}
                   </p>
                 </div>
+                {currentUser.role === UserRole.VILLAGER && onEditProfile && (
+                  <button
+                    onClick={onEditProfile}
+                    className="bg-[#805894] hover:bg-purple-900 text-white p-2 text-xs rounded-lg transition-colors flex items-center justify-center font-semibold"
+                    title="Profilimi Düzenle"
+                  >
+                    Profili Düzenle
+                  </button>
+                )}
                 <button
                   onClick={onLogout}
                   className="bg-red-500 hover:bg-red-600 p-2 rounded-full transition-colors flex items-center justify-center"
@@ -255,12 +266,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                         (currentUser.role === UserRole.VILLAGER || currentUser.role === 'villager') ? 'Köy Sakini' : 'Misafir'}
                     </p>
                   </div>
-                  <button
-                    onClick={() => { onLogout(); setIsMobileMenuOpen(false); }}
-                    className="bg-red-500 hover:bg-red-600 p-2 rounded-lg flex items-center gap-2 text-sm"
-                  >
-                    <LogOut size={16} /> Çıkış
-                  </button>
+                  <div className="flex gap-2">
+                    {currentUser.role === UserRole.VILLAGER && onEditProfile && (
+                      <button
+                        onClick={() => { onEditProfile(); setIsMobileMenuOpen(false); }}
+                        className="bg-[#805894] hover:bg-purple-900 p-2 rounded-lg flex items-center gap-2 text-sm text-white font-semibold"
+                      >
+                        Profili Düzenle
+                      </button>
+                    )}
+                    <button
+                      onClick={() => { onLogout(); setIsMobileMenuOpen(false); }}
+                      className="bg-red-500 hover:bg-red-600 p-2 rounded-lg flex items-center gap-2 text-sm text-white"
+                    >
+                      <LogOut size={16} /> Çıkış
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <button
