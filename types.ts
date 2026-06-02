@@ -77,4 +77,14 @@ export interface DynamicItem {
   created_at?: string;
 }
 
+export interface Manager {
+  id: string;
+  name: string;
+  surname: string;
+  title: string;
+  phone: string;
+  photo_url?: string;
+  created_at?: string;
+}
+
 export type AnyUser = User | Villager;

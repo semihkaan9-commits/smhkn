@@ -16,6 +16,7 @@ interface NavbarProps {
   dynamicSections?: any[];
   refreshData?: () => void;
   onEditProfile?: () => void;
+  onManagersClick?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ 
@@ -26,7 +27,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onLogoClick,
   dynamicSections = [],
   refreshData,
-  onEditProfile
+  onEditProfile,
+  onManagersClick
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAddingSection, setIsAddingSection] = useState(false);
@@ -92,6 +94,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="flex items-center justify-center space-x-1 lg:space-x-4">
               <button onClick={() => scrollToSection('workers')} className="whitespace-nowrap hover:bg-[#805894] px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
                 <EditableText textKey="nav.workers" defaultText="Köy Rehberi" />
+              </button>
+              <button onClick={() => { if (onManagersClick) onManagersClick(); }} className="whitespace-nowrap hover:bg-[#805894] px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                <EditableText textKey="nav.managers" defaultText="Yöneticiler" />
               </button>
               <button onClick={() => scrollToSection('news')} className="whitespace-nowrap hover:bg-[#805894] px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition-colors">
                 <EditableText textKey="nav.news" defaultText="Haberler" />
@@ -206,6 +211,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="md:hidden bg-[#805894] border-t border-[#805894] absolute w-full left-0 animate-fade-in-up shadow-2xl">
           <div className="px-4 pt-2 pb-6 space-y-1">
             <button onClick={() => handleMobileNav('workers')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-[#805894]"><EditableText textKey="nav.workers" defaultText="Köy Rehberi" /></button>
+            <button onClick={() => { if (onManagersClick) onManagersClick(); setIsMobileMenuOpen(false); }} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-[#805894]"><EditableText textKey="nav.managers" defaultText="Yöneticiler" /></button>
             <button onClick={() => handleMobileNav('news')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-[#805894]"><EditableText textKey="nav.news" defaultText="Haberler" /></button>
             <button onClick={() => handleMobileNav('events')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-[#805894]"><EditableText textKey="nav.events" defaultText="Etkinlikler" /></button>
             <button onClick={() => handleMobileNav('gallery')} className="block w-full text-left px-3 py-3 rounded-md text-base font-medium hover:bg-[#805894]"><EditableText textKey="nav.gallery" defaultText="Galeri" /></button>

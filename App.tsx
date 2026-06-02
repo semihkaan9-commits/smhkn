@@ -13,7 +13,8 @@ import { EventSection } from './components/EventSection';
 import { AdManager } from './components/AdManager';
 import { ContentContext, EditableText } from './components/EditableText';
 import { EditVillagerModal } from './components/EditVillagerModal';
-import { Villager, NewsItem, GalleryItem, Donation, UserRole, AnyUser, EventItem, DynamicSection, DynamicItem } from './types';
+import { ManagerList } from './components/ManagerList';
+import { Villager, NewsItem, GalleryItem, Donation, UserRole, AnyUser, EventItem, DynamicSection, DynamicItem, Manager } from './types';
 import { DynamicSectionView } from './components/DynamicSectionView';
 import { supabase } from './lib/supabase';
 import { Analytics } from '@vercel/analytics/react';
@@ -38,12 +39,13 @@ const App: React.FC = () => {
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
   const [events, setEvents] = useState<EventItem[]>([]);
   const [donations, setDonations] = useState<Donation[]>([]);
+  const [managers, setManagers] = useState<Manager[]>([]);
 
   // Reklam Durumları - Dictionary mapping area key to Ad Data
   const [adsMap, setAdsMap] = useState<Record<string, {url: string, link: string | null}>>({});
 
   // View State
-  const [currentView, setCurrentView] = useState<'home' | 'all-news' | 'all-events' | 'all-gallery'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'all-news' | 'all-events' | 'all-gallery' | 'managers'>('home');
 
   // Dynamic Content & Sections
   const [pageContent, setPageContent] = useState<Record<string, string>>({});
@@ -102,6 +104,11 @@ const App: React.FC = () => {
   const refreshData = async () => {
     try {
       // Individual try-catches for each table to prevent one failure from blocking everything
+      try {
+        const { data: managersData } = await supabase.from('managers').select('*').order('created_at');
+        if (managersData) setManagers(managersData);
+      } catch (e) { console.error('Error fetching managers:', e); }
+
       try {
         const { data: villagersData } = await supabase.from('villagers').select('*').order('name');
         if (villagersData) setVillagers(villagersData);
@@ -631,6 +638,43 @@ const App: React.FC = () => {
     }
   };
 
+  const handleAddManager = async (managerData: Partial<Manager>) => {
+    try {
+      const { error } = await supabase.from('managers').insert([managerData]);
+      if (error) throw error;
+      toast.success('Yönetici başarıyla eklendi.');
+      await refreshData();
+    } catch (error: any) {
+      console.error('Error adding manager:', error);
+      toast.error(`Yönetici eklenirken hata oluştu: ${error.message || 'Yetki Yok'}`);
+    }
+  };
+
+  const handleUpdateManager = async (managerData: Partial<Manager>) => {
+    try {
+      const { id, ...updateData } = managerData;
+      const { error } = await supabase.from('managers').update(updateData).eq('id', id);
+      if (error) throw error;
+      toast.success('Yönetici başarıyla güncellendi.');
+      await refreshData();
+    } catch (error: any) {
+      console.error('Error updating manager:', error);
+      toast.error(`Yönetici güncellenirken hata oluştu: ${error.message || 'Yetki Yok'}`);
+    }
+  };
+
+  const handleDeleteManager = async (id: string) => {
+    try {
+      const { error } = await supabase.from('managers').delete().eq('id', id);
+      if (error) throw error;
+      toast.success('Yönetici başarıyla silindi.');
+      setManagers(prev => prev.filter(m => m.id !== id));
+    } catch (error: any) {
+      console.error('Error deleting manager:', error);
+      toast.error(`Yönetici silinirken hata oluştu: ${error.message || 'Yetki Yok'}`);
+    }
+  };
+
   const updatePageContent = async (key: string, value: string) => {
     try {
       setPageContent(prev => ({ ...prev, [key]: value }));
@@ -660,6 +704,10 @@ const App: React.FC = () => {
         dynamicSections={dynamicSections}
         refreshData={refreshData}
         onEditProfile={() => setIsEditProfileOpen(true)}
+        onManagersClick={() => {
+          setCurrentView('managers');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
       />
 
       {/* Admin Reklam Paneli */}
@@ -778,6 +826,23 @@ const App: React.FC = () => {
               currentUser={currentUser}
               onAddItem={handleAddGalleryItem}
               onDeleteItem={handleDeleteGalleryItem}
+            />
+          </div>
+        )}
+
+        {currentView === 'managers' && (
+          <div className="pt-24 pb-10">
+            <div className="max-w-7xl mx-auto px-4 mb-6">
+              <button onClick={() => setCurrentView('home')} className="flex items-center text-[#805894] font-bold hover:underline mb-4">
+                ← Ana Sayfaya Dön
+              </button>
+            </div>
+            <ManagerList
+              managers={managers}
+              currentUser={currentUser}
+              onAddManager={handleAddManager}
+              onUpdateManager={handleUpdateManager}
+              onDeleteManager={handleDeleteManager}
             />
           </div>
         )}
